@@ -149,9 +149,9 @@ export default function StudioPage() {
         </div>
       )}
 
-      {activeTab === 'preview' && projectType === 'bot' && sandboxId && (
+      {activeTab === 'preview' && projectType === 'bot' && sandboxId ? (
         <BotEmulator sandboxId={sandboxId} />
-      )}
+      ) : null}
       {activeTab === 'preview' &&
         sandboxUrl &&
         (projectType === 'website' || projectType === 'application') && (
