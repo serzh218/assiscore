@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Open Lovable",
-  description: "Re-imagine any website in seconds with AI-powered website builder.",
+  title: "Open AssisCore",
+  description: "Преобразуйте любой сайт за секунды с помощью конструктора сайтов на AI.",
 };
 
 export default function RootLayout({
@@ -14,11 +14,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        {children}
-      </body>
-    </html>
-  );
+    return (
+      <html lang="ru">
+        <body className={inter.className}>
+          {children}
+        </body>
+      </html>
+    );
 }
