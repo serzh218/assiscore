@@ -4,6 +4,7 @@ import type { SandboxState } from '@/types/sandbox';
 import { appConfig } from '@/config/app.config';
 import fs from 'fs';
 import path from 'path';
+import { writeOpenRouterEnvFile } from '@/server/routes/sandbox';
 
 // Store active sandbox globally
 declare global {
@@ -97,6 +98,11 @@ export async function POST(request: Request) {
     console.log('[create-ai-sandbox] Installing dependencies...');
     const installCmd = `npm install${appConfig.packages.useLegacyPeerDeps ? ' --legacy-peer-deps' : ''}`;
     await sandbox.commands.run(installCmd, { cwd: '/home/user/app' });
+
+    // Ensure OpenRouter API key is available for bot projects
+    if (projectType === 'bot') {
+      await writeOpenRouterEnvFile(sandbox);
+    }
 
     // Start project
     const startCmd = projectType === 'bot' ? 'npm start' : 'npm run dev';
