@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const data = await firecrawlResponse.json();
     
     if (!data.success || !data.data?.screenshot) {
-      throw new Error('Failed to capture screenshot');
+      throw new Error('Не удалось сделать скриншот');
     }
 
     return NextResponse.json({
@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('Screenshot capture error:', error);
-    return NextResponse.json({ 
-      error: error.message || 'Failed to capture screenshot' 
+    return NextResponse.json({
+      error: error.message || 'Не удалось сделать скриншот'
     }, { status: 500 });
   }
 }

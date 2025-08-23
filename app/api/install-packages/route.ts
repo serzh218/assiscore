@@ -46,10 +46,10 @@ export async function POST(request: NextRequest) {
         global.activeSandbox = sandbox;
         console.log(`[install-packages] Successfully reconnected to sandbox ${sandboxId}`);
       } catch (error) {
-        console.error(`[install-packages] Failed to reconnect to sandbox:`, error);
+        console.error(`[install-packages] Не удалось переподключиться к песочнице:`, error);
         return NextResponse.json({ 
           success: false, 
-          error: `Failed to reconnect to sandbox: ${(error as Error).message}` 
+          error: `Не удалось переподключиться к песочнице: ${(error as Error).message}`
         }, { status: 500 });
       }
     }
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     if (!sandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: 'No active sandbox available' 
+        error: 'Нет доступной активной песочницы'
       }, { status: 400 });
     }
     
@@ -160,7 +160,7 @@ except Exception as e:
               try {
                 packagesToInstall = JSON.parse(line.substring('NEED_INSTALL:'.length));
               } catch (e) {
-                console.error('Failed to parse packages to install:', e);
+                console.error('Не удалось разобрать список пакетов для установки:', e);
               }
             }
           }
@@ -280,18 +280,18 @@ print(f"\\nVerified installed packages: {installed}")
         if (installedPackages.length > 0) {
           await sendProgress({ 
             type: 'success', 
-            message: `Successfully installed: ${installedPackages.join(', ')}`,
+            message: `Успешно установлено: ${installedPackages.join(', ')}`,
             installedPackages 
           });
         } else {
           await sendProgress({ 
             type: 'error', 
-            message: 'Failed to verify package installation' 
+            message: 'Не удалось подтвердить установку пакетов'
           });
         }
         
         // Restart Vite dev server
-        await sendProgress({ type: 'status', message: 'Restarting development server...' });
+        await sendProgress({ type: 'status', message: 'Перезапуск сервера разработки...' });
         
         await sandboxInstance.runCode(`
 import subprocess

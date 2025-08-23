@@ -261,7 +261,7 @@ User request: "${prompt}"`;
                   });
                 }
               } else {
-                console.error('[generate-ai-code-stream] Failed to get search plan');
+                console.error('[generate-ai-code-stream] Не удалось получить план поиска');
               }
             } catch (error) {
               console.error('[generate-ai-code-stream] Error in agentic search workflow:', error);
@@ -457,10 +457,10 @@ Remember: You are a SURGEON making a precise incision, not an artist repainting 
                       console.error('[generate-ai-code-stream] Error analyzing intent after fetch:', error);
                     }
                   } else {
-                    console.error('[generate-ai-code-stream] Failed to get manifest from sandbox files');
+                    console.error('[generate-ai-code-stream] Не удалось получить манифест из файлов песочницы');
                   }
                 } else {
-                  console.error('[generate-ai-code-stream] Failed to fetch sandbox files:', filesResponse.status);
+                  console.error('[generate-ai-code-stream] Не удалось получить файлы песочницы:', filesResponse.status);
                 }
               } catch (error) {
                 console.error('[generate-ai-code-stream] Error fetching sandbox files:', error);
@@ -470,7 +470,7 @@ Remember: You are a SURGEON making a precise incision, not an artist repainting 
                 });
               }
             } else {
-              console.log('[generate-ai-code-stream] No active sandbox to fetch files from');
+              console.log('[generate-ai-code-stream] Нет активной песочницы для получения файлов');
               await sendProgress({ 
                 type: 'warning', 
                 message: 'No existing files found. Consider generating initial code first.'
@@ -987,7 +987,7 @@ CRITICAL: When files are provided in the context:
                           console.log('[generate-ai-code-stream] Edit context created with', editContext.primaryFiles.length, 'primary files');
                         }
                       } catch (error) {
-                        console.error('[generate-ai-code-stream] Failed to analyze edit intent:', error);
+                        console.error('[generate-ai-code-stream] Не удалось проанализировать намерение редактирования:', error);
                       }
                     }
                   }
@@ -999,7 +999,7 @@ CRITICAL: When files are provided in the context:
                 }
               }
             } catch (error) {
-              console.error('[generate-ai-code-stream] Failed to fetch sandbox files:', error);
+              console.error('[generate-ai-code-stream] Не удалось получить файлы песочницы:', error);
             }
           }
           
@@ -1636,10 +1636,10 @@ Provide the complete file content without any truncation. Include all necessary 
                 console.log(`[generate-ai-code-stream] Successfully completed ${filePath}`);
                 
               } catch (completionError) {
-                console.error(`[generate-ai-code-stream] Failed to complete ${filePath}:`, completionError);
+                console.error(`[generate-ai-code-stream] Не удалось завершить ${filePath}:`, completionError);
                 await sendProgress({
                   type: 'warning',
-                  message: `Could not auto-complete ${filePath}. Manual review may be needed.`
+                  message: `Не удалось автоматически завершить ${filePath}. Может потребоваться ручная проверка.`
                 });
               }
             }

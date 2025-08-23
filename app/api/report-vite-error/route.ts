@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     if (!error) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Error message is required' 
+        error: 'Требуется сообщение об ошибке'
       }, { status: 400 });
     }
     
@@ -44,16 +44,16 @@ export async function POST(request: NextRequest) {
       global.viteErrors = global.viteErrors.slice(-50);
     }
     
-    console.log('[report-vite-error] Error reported:', errorObj);
+    console.log('[report-vite-error] Ошибка отправлена:', errorObj);
     
     return NextResponse.json({
       success: true,
-      message: 'Error reported successfully',
+      message: 'Ошибка успешно отправлена',
       error: errorObj
     });
     
   } catch (error) {
-    console.error('[report-vite-error] Error:', error);
+    console.error('[report-vite-error] Ошибка:', error);
     return NextResponse.json({ 
       success: false, 
       error: (error as Error).message 

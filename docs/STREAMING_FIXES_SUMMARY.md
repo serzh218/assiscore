@@ -28,7 +28,7 @@ const commandsArray = Array.isArray(parsed.commands) ? parsed.commands : [];
 - Added null checks before push operations:
 ```typescript
 if (results.filesCreated) results.filesCreated.push(normalizedPath);
-if (results.errors) results.errors.push(`Failed to create ${file.path}`);
+if (results.errors) results.errors.push(`Не удалось создать ${file.path}`);
 ```
 
 ### 3. Improved Error Handling

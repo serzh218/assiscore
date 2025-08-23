@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     const data = await firecrawlResponse.json();
     
     if (!data.success || !data.data) {
-      throw new Error('Failed to scrape content');
+      throw new Error('Не удалось извлечь содержимое');
     }
     
     const { markdown, html, metadata } = data.data;

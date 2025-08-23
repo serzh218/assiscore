@@ -324,22 +324,22 @@ export async function POST(request: NextRequest) {
           global.existingFiles = new Set<string>();
         }
       } catch (reconnectError) {
-        console.error(`[apply-ai-code-stream] Failed to reconnect to sandbox ${sandboxId}:`, reconnectError);
+        console.error(`[apply-ai-code-stream] Не удалось переподключиться к песочнице ${sandboxId}:`, reconnectError);
         
         // If reconnection fails, we'll still try to return a meaningful response
         return NextResponse.json({
           success: false,
-          error: `Failed to reconnect to sandbox ${sandboxId}. The sandbox may have expired or been terminated.`,
+          error: `Не удалось переподключиться к песочнице ${sandboxId}. Песочница могла истечь или быть завершена.`,
           results: {
             filesCreated: [],
             packagesInstalled: [],
             commandsExecuted: [],
-            errors: [`Sandbox reconnection failed: ${(reconnectError as Error).message}`]
+            errors: [`Не удалось переподключиться к песочнице: ${(reconnectError as Error).message}`]
           },
           explanation: parsed.explanation,
           structure: parsed.structure,
           parsedFiles: parsed.files,
-          message: `Parsed ${parsed.files.length} files but couldn't apply them - sandbox reconnection failed.`
+          message: `Разобрано ${parsed.files.length} файлов, но применить их не удалось — не удалось переподключиться к песочнице.`
         });
       }
     }
@@ -349,12 +349,12 @@ export async function POST(request: NextRequest) {
       console.log('[apply-ai-code-stream] No sandbox available and no sandboxId provided');
       return NextResponse.json({
         success: false,
-        error: 'No active sandbox found. Please create a sandbox first.',
+        error: 'Активная песочница не найдена. Пожалуйста, сначала создайте песочницу.',
         results: {
           filesCreated: [],
           packagesInstalled: [],
           commandsExecuted: [],
-          errors: ['No sandbox available']
+            errors: ['Песочница недоступна']
         },
         explanation: parsed.explanation,
         structure: parsed.structure,
@@ -570,7 +570,7 @@ print(f"File written: ${fullPath}")
             });
           } catch (error) {
             if (results.errors) {
-              results.errors.push(`Failed to create ${file.path}: ${(error as Error).message}`);
+              results.errors.push(`Не удалось создать ${file.path}: ${(error as Error).message}`);
             }
             await sendProgress({
               type: 'file-error',
@@ -586,7 +586,7 @@ print(f"File written: ${fullPath}")
           await sendProgress({ 
             type: 'step', 
             step: 3,
-            message: `Executing ${commandsArray.length} commands...`
+            message: `Выполняю ${commandsArray.length} команд...`
           });
           
           for (const [index, cmd] of commandsArray.entries()) {
@@ -633,7 +633,7 @@ print(f"File written: ${fullPath}")
               });
             } catch (error) {
               if (results.errors) {
-                results.errors.push(`Failed to execute ${cmd}: ${(error as Error).message}`);
+                results.errors.push(`Не удалось выполнить ${cmd}: ${(error as Error).message}`);
               }
               await sendProgress({
                 type: 'command-error',
@@ -700,7 +700,7 @@ print(f"File written: ${fullPath}")
   } catch (error) {
     console.error('Apply AI code stream error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to parse AI code' },
+      { error: error instanceof Error ? error.message : 'Не удалось разобрать AI-код' },
       { status: 500 }
     );
   }

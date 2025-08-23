@@ -19,7 +19,7 @@ export async function POST() {
         sandboxKilled = true;
         console.log('[kill-sandbox] Sandbox closed successfully');
       } catch (e) {
-        console.error('[kill-sandbox] Failed to close sandbox:', e);
+        console.error('[kill-sandbox] Не удалось закрыть песочницу:', e);
       }
       global.activeSandbox = null;
       global.sandboxData = null;
@@ -33,7 +33,7 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       sandboxKilled,
-      message: 'Sandbox cleaned up successfully'
+      message: 'Песочница успешно очищена'
     });
     
   } catch (error) {

@@ -37,10 +37,10 @@ export async function GET() {
       healthy: sandboxHealthy,
       sandboxData: sandboxInfo,
       message: sandboxHealthy 
-        ? 'Sandbox is active and healthy' 
-        : sandboxExists 
-          ? 'Sandbox exists but is not responding' 
-          : 'No active sandbox'
+        ? 'Песочница активна и работает'
+        : sandboxExists
+          ? 'Песочница существует, но не отвечает'
+          : 'Нет активной песочницы'
     });
     
   } catch (error) {
