@@ -23,13 +23,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import CodeApplicationProgress, { type CodeApplicationState } from '@/components/CodeApplicationProgress';
 import Logo from '@/components/Logo';
-
-interface SandboxData {
-  sandboxId: string;
-  url: string;
-  projectType?: string;
-  [key: string]: any;
-}
+import type { SandboxData } from '@/types/sandbox';
 
 interface ChatMessage {
   content: string;

@@ -12,14 +12,17 @@ export interface SandboxFileCache {
   manifest?: any; // FileManifest type from file-manifest.ts
 }
 
+export interface SandboxData {
+  sandboxId: string;
+  url: string;
+  projectType?: string;
+  [key: string]: any;
+}
+
 export interface SandboxState {
   fileCache: SandboxFileCache | null;
   sandbox: any; // E2B sandbox instance
-  sandboxData: {
-    sandboxId: string;
-    url: string;
-    projectType?: string;
-  } | null;
+  sandboxData: SandboxData | null;
 }
 
 // Declare global types

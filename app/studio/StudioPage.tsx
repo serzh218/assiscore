@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import FileTree from '@/components/FileTree'
-
-interface SandboxResponse {
-  sandboxId: string
-  url: string
-  [key: string]: any
-}
+import type { SandboxData } from '@/types/sandbox'
 
 export default function StudioPage() {
   const [sandboxId, setSandboxId] = useState<string | null>(null)
@@ -22,7 +17,7 @@ export default function StudioPage() {
     const prepareSandbox = async () => {
       try {
         const sandboxRes = await fetch('/api/sandbox', { method: 'POST' })
-        const sandboxData: SandboxResponse = await sandboxRes.json()
+        const sandboxData: SandboxData = await sandboxRes.json()
 
         if (!sandboxData?.sandboxId) {
           console.error('Sandbox ID не был получен')
