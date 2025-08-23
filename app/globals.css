@@ -115,13 +115,13 @@
 
 /* Theme configuration for Tailwind CSS v4 */
 @theme {
-  --color-background: hsl(222 47% 11%);
-  --color-foreground: hsl(214 32% 91%);
-  --color-card: hsl(217 33% 17%);
+  --color-background: #111827;
+  --color-foreground: #e2e8f0;
+  --color-card: #1f2937;
   --color-card-foreground: hsl(214 32% 91%);
   --color-popover: hsl(217 33% 17%);
   --color-popover-foreground: hsl(214 32% 91%);
-  --color-primary: hsl(258 90% 66%);
+  --color-primary: #8b5cf6;
   --color-primary-foreground: hsl(214 32% 91%);
   --color-secondary: hsl(217 33% 17%);
   --color-secondary-foreground: hsl(214 32% 91%);
