@@ -16,7 +16,7 @@ export default function StudioPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [currentFile, setCurrentFile] = useState<{ path: string; content: string } | null>(null)
-  const [activeTab, setActiveTab] = useState<'explorer' | 'editor'>('explorer')
+  const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor')
 
   useEffect(() => {
     const prepareSandbox = async () => {
@@ -93,35 +93,46 @@ export default function StudioPage() {
 
       <div className="flex gap-4 border-b pb-2 text-sm">
         <button
-          className={activeTab === 'explorer' ? 'font-semibold' : ''}
-          onClick={() => setActiveTab('explorer')}
-        >
-          Файлы
-        </button>
-        <button
           className={activeTab === 'editor' ? 'font-semibold' : ''}
           onClick={() => setActiveTab('editor')}
         >
           Редактор
         </button>
+        <button
+          className={activeTab === 'preview' ? 'font-semibold' : ''}
+          onClick={() => setActiveTab('preview')}
+        >
+          Превью
+        </button>
       </div>
 
-      {activeTab === 'explorer' && fileTree && (
-        <FileTree
-          nodes={Array.isArray(fileTree) ? fileTree : [fileTree]}
-          expanded={expanded}
-          onToggle={toggle}
-          onFileClick={handleFileClick}
-        />
+      {activeTab === 'editor' && (
+        <div className="flex gap-4">
+          {fileTree && (
+            <FileTree
+              nodes={Array.isArray(fileTree) ? fileTree : [fileTree]}
+              expanded={expanded}
+              onToggle={toggle}
+              onFileClick={handleFileClick}
+            />
+          )}
+          <div className="flex-1">
+            {currentFile ? (
+              <>
+                <h3 className="mb-2 font-medium">{currentFile.path}</h3>
+                <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
+                  {currentFile.content}
+                </pre>
+              </>
+            ) : (
+              <p className="text-sm text-gray-500">Выберите файл из списка</p>
+            )}
+          </div>
+        </div>
       )}
 
-      {activeTab === 'editor' && currentFile && (
-        <div>
-          <h3 className="mb-2 font-medium">{currentFile.path}</h3>
-          <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
-            {currentFile.content}
-          </pre>
-        </div>
+      {activeTab === 'preview' && sandboxUrl && (
+        <iframe src={sandboxUrl} className="w-full h-[500px] border rounded" />
       )}
     </div>
   )
