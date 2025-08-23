@@ -27,6 +27,7 @@ import Logo from '@/components/Logo';
 interface SandboxData {
   sandboxId: string;
   url: string;
+  projectType?: string;
   [key: string]: any;
 }
 
@@ -364,9 +365,12 @@ export default function AISandboxPage() {
     try {
       const response = await fetch('/api/sandbox-status');
       const data = await response.json();
-      
+
       if (data.active && data.healthy && data.sandboxData) {
         setSandboxData(data.sandboxData);
+        if (data.sandboxData.projectType) {
+          setProjectType(data.sandboxData.projectType);
+        }
         updateStatus('Песочница активна', true);
       } else if (data.active && !data.healthy) {
         // Sandbox exists but not responding
@@ -400,9 +404,12 @@ export default function AISandboxPage() {
       
       const data = await response.json();
       console.log('[createSandbox] Response data:', data);
-      
+
       if (data.success) {
         setSandboxData(data);
+        if (data.projectType) {
+          setProjectType(data.projectType);
+        }
         updateStatus('Sandbox active', true);
         log('Sandbox created successfully!');
         log(`Sandbox ID: ${data.sandboxId}`);
