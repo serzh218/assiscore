@@ -106,6 +106,12 @@ export default function AISandboxPage() {
 
   useEffect(() => {
     setConversationContext(prev => ({ ...prev, projectType }));
+    // Persist project type in conversation state
+    fetch('/api/conversation-state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'update', data: { projectType } })
+    }).catch(err => console.error('[conversation] Failed to update project type:', err));
   }, [projectType]);
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -1560,7 +1566,8 @@ export default function AISandboxPage() {
           prompt: message,
           model: aiModel,
           context: fullContext,
-          isEdit: conversationContext.appliedCode.length > 0
+          isEdit: conversationContext.appliedCode.length > 0,
+          projectType
         })
       });
       
@@ -2140,7 +2147,8 @@ Focus on the key sections and content, making it clean and modern while preservi
             sandboxId: sandboxData?.id,
             structure: structureContent,
             conversationContext: conversationContext
-          }
+          },
+          projectType
         })
       });
       
@@ -2491,14 +2499,15 @@ Focus on the key sections and content, making it clean and modern.`;
         const aiResponse = await fetch('/api/generate-ai-code-stream', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             prompt,
             model: aiModel,
             context: {
               sandboxId: sandboxData?.sandboxId,
               structure: structureContent,
               conversationContext: conversationContext
-            }
+            },
+            projectType
           })
         });
         

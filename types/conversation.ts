@@ -27,6 +27,7 @@ export interface ConversationContext {
   messages: ConversationMessage[];
   edits: ConversationEdit[];
   currentTopic?: string; // Current focus area (e.g., "header styling", "hero section")
+  projectType?: 'website' | 'application' | 'bot'; // Type of project being built
   projectEvolution: {
     initialState?: string; // Description of initial project state
     majorChanges: Array<{
