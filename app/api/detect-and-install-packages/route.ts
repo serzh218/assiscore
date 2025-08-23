@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!global.activeSandbox) {
       return NextResponse.json({
         success: false,
-        error: 'No active sandbox'
+        error: 'Нет активной песочницы'
       }, { status: 404 });
     }
 
@@ -198,7 +198,7 @@ for package in packages_to_install:
             print(f"✓ Verified installation of {package} (via {base_package})")
         else:
             failed.append(package)
-            print(f"✗ Failed to verify installation of {package}")
+            print(f"✗ Не удалось подтвердить установку {package}")
 
 result_data = {
     'installed': installed,
@@ -227,7 +227,7 @@ print("\\nResult:", json.dumps(result_data))
         }
       }
     } catch (parseError) {
-      console.error('[detect-and-install-packages] Failed to parse install result:', parseError);
+      console.error('[detect-and-install-packages] Не удалось разобрать результат установки:', parseError);
       console.error('[detect-and-install-packages] stdout:', installResult.logs.stdout.join(''));
       // Fallback to assuming all packages were installed
       installStatus = {
@@ -238,7 +238,7 @@ print("\\nResult:", json.dumps(result_data))
     }
 
     if (installStatus.failed.length > 0) {
-      console.error('[detect-and-install-packages] Failed to install:', installStatus.failed);
+      console.error('[detect-and-install-packages] Не удалось установить:', installStatus.failed);
     }
 
     return NextResponse.json({

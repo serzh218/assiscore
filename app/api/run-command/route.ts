@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
     if (!command) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Command is required' 
+        error: 'Требуется команда'
       }, { status: 400 });
     }
     
     if (!global.activeSandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: 'No active sandbox' 
+        error: 'Нет активной песочницы'
       }, { status: 400 });
     }
     
@@ -49,7 +49,7 @@ print(f"\\nReturn code: {result.returncode}")
     return NextResponse.json({
       success: true,
       output,
-      message: 'Command executed successfully'
+      message: 'Команда выполнена успешно'
     });
     
   } catch (error) {

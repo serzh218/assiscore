@@ -7,9 +7,9 @@ declare global {
 export async function POST() {
   try {
     if (!global.activeSandbox) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'No active sandbox' 
+      return NextResponse.json({
+        success: false,
+        error: 'Нет активной песочницы'
       }, { status: 400 });
     }
     
@@ -30,10 +30,10 @@ try:
     with open('/tmp/vite-process.pid', 'r') as f:
         pid = int(f.read().strip())
         os.kill(pid, signal.SIGTERM)
-        print("Killed existing Vite process")
+        print("Существующий процесс Vite остановлен")
         time.sleep(1)
 except:
-    print("No existing Vite process found")
+    print("Не найден существующий процесс Vite")
 
 os.chdir('/home/user/app')
 
@@ -91,7 +91,7 @@ def monitor_output(proc, error_file):
                             with open(error_file, 'w') as f:
                                 json.dump(data, f)
                                 
-                            print(f"WARNING: Detected missing package: {error_obj['package']}")
+                            print(f"ПРЕДУПРЕЖДЕНИЕ: Обнаружен отсутствующий пакет: {error_obj['package']}")
             except Exception as e:
                 print(f"Error parsing Vite error: {e}")
 
@@ -109,7 +109,7 @@ monitor_thread = threading.Thread(target=monitor_output, args=(process, error_fi
 monitor_thread.daemon = True
 monitor_thread.start()
 
-print("Vite restarted successfully!")
+print("Vite успешно перезапущен!")
 
 # Store process info for later
 with open('/tmp/vite-process.pid', 'w') as f:
@@ -117,12 +117,12 @@ with open('/tmp/vite-process.pid', 'w') as f:
 
 # Wait for Vite to fully start
 time.sleep(5)
-print("Vite is ready")
+print("Vite готов")
     `);
     
     return NextResponse.json({
       success: true,
-      message: 'Vite restarted successfully',
+      message: 'Vite успешно перезапущен',
       output: result.output
     });
     

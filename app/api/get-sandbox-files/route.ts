@@ -12,7 +12,7 @@ export async function GET() {
     if (!global.activeSandbox) {
       return NextResponse.json({
         success: false,
-        error: 'No active sandbox'
+        error: 'Нет активной песочницы'
       }, { status: 404 });
     }
 

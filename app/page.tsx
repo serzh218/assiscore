@@ -46,9 +46,9 @@ interface ChatMessage {
 export default function AISandboxPage() {
   const [sandboxData, setSandboxData] = useState<SandboxData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState({ text: 'Not connected', active: false });
+  const [status, setStatus] = useState({ text: 'Не подключено', active: false });
   const [responseArea, setResponseArea] = useState<string[]>([]);
-  const [structureContent, setStructureContent] = useState('No sandbox created yet');
+  const [structureContent, setStructureContent] = useState('Песочница ещё не создана');
   const [promptInput, setPromptInput] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
@@ -149,9 +149,9 @@ export default function AISandboxPage() {
         });
         console.log('[home] Cleared old conversation data on mount');
       } catch (error) {
-        console.error('[ai-sandbox] Failed to clear old conversation:', error);
+        console.error('[ai-sandbox] Не удалось очистить старый разговор:', error);
         if (isMounted) {
-          addChatMessage('Failed to clear old conversation data.', 'error');
+          addChatMessage('Не удалось очистить старые данные разговора.', 'error');
         }
       }
       
@@ -172,9 +172,9 @@ export default function AISandboxPage() {
           await createSandbox(true);
         }
       } catch (error) {
-        console.error('[ai-sandbox] Failed to create or restore sandbox:', error);
+        console.error('[ai-sandbox] Не удалось создать или восстановить песочницу:', error);
         if (isMounted) {
-          addChatMessage('Failed to create or restore sandbox.', 'error');
+          addChatMessage('Не удалось создать или восстановить песочницу.', 'error');
         }
       } finally {
         if (isMounted) {
@@ -261,12 +261,12 @@ export default function AISandboxPage() {
   
   const checkAndInstallPackages = async () => {
     if (!sandboxData) {
-      addChatMessage('No active sandbox. Create a sandbox first!', 'system');
+      addChatMessage('Нет активной песочницы. Сначала создайте песочницу!', 'system');
       return;
     }
     
     // Vite error checking removed - handled by template setup
-    addChatMessage('Sandbox is ready. Vite configuration is handled by the template.', 'system');
+    addChatMessage('Песочница готова. Конфигурация Vite берётся из шаблона.', 'system');
   };
   
   const handleSurfaceError = (errors: any[]) => {
@@ -281,7 +281,7 @@ export default function AISandboxPage() {
   
   const installPackages = async (packages: string[]) => {
     if (!sandboxData) {
-      addChatMessage('No active sandbox. Create a sandbox first!', 'system');
+      addChatMessage('Нет активной песочницы. Сначала создайте песочницу!', 'system');
       return;
     }
     
@@ -293,7 +293,7 @@ export default function AISandboxPage() {
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to install packages: ${response.statusText}`);
+        throw new Error(`Не удалось установить пакеты: ${response.statusText}`);
       }
       
       const reader = response.body?.getReader();
@@ -337,13 +337,13 @@ export default function AISandboxPage() {
                   break;
               }
             } catch (e) {
-              console.error('Failed to parse SSE data:', e);
+              console.error('Не удалось разобрать данные SSE:', e);
             }
           }
         }
       }
     } catch (error: any) {
-      addChatMessage(`Failed to install packages: ${error.message}`, 'system');
+      addChatMessage(`Не удалось установить пакеты: ${error.message}`, 'system');
     }
   };
 
@@ -354,19 +354,19 @@ export default function AISandboxPage() {
       
       if (data.active && data.healthy && data.sandboxData) {
         setSandboxData(data.sandboxData);
-        updateStatus('Sandbox active', true);
+        updateStatus('Песочница активна', true);
       } else if (data.active && !data.healthy) {
         // Sandbox exists but not responding
-        updateStatus('Sandbox not responding', false);
+        updateStatus('Песочница не отвечает', false);
         // Optionally try to create a new one
       } else {
         setSandboxData(null);
-        updateStatus('No sandbox', false);
+        updateStatus('Нет песочницы', false);
       }
     } catch (error) {
-      console.error('Failed to check sandbox status:', error);
+      console.error('Не удалось проверить статус песочницы:', error);
       setSandboxData(null);
-      updateStatus('Error', false);
+      updateStatus('Ошибка', false);
     }
   };
 
@@ -435,9 +435,9 @@ export default function AISandboxPage() {
         
         // Only add welcome message if not coming from home screen
         if (!fromHomeScreen) {
-          addChatMessage(`Sandbox created! ID: ${data.sandboxId}. I now have context of your sandbox and can help you build your app. Just ask me to create components and I'll automatically apply them!
+          addChatMessage(`Песочница создана! ID: ${data.sandboxId}. Теперь у меня есть контекст вашей песочницы, и я могу помочь вам создать приложение. Просто попросите меня создать компоненты, и я автоматически применю их!
 
-Tip: I automatically detect and install npm packages from your code imports (like react-router-dom, axios, etc.)`, 'system');
+Совет: я автоматически обнаруживаю и устанавливаю npm-пакеты из импортов вашего кода (например, react-router-dom, axios и т.д.)`, 'system');
         }
         
         setTimeout(() => {
@@ -451,8 +451,8 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     } catch (error: any) {
       console.error('[createSandbox] Error:', error);
       updateStatus('Error', false);
-      log(`Failed to create sandbox: ${error.message}`, 'error');
-      addChatMessage(`Failed to create sandbox: ${error.message}`, 'system');
+      log(`Не удалось создать песочницу: ${error.message}`, 'error');
+      addChatMessage(`Не удалось создать песочницу: ${error.message}`, 'system');
     } finally {
       setLoading(false);
     }
@@ -495,7 +495,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to apply code: ${response.statusText}`);
+        throw new Error(`Не удалось применить код: ${response.statusText}`);
       }
       
       // Handle streaming response
@@ -582,9 +582,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   
                 case 'command-complete':
                   if (data.success) {
-                    addChatMessage(`Command completed successfully`, 'system');
+                    addChatMessage(`Команда выполнена успешно`, 'system');
                   } else {
-                    addChatMessage(`Command failed with exit code ${data.exitCode}`, 'system');
+                    addChatMessage(`Команда завершилась с кодом выхода ${data.exitCode}`, 'system');
                   }
                   break;
                   
@@ -598,7 +598,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   break;
                   
                 case 'error':
-                  addChatMessage(`Error: ${data.message || data.error || 'Unknown error'}`, 'system');
+                  addChatMessage(`Ошибка: ${data.message || data.error || 'Неизвестная ошибка'}`, 'system');
                   break;
                   
                 case 'warning':
@@ -874,14 +874,14 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
         
         } else {
-          throw new Error(finalData?.error || 'Failed to apply code');
+          throw new Error(finalData?.error || 'Не удалось применить код');
         }
       } else {
         // If no final data was received, still close loading
-        addChatMessage('Код application may have partially succeeded. Check the preview.', 'system');
+        addChatMessage('Применение кода могло частично завершиться. Проверьте предварительный просмотр.', 'system');
       }
     } catch (error: any) {
-      log(`Failed to apply code: ${error.message}`, 'error');
+      log(`Не удалось применить код: ${error.message}`, 'error');
     } finally {
       setLoading(false);
       // Clear isEdit flag after applying code
@@ -918,7 +918,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
   
   const restartViteServer = async () => {
     try {
-      addChatMessage('Restarting Vite dev server...', 'system');
+      addChatMessage('Перезапуск сервера разработки Vite...', 'system');
       
       const response = await fetch('/api/restart-vite', {
         method: 'POST',
@@ -928,7 +928,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          addChatMessage('✓ Vite dev server restarted successfully!', 'system');
+          addChatMessage('✓ Сервер разработки Vite успешно перезапущен!', 'system');
           
           // Refresh the iframe after a short delay
           setTimeout(() => {
@@ -937,14 +937,14 @@ Tip: I automatically detect and install npm packages from your code imports (lik
             }
           }, 2000);
         } else {
-          addChatMessage(`Failed to restart Vite: ${data.error}`, 'error');
+          addChatMessage(`Не удалось перезапустить Vite: ${data.error}`, 'error');
         }
       } else {
-        addChatMessage('Failed to restart Vite server', 'error');
+        addChatMessage('Не удалось перезапустить сервер Vite', 'error');
       }
     } catch (error) {
       console.error('[restartViteServer] Error:', error);
-      addChatMessage(`Error restarting Vite: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      addChatMessage(`Ошибка перезапуска Vite: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`, 'error');
     }
   };
 
@@ -952,7 +952,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     const code = promptInput.trim();
     if (!code) {
       log('Please enter some code first', 'error');
-      addChatMessage('No code to apply. Please generate code first.', 'system');
+      addChatMessage('Нет кода для применения. Сначала сгенерируйте код.', 'system');
       return;
     }
     
@@ -1473,7 +1473,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     if (!message) return;
     
     if (!aiEnabled) {
-      addChatMessage('AI is disabled. Please enable it first.', 'system');
+      addChatMessage('Искусственный интеллект отключён. Пожалуйста, сначала включите его.', 'system');
       return;
     }
     
@@ -1484,7 +1484,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     const lowerMessage = message.toLowerCase().trim();
     if (lowerMessage === 'check packages' || lowerMessage === 'install packages' || lowerMessage === 'npm install') {
       if (!sandboxData) {
-        addChatMessage('No active sandbox. Create a sandbox first!', 'system');
+        addChatMessage('Нет активной песочницы. Сначала создайте песочницу!', 'system');
         return;
       }
       await checkAndInstallPackages();
@@ -1497,9 +1497,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     
     if (!sandboxData) {
       sandboxCreating = true;
-      addChatMessage('Creating sandbox while I plan your app...', 'system');
+      addChatMessage('Создаю песочницу, пока планирую ваше приложение...', 'system');
       sandboxPromise = createSandbox(true).catch((error: any) => {
-        addChatMessage(`Failed to create sandbox: ${error.message}`, 'system');
+        addChatMessage(`Не удалось создать песочницу: ${error.message}`, 'system');
         throw error;
       });
     }
@@ -1784,7 +1784,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   throw new Error(data.error);
                 }
               } catch (e) {
-                console.error('Failed to parse SSE data:', e);
+                console.error('Не удалось разобрать данные SSE:', e);
               }
             }
           }
@@ -1813,7 +1813,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           );
         } else {
           // For new generation, show all files
-          addChatMessage(explanation || 'Код generated!', 'ai', {
+          addChatMessage(explanation || 'Код сгенерирован!', 'ai', {
             appliedFiles: generatedFiles
           });
         }
@@ -1824,13 +1824,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         
         // Wait for sandbox creation if it's still in progress
         if (sandboxPromise) {
-          addChatMessage('Waiting for sandbox to be ready...', 'system');
+          addChatMessage('Ожидание готовности песочницы...', 'system');
           try {
             await sandboxPromise;
             // Remove the waiting message
-            setChatMessages(prev => prev.filter(msg => msg.content !== 'Waiting for sandbox to be ready...'));
+            setChatMessages(prev => prev.filter(msg => msg.content !== 'Ожидание готовности песочницы...'));
           } catch {
-            addChatMessage('Sandbox creation failed. Cannot apply code.', 'system');
+            addChatMessage('Не удалось создать песочницу. Нельзя применить код.', 'system');
             return;
           }
         }
@@ -1846,7 +1846,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         ...prev,
         isGenerating: false,
         isStreaming: false,
-        status: 'Generation complete!',
+        status: 'Генерация завершена!',
         isEdit: prev.isEdit,
         // Clear thinking state on completion
         isThinking: false,
@@ -1860,7 +1860,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       }, 1000); // Reduced from 3000ms to 1000ms
     } catch (error: any) {
       setChatMessages(prev => prev.filter(msg => msg.content !== 'Thinking...'));
-      addChatMessage(`Error: ${error.message}`, 'system');
+      addChatMessage(`Ошибка: ${error.message}`, 'system');
       // Reset generation progress and switch back to preview on error
       setGenerationProgress({
         isGenerating: false,
@@ -1883,13 +1883,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
   const downloadZip = async () => {
     if (!sandboxData) {
-      addChatMessage('No active sandbox to download. Create a sandbox first!', 'system');
+      addChatMessage('Нет активной песочницы для загрузки. Сначала создайте песочницу!', 'system');
       return;
     }
     
     setLoading(true);
     log('Creating zip file...');
-    addChatMessage('Creating ZIP file of your Vite app...', 'system');
+    addChatMessage('Создание ZIP-файла вашего приложения Vite...', 'system');
     
     try {
       const response = await fetch('/api/create-zip', {
@@ -1901,7 +1901,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       
       if (data.success) {
         log('Zip file created!');
-        addChatMessage('ZIP file created! Download starting...', 'system');
+        addChatMessage('ZIP-файл создан! Начинаю загрузку...', 'system');
         
         const link = document.createElement('a');
         link.href = data.dataUrl;
@@ -1911,19 +1911,19 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         document.body.removeChild(link);
         
         addChatMessage(
-          'Your Vite app has been downloaded! To run it locally:\n' +
-          '1. Unzip the file\n' +
-          '2. Run: npm install\n' +
-          '3. Run: npm run dev\n' +
-          '4. Open http://localhost:5173',
+          'Ваше приложение Vite скачано! Чтобы запустить его локально:\n' +
+          '1. Распакуйте файл\n' +
+          '2. Выполните: npm install\n' +
+          '3. Выполните: npm run dev\n' +
+          '4. Откройте http://localhost:5173',
           'system'
         );
       } else {
         throw new Error(data.error);
       }
     } catch (error: any) {
-      log(`Failed to create zip: ${error.message}`, 'error');
-      addChatMessage(`Failed to create ZIP: ${error.message}`, 'system');
+      log(`Не удалось создать ZIP: ${error.message}`, 'error');
+      addChatMessage(`Не удалось создать ZIP: ${error.message}`, 'system');
     } finally {
       setLoading(false);
     }
@@ -1931,16 +1931,16 @@ Tip: I automatically detect and install npm packages from your code imports (lik
 
   const reapplyLastGeneration = async () => {
     if (!conversationContext.lastGeneratedCode) {
-      addChatMessage('No previous generation to re-apply', 'system');
+      addChatMessage('Нет предыдущей генерации для повторного применения', 'system');
       return;
     }
     
     if (!sandboxData) {
-      addChatMessage('Please create a sandbox first', 'system');
+      addChatMessage('Сначала создайте песочницу', 'system');
       return;
     }
     
-    addChatMessage('Re-applying last generation...', 'system');
+    addChatMessage('Повторное применение последней генерации...', 'system');
     const isEdit = conversationContext.appliedCode.length > 0;
     await applyGeneratedCode(conversationContext.lastGeneratedCode, isEdit);
   };
@@ -2009,13 +2009,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     
     // Remove protocol for cleaner display
     const cleanUrl = url.replace(/^https?:\/\//i, '');
-    addChatMessage(`Starting to clone ${cleanUrl}...`, 'system');
+    addChatMessage(`Начинаю клонировать ${cleanUrl}...`, 'system');
     
     // Capture screenshot immediately and switch to preview tab
     captureUrlScreenshot(url);
     
     try {
-      addChatMessage('Scraping website content...', 'system');
+      addChatMessage('Извлекаю содержимое сайта...', 'system');
       const scrapeResponse = await fetch('/api/scrape-url-enhanced', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2023,16 +2023,16 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       });
       
       if (!scrapeResponse.ok) {
-        throw new Error(`Scraping failed: ${scrapeResponse.status}`);
+        throw new Error(`Сбор данных не удался: ${scrapeResponse.status}`);
       }
       
       const scrapeData = await scrapeResponse.json();
       
       if (!scrapeData.success) {
-        throw new Error(scrapeData.error || 'Failed to scrape website');
+        throw new Error(scrapeData.error || 'Не удалось извлечь данные сайта');
       }
       
-      addChatMessage(`Scraped ${scrapeData.content.length} characters from ${url}`, 'system');
+      addChatMessage(`Извлечено ${scrapeData.content.length} символов с ${url}`, 'system');
       
       // Clear preparing design state and switch to generation tab
       setIsPreparingDesign(false);
@@ -2051,11 +2051,11 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       // Start sandbox creation in parallel with code generation
       let sandboxPromise: Promise<void> | null = null;
       if (!sandboxData) {
-        addChatMessage('Creating sandbox while generating your React app...', 'system');
+        addChatMessage('Создаю песочницу, пока генерирую ваше React-приложение...', 'system');
         sandboxPromise = createSandbox(true);
       }
       
-      addChatMessage('Analyzing and generating React recreation...', 'system');
+      addChatMessage('Анализирую и генерирую React-копию...', 'system');
       
       const recreatePrompt = `I scraped this website and want you to recreate it as a modern React application.
 
@@ -2226,12 +2226,12 @@ Focus on the key sections and content, making it clean and modern while preservi
         ...prev,
         isGenerating: false,
         isStreaming: false,
-        status: 'Generation complete!',
+        status: 'Генерация завершена!',
         isEdit: prev.isEdit
       }));
       
       if (generatedCode) {
-        addChatMessage('AI recreation generated!', 'system');
+        addChatMessage('AI-копия создана!', 'system');
         
         // Add the explanation to chat if available
         if (explanation && explanation.trim()) {
@@ -2244,13 +2244,13 @@ Focus on the key sections and content, making it clean and modern while preservi
         
         // Wait for sandbox creation if it's still in progress
         if (sandboxPromise) {
-          addChatMessage('Waiting for sandbox to be ready...', 'system');
+          addChatMessage('Ожидание готовности песочницы...', 'system');
           try {
             await sandboxPromise;
             // Remove the waiting message
-            setChatMessages(prev => prev.filter(msg => msg.content !== 'Waiting for sandbox to be ready...'));
+            setChatMessages(prev => prev.filter(msg => msg.content !== 'Ожидание готовности песочницы...'));
           } catch (error: any) {
-            addChatMessage('Sandbox creation failed. Cannot apply code.', 'system');
+            addChatMessage('Не удалось создать песочницу. Нельзя применить код.', 'system');
             throw error;
           }
         }
@@ -2277,7 +2277,7 @@ Focus on the key sections and content, making it clean and modern while preservi
           ...prev,
           isGenerating: false,
           isStreaming: false,
-          status: 'Generation complete!'
+          status: 'Генерация завершена!'
         }));
         
         // Clear screenshot and preparing design states to prevent them from showing on next run
@@ -2292,11 +2292,11 @@ Focus on the key sections and content, making it clean and modern while preservi
           setActiveTab('preview');
         }, 1000); // Show completion briefly then switch
       } else {
-        throw new Error('Failed to generate recreation');
+        throw new Error('Не удалось сгенерировать копию');
       }
       
     } catch (error: any) {
-      addChatMessage(`Failed to clone website: ${error.message}`, 'system');
+      addChatMessage(`Не удалось клонировать сайт: ${error.message}`, 'system');
       setUrlStatus([]);
       setIsPreparingDesign(false);
       // Clear all states on error
@@ -2363,7 +2363,7 @@ Focus on the key sections and content, making it clean and modern while preservi
     }
     // Remove protocol for cleaner display
     const cleanUrl = displayUrl.replace(/^https?:\/\//i, '');
-    addChatMessage(`Starting to clone ${cleanUrl}...`, 'system');
+    addChatMessage(`Начинаю клонировать ${cleanUrl}...`, 'system');
     
     // Start creating sandbox and capturing screenshot immediately in parallel
     const sandboxPromise = !sandboxData ? createSandbox(true) : Promise.resolve();
@@ -2407,13 +2407,13 @@ Focus on the key sections and content, making it clean and modern while preservi
         });
         
         if (!scrapeResponse.ok) {
-          throw new Error('Failed to scrape website');
+          throw new Error('Не удалось извлечь данные сайта');
         }
         
         const scrapeData = await scrapeResponse.json();
         
         if (!scrapeData.success) {
-          throw new Error(scrapeData.error || 'Failed to scrape website');
+          throw new Error(scrapeData.error || 'Не удалось извлечь данные сайта');
         }
         
         setUrlStatus(['Website scraped successfully!', 'Generating React app...']);
@@ -2496,7 +2496,7 @@ Focus on the key sections and content, making it clean and modern.`;
         });
         
         if (!aiResponse.ok || !aiResponse.body) {
-          throw new Error('Failed to generate code');
+          throw new Error('Не удалось сгенерировать код');
         }
         
         const reader = aiResponse.body.getReader();
@@ -2650,7 +2650,7 @@ Focus on the key sections and content, making it clean and modern.`;
                   }));
                 }
               } catch (e) {
-                console.error('Failed to parse SSE data:', e);
+                console.error('Не удалось разобрать данные SSE:', e);
               }
             }
           }
@@ -2660,11 +2660,11 @@ Focus on the key sections and content, making it clean and modern.`;
           ...prev,
           isGenerating: false,
           isStreaming: false,
-          status: 'Generation complete!'
+          status: 'Генерация завершена!'
         }));
         
         if (generatedCode) {
-          addChatMessage('AI recreation generated!', 'system');
+          addChatMessage('AI-копия создана!', 'system');
           
           // Add the explanation to chat if available
           if (explanation && explanation.trim()) {
@@ -2695,7 +2695,7 @@ Focus on the key sections and content, making it clean and modern.`;
             }]
           }));
         } else {
-          throw new Error('Failed to generate recreation');
+          throw new Error('Не удалось сгенерировать копию');
         }
         
         setUrlInput('');
@@ -2707,7 +2707,7 @@ Focus on the key sections and content, making it clean and modern.`;
           ...prev,
           isGenerating: false,
           isStreaming: false,
-          status: 'Generation complete!'
+          status: 'Генерация завершена!'
         }));
         
         // Clear screenshot and preparing design states to prevent them from showing on next run
@@ -2722,7 +2722,7 @@ Focus on the key sections and content, making it clean and modern.`;
           setActiveTab('preview');
         }, 1000); // Show completion briefly then switch
       } catch (error: any) {
-        addChatMessage(`Failed to clone website: ${error.message}`, 'system');
+        addChatMessage(`Не удалось клонировать сайт: ${error.message}`, 'system');
         setUrlStatus([]);
         setIsPreparingDesign(false);
         // Also clear generation progress on error
@@ -3106,8 +3106,8 @@ Focus on the key sections and content, making it clean and modern.`;
             {chatMessages.map((msg, idx) => {
               // Check if this message is from a successful generation
               const isGenerationComplete = msg.content.includes('Successfully recreated') || 
-                                         msg.content.includes('AI recreation generated!') ||
-                                         msg.content.includes('Код generated!');
+                                         msg.content.includes('AI-копия создана!') ||
+                                         msg.content.includes('Код сгенерирован!');
               
               // Get the files from metadata if this is a completion message
               const completedFiles = msg.metadata?.appliedFiles || [];
@@ -3368,19 +3368,19 @@ Focus on the key sections and content, making it clean and modern.`;
                 <div className="flex items-center gap-3">
                   {!generationProgress.isEdit && (
                     <div className="text-gray-600 text-sm">
-                      {generationProgress.files.length} files generated
+                      {generationProgress.files.length} файлов создано
                     </div>
                   )}
                   <div className={`inline-flex items-center justify-center whitespace-nowrap rounded-[10px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#36322F] text-white hover:bg-[#36322F] [box-shadow:inset_0px_-2px_0px_0px_#171310,_0px_1px_6px_0px_rgba(58,_33,_8,_58%)] hover:translate-y-[1px] hover:scale-[0.98] hover:[box-shadow:inset_0px_-1px_0px_0px_#171310,_0px_1px_3px_0px_rgba(58,_33,_8,_40%)] active:translate-y-[2px] active:scale-[0.97] active:[box-shadow:inset_0px_1px_1px_0px_#171310,_0px_1px_2px_0px_rgba(58,_33,_8,_30%)] disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100 h-8 px-3 py-1 text-sm gap-2`}>
                     {generationProgress.isGenerating ? (
                       <>
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-                        {generationProgress.isEdit ? 'Editing code' : 'Live code generation'}
+                        {generationProgress.isEdit ? 'Редактирование кода' : 'Генерация кода в реальном времени'}
                       </>
                     ) : (
                       <>
                         <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                        COMPLETE
+                        ГОТОВО
                       </>
                     )}
                   </div>

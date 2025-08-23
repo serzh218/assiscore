@@ -23,7 +23,7 @@ export async function POST() {
       try {
         await global.activeSandbox.kill();
       } catch (e) {
-        console.error('Failed to close existing sandbox:', e);
+        console.error('Не удалось закрыть существующую песочницу:', e);
       }
       global.activeSandbox = null;
     }
@@ -350,13 +350,13 @@ print('✓ Tailwind CSS should be loaded')
       try {
         await sandbox.kill();
       } catch (e) {
-        console.error('Failed to close sandbox on error:', e);
+        console.error('Не удалось закрыть песочницу при ошибке:', e);
       }
     }
     
     return NextResponse.json(
       { 
-        error: error instanceof Error ? error.message : 'Failed to create sandbox',
+        error: error instanceof Error ? error.message : 'Не удалось создать песочницу',
         details: error instanceof Error ? error.stack : undefined
       },
       { status: 500 }

@@ -9,7 +9,7 @@ export async function GET() {
     if (!global.activeSandbox) {
       return NextResponse.json({ 
         success: false, 
-        error: 'No active sandbox' 
+        error: 'Нет активной песочницы'
       }, { status: 400 });
     }
     
@@ -77,7 +77,7 @@ try:
                         error_obj = {
                             "type": "npm-missing",
                             "package": final_pkg,
-                            "message": f"Failed to resolve import \\"{pkg}\\"",
+                            "message": f"Не удалось разрешить импорт \\"{pkg}\\"",
                             "file": "Unknown"
                         }
                         

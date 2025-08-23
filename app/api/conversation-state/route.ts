@@ -12,7 +12,7 @@ export async function GET() {
       return NextResponse.json({
         success: true,
         state: null,
-        message: 'No active conversation'
+        message: 'Нет активного разговора'
       });
     }
     
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({
           success: true,
-          message: 'Conversation state reset',
+          message: 'Состояние разговора сброшено',
           state: global.conversationState
         });
         
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         if (!global.conversationState) {
           return NextResponse.json({
             success: false,
-            error: 'No active conversation to clear'
+            error: 'Нет активного разговора для очистки'
           }, { status: 400 });
         }
         
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({
           success: true,
-          message: 'Old conversation data cleared',
+          message: 'Старые данные разговора удалены',
           state: global.conversationState
         });
         
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
         if (!global.conversationState) {
           return NextResponse.json({
             success: false,
-            error: 'No active conversation to update'
+            error: 'Нет активного разговора для обновления'
           }, { status: 400 });
         }
         
@@ -104,14 +104,14 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({
           success: true,
-          message: 'Conversation state updated',
+          message: 'Состояние разговора обновлено',
           state: global.conversationState
         });
         
       default:
         return NextResponse.json({
           success: false,
-          error: 'Invalid action. Use "reset" or "update"'
+          error: 'Недопустимое действие. Используйте "reset" или "update"'
         }, { status: 400 });
     }
   } catch (error) {

@@ -259,8 +259,8 @@ export async function POST(request: NextRequest) {
         
         if (packageResult.packagesFailed && packageResult.packagesFailed.length > 0) {
           results.packagesFailed = packageResult.packagesFailed;
-          console.error(`[apply-ai-code] Failed to install packages: ${packageResult.packagesFailed.join(', ')}`);
-          results.errors.push(`Failed to install packages: ${packageResult.packagesFailed.join(', ')}`);
+          console.error(`[apply-ai-code] Не удалось установить пакеты: ${packageResult.packagesFailed.join(', ')}`);
+          results.errors.push(`Не удалось установить пакеты: ${packageResult.packagesFailed.join(', ')}`);
         }
         
         // Force Vite restart after package installation
@@ -278,7 +278,7 @@ export async function POST(request: NextRequest) {
               const restartResult = await restartResponse.json();
               console.log('[apply-ai-code] Vite restart result:', restartResult.message);
             } else {
-              console.error('[apply-ai-code] Failed to restart Vite:', await restartResponse.text());
+              console.error('[apply-ai-code] Не удалось перезапустить Vite:', await restartResponse.text());
             }
           } catch (e) {
             console.error('[apply-ai-code] Error calling restart-vite:', e);
@@ -365,7 +365,7 @@ export async function POST(request: NextRequest) {
           global.existingFiles.add(normalizedPath);
         }
       } catch (error) {
-        results.errors.push(`Failed to create ${file.path}: ${(error as Error).message}`);
+        results.errors.push(`Не удалось создать ${file.path}: ${(error as Error).message}`);
       }
     }
     
@@ -443,7 +443,7 @@ print(f"Auto-generated: {file_path}")
         `);
         results.filesCreated.push('src/App.jsx (auto-generated)');
       } catch (error) {
-        results.errors.push(`Failed to create App.jsx: ${(error as Error).message}`);
+        results.errors.push(`Не удалось создать App.jsx: ${(error as Error).message}`);
       }
       
       // Don't auto-generate App.css - we're using Tailwind CSS
@@ -492,7 +492,7 @@ print(f"Auto-generated: {file_path}")
           `);
           results.filesCreated.push('src/index.css (with Tailwind)');
         } catch (error) {
-          results.errors.push('Failed to create index.css with Tailwind');
+          results.errors.push('Не удалось создать index.css с Tailwind');
         }
       }
     }
@@ -511,7 +511,7 @@ if result.stderr:
         `);
         results.commandsExecuted.push(cmd);
       } catch (error) {
-        results.errors.push(`Failed to execute ${cmd}: ${(error as Error).message}`);
+        results.errors.push(`Не удалось выполнить ${cmd}: ${(error as Error).message}`);
       }
     }
     
@@ -642,7 +642,7 @@ if result.stderr:
   } catch (error) {
     console.error('Apply AI code error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to parse AI code' },
+      { error: error instanceof Error ? error.message : 'Не удалось разобрать AI-код' },
       { status: 500 }
     );
   }
