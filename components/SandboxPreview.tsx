@@ -34,8 +34,8 @@ export default function SandboxPreview({
 
   if (type === 'console') {
     return (
-      <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-        <div className="font-mono text-sm whitespace-pre-wrap text-gray-300">
+      <div className="bg-card rounded-lg p-4 border border-text">
+        <div className="font-mono text-sm whitespace-pre-wrap text-text">
             {output || 'Вывода пока нет...'}
         </div>
       </div>
@@ -45,26 +45,26 @@ export default function SandboxPreview({
   return (
     <div className="space-y-4">
       {/* Preview Controls */}
-      <div className="flex items-center justify-between bg-gray-800 rounded-lg p-3 border border-gray-700">
+      <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-text">
         <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-text">
               {type === 'vite' ? '⚡ Vite' : '▲ Next.js'} Предпросмотр
             </span>
-          <code className="text-xs bg-gray-900 px-2 py-1 rounded text-blue-400">
+          <code className="text-xs bg-background px-2 py-1 rounded text-accent">
             {previewUrl}
           </code>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowConsole(!showConsole)}
-            className="p-2 hover:bg-gray-700 rounded transition-colors"
+            className="p-2 hover:bg-background rounded transition-colors"
               title="Переключить консоль"
           >
             <Terminal className="w-4 h-4" />
           </button>
           <button
             onClick={handleRefresh}
-            className="p-2 hover:bg-gray-700 rounded transition-colors"
+            className="p-2 hover:bg-background rounded transition-colors"
               title="Обновить предпросмотр"
           >
             <RefreshCw className="w-4 h-4" />
@@ -73,7 +73,7 @@ export default function SandboxPreview({
             href={previewUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 hover:bg-gray-700 rounded transition-colors"
+            className="p-2 hover:bg-background rounded transition-colors"
               title="Открыть в новой вкладке"
           >
             <ExternalLink className="w-4 h-4" />
@@ -82,12 +82,12 @@ export default function SandboxPreview({
       </div>
 
       {/* Main Preview */}
-      <div className="relative bg-gray-900 rounded-lg overflow-hidden border border-gray-700">
+      <div className="relative bg-background rounded-lg overflow-hidden border border-text">
         {isLoading && (
-          <div className="absolute inset-0 bg-gray-900/80 flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-10">
             <div className="text-center">
               <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text">
                   {type === 'vite' ? 'Запуск dev-сервера Vite...' : 'Запуск dev-сервера Next.js...'}
                 </p>
             </div>
@@ -97,7 +97,7 @@ export default function SandboxPreview({
         <iframe
           key={iframeKey}
           src={previewUrl}
-          className="w-full h-[600px] bg-white"
+          className="w-full h-[600px] bg-background"
             title={`предпросмотр ${type}`}
           sandbox="allow-scripts allow-same-origin allow-forms"
         />
@@ -105,11 +105,11 @@ export default function SandboxPreview({
 
       {/* Console Output (Toggle) */}
       {showConsole && output && (
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+        <div className="bg-card rounded-lg p-4 border border-text">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-gray-400">Вывод консоли</span>
+            <span className="text-sm font-semibold text-text">Вывод консоли</span>
           </div>
-          <div className="font-mono text-xs whitespace-pre-wrap text-gray-300 max-h-48 overflow-y-auto">
+          <div className="font-mono text-xs whitespace-pre-wrap text-text max-h-48 overflow-y-auto">
             {output}
           </div>
         </div>
