@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
           context: {
             messages: [],
             edits: [],
+            projectType: data?.projectType,
             projectEvolution: { majorChanges: [] },
             userPreferences: {}
           }
@@ -92,13 +93,16 @@ export async function POST(request: NextRequest) {
           if (data.currentTopic) {
             global.conversationState.context.currentTopic = data.currentTopic;
           }
+          if (data.projectType) {
+            global.conversationState.context.projectType = data.projectType;
+          }
           if (data.userPreferences) {
             global.conversationState.context.userPreferences = {
               ...global.conversationState.context.userPreferences,
               ...data.userPreferences
             };
           }
-          
+
           global.conversationState.lastUpdated = Date.now();
         }
         
