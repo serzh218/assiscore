@@ -20,7 +20,7 @@
     "@ai-sdk/openai": "^2.0.4",
     "@anthropic-ai/sdk": "^0.57.0",
     "@e2b/code-interpreter": "^1.5.1",
-    "@octokit/rest": "^20.0.2",
+    "@octokit/rest": "^22.0.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.5",
     "@types/react-syntax-highlighter": "^15.5.13",
@@ -39,7 +39,7 @@
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
     "react-syntax-highlighter": "^15.6.1",
-    "simple-git": "^3.22.0",
+    "simple-git": "^3.28.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.76"
