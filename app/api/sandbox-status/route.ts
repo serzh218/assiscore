@@ -22,6 +22,7 @@ export async function GET() {
         sandboxInfo = {
           sandboxId: global.sandboxData?.sandboxId,
           url: global.sandboxData?.url,
+          projectType: global.sandboxData?.projectType,
           filesTracked: global.existingFiles ? Array.from(global.existingFiles) : [],
           lastHealthCheck: new Date().toISOString()
         };

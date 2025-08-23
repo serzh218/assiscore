@@ -315,7 +315,8 @@ export async function POST(request: NextRequest) {
           const host = (sandbox as any).getHost(5173);
           global.sandboxData = {
             sandboxId,
-            url: `https://${host}`
+            url: `https://${host}`,
+            projectType: global.conversationState?.context.projectType || 'website'
           };
         }
         

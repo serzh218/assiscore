@@ -18,6 +18,7 @@ export interface SandboxState {
   sandboxData: {
     sandboxId: string;
     url: string;
+    projectType?: string;
   } | null;
 }
 
