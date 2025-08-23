@@ -37,7 +37,7 @@ interface ChatMessage {
   metadata?: {
     scrapedUrl?: string;
     scrapedContent?: any;
-    generatedКод?: string;
+    generatedCode?: string;
     appliedFiles?: string[];
     commandType?: 'input' | 'output' | 'error' | 'success';
   };
@@ -90,15 +90,15 @@ export default function AISandboxPage() {
   const [conversationContext, setConversationContext] = useState<{
     scrapedWebsites: Array<{ url: string; content: any; timestamp: Date }>;
     generatedComponents: Array<{ name: string; path: string; content: string }>;
-    appliedКод: Array<{ files: string[]; timestamp: Date }>;
+    appliedCode: Array<{ files: string[]; timestamp: Date }>;
     currentProject: string;
-    lastGeneratedКод?: string;
+    lastGeneratedCode?: string;
   }>({
     scrapedWebsites: [],
     generatedComponents: [],
-    appliedКод: [],
+    appliedCode: [],
     currentProject: '',
-    lastGeneratedКод: undefined
+    lastGeneratedCode: undefined
   });
   
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -114,7 +114,7 @@ export default function AISandboxPage() {
     status: string;
     components: Array<{ name: string; path: string; completed: boolean }>;
     currentComponent: number;
-    streamedКод: string;
+    streamedCode: string;
     isStreaming: boolean;
     isThinking: boolean;
     thinkingText?: string;
@@ -128,7 +128,7 @@ export default function AISandboxPage() {
     status: '',
     components: [],
     currentComponent: 0,
-    streamedКод: '',
+    streamedCode: '',
     isStreaming: false,
     isThinking: false,
     files: [],
@@ -466,7 +466,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     }
   };
 
-  const applyGeneratedКод = async (code: string, isEdit: boolean = false) => {
+  const applyGeneratedCode = async (code: string, isEdit: boolean = false) => {
     setLoading(true);
     log('Applying AI-generated code...');
     
@@ -477,7 +477,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       // Get pending packages from tool calls
       const pendingPackages = ((window as any).pendingPackages || []).filter((pkg: any) => pkg && typeof pkg === 'string');
       if (pendingPackages.length > 0) {
-        console.log('[applyGeneratedКод] Sending packages from tool calls:', pendingPackages);
+        console.log('[applyGeneratedCode] Sending packages from tool calls:', pendingPackages);
         // Clear pending packages after use
         (window as any).pendingPackages = [];
       }
@@ -584,7 +584,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   if (data.success) {
                     addChatMessage(`Command completed successfully`, 'system');
                   } else {
-                    addChatMessage(`Command failed with exit code ${data.exitКод}`, 'system');
+                    addChatMessage(`Command failed with exit code ${data.exitCode}`, 'system');
                   }
                   break;
                   
@@ -665,7 +665,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         // Update conversation context with applied code
         setConversationContext(prev => ({
           ...prev,
-          appliedКод: [...prev.appliedКод, {
+          appliedCode: [...prev.appliedCode, {
             files: [...(results.filesCreated || []), ...(results.filesUpdated || [])],
             timestamp: new Date()
           }]
@@ -716,16 +716,16 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
         
         log('Код applied successfully!');
-        console.log('[applyGeneratedКод] Response data:', data);
-        console.log('[applyGeneratedКод] Debug info:', data.debug);
-        console.log('[applyGeneratedКод] Current sandboxData:', sandboxData);
-        console.log('[applyGeneratedКод] Current iframe element:', iframeRef.current);
-        console.log('[applyGeneratedКод] Current iframe src:', iframeRef.current?.src);
+        console.log('[applyGeneratedCode] Response data:', data);
+        console.log('[applyGeneratedCode] Debug info:', data.debug);
+        console.log('[applyGeneratedCode] Current sandboxData:', sandboxData);
+        console.log('[applyGeneratedCode] Current iframe element:', iframeRef.current);
+        console.log('[applyGeneratedCode] Current iframe src:', iframeRef.current?.src);
         
         if (results.filesCreated?.length > 0) {
           setConversationContext(prev => ({
             ...prev,
-            appliedКод: [...prev.appliedКод, {
+            appliedCode: [...prev.appliedCode, {
               files: results.filesCreated,
               timestamp: new Date()
             }]
@@ -804,18 +804,18 @@ Tip: I automatically detect and install npm packages from your code imports (lik
             // If packages were installed, wait longer for Vite to restart
             const packagesInstalled = results?.packagesInstalled?.length > 0 || data.results?.packagesInstalled?.length > 0;
             const refreshDelay = packagesInstalled ? appConfig.codeApplication.packageInstallRefreshDelay : appConfig.codeApplication.defaultRefreshDelay;
-            console.log(`[applyGeneratedКод] Packages installed: ${packagesInstalled}, refresh delay: ${refreshDelay}ms`);
+            console.log(`[applyGeneratedCode] Packages installed: ${packagesInstalled}, refresh delay: ${refreshDelay}ms`);
             
             setTimeout(async () => {
             if (iframeRef.current && sandboxData?.url) {
-              console.log('[applyGeneratedКод] Starting iframe refresh sequence...');
-              console.log('[applyGeneratedКод] Current iframe src:', iframeRef.current.src);
-              console.log('[applyGeneratedКод] Sandbox URL:', sandboxData.url);
+              console.log('[applyGeneratedCode] Starting iframe refresh sequence...');
+              console.log('[applyGeneratedCode] Current iframe src:', iframeRef.current.src);
+              console.log('[applyGeneratedCode] Sandbox URL:', sandboxData.url);
               
               // Method 1: Try direct navigation first
               try {
                 const urlWithTimestamp = `${sandboxData.url}?t=${Date.now()}&force=true`;
-                console.log('[applyGeneratedКод] Attempting direct navigation to:', urlWithTimestamp);
+                console.log('[applyGeneratedCode] Attempting direct navigation to:', urlWithTimestamp);
                 
                 // Remove any existing onload handler
                 iframeRef.current.onload = null;
@@ -830,19 +830,19 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                 try {
                   const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
                   if (iframeDoc && iframeDoc.readyState === 'complete') {
-                    console.log('[applyGeneratedКод] Iframe loaded successfully');
+                    console.log('[applyGeneratedCode] Iframe loaded successfully');
                     return;
                   }
                 } catch (e) {
-                  console.log('[applyGeneratedКод] Cannot access iframe content (CORS), assuming loaded');
+                  console.log('[applyGeneratedCode] Cannot access iframe content (CORS), assuming loaded');
                   return;
                 }
               } catch (e) {
-                console.error('[applyGeneratedКод] Direct navigation failed:', e);
+                console.error('[applyGeneratedCode] Direct navigation failed:', e);
               }
               
               // Method 2: Force complete iframe recreation if direct navigation failed
-              console.log('[applyGeneratedКод] Falling back to iframe recreation...');
+              console.log('[applyGeneratedCode] Falling back to iframe recreation...');
               const parent = iframeRef.current.parentElement;
               const newIframe = document.createElement('iframe');
               
@@ -866,9 +866,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
               // Update ref
               (iframeRef as any).current = newIframe;
               
-              console.log('[applyGeneratedКод] Iframe recreated with new content');
+              console.log('[applyGeneratedCode] Iframe recreated with new content');
             } else {
-              console.error('[applyGeneratedКод] No iframe or sandbox URL available for refresh');
+              console.error('[applyGeneratedCode] No iframe or sandbox URL available for refresh');
             }
           }, refreshDelay); // Dynamic delay based on whether packages were installed
         }
@@ -948,7 +948,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     }
   };
 
-  const applyКод = async () => {
+  const applyCode = async () => {
     const code = promptInput.trim();
     if (!code) {
       log('Please enter some code first', 'error');
@@ -958,13 +958,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     
     // Prevent double clicks
     if (loading) {
-      console.log('[applyКод] Already loading, skipping...');
+      console.log('[applyCode] Already loading, skipping...');
       return;
     }
     
     // Determine if this is an edit based on whether we have applied code before
-    const isEdit = conversationContext.appliedКод.length > 0;
-    await applyGeneratedКод(code, isEdit);
+    const isEdit = conversationContext.appliedCode.length > 0;
+    await applyGeneratedCode(code, isEdit);
   };
 
   const renderMainContent = () => {
@@ -1203,7 +1203,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                           }}
                           showLineNumbers={true}
                         >
-                          {generationProgress.streamedКод || 'Starting code generation...'}
+                          {generationProgress.streamedCode || 'Starting code generation...'}
                         </SyntaxHighlighter>
                         <span className="inline-block w-2 h-4 bg-orange-400 ml-1 animate-pulse" />
                       </div>
@@ -1294,7 +1294,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     ))}
                     
                     {/* Show remaining raw stream if there's content after the last file */}
-                    {!generationProgress.currentFile && generationProgress.streamedКод.length > 0 && (
+                    {!generationProgress.currentFile && generationProgress.streamedCode.length > 0 && (
                       <div className="bg-black border border-gray-200 rounded-lg overflow-hidden">
                         <div className="px-4 py-2 bg-[#36322F] text-white flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -1317,9 +1317,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                             {(() => {
                               // Show only the tail of the stream after the last file
                               const lastFileEnd = generationProgress.files.length > 0 
-                                ? generationProgress.streamedКод.lastIndexOf('</file>') + 7
+                                ? generationProgress.streamedCode.lastIndexOf('</file>') + 7
                                 : 0;
-                              let remainingContent = generationProgress.streamedКод.slice(lastFileEnd).trim();
+                              let remainingContent = generationProgress.streamedCode.slice(lastFileEnd).trim();
                               
                               // Remove explanation tags and content
                               remainingContent = remainingContent.replace(/<explanation>[\s\S]*?<\/explanation>/g, '').trim();
@@ -1505,7 +1505,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     }
     
     // Determine if this is an edit
-    const isEdit = conversationContext.appliedКод.length > 0;
+    const isEdit = conversationContext.appliedCode.length > 0;
     
     try {
       // Generation tab is already active from scraping phase
@@ -1515,7 +1515,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         status: 'Starting AI generation...',
         components: [],
         currentComponent: 0,
-        streamedКод: '',
+        streamedCode: '',
         isStreaming: false,
         isThinking: true,
         thinkingText: 'Analyzing your request...',
@@ -1536,7 +1536,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         structure: structureContent,
         recentMessages: chatMessages.slice(-20),
         conversationContext: conversationContext,
-        currentКод: promptInput,
+        currentCode: promptInput,
         sandboxUrl: sandboxData?.url,
         sandboxCreating: sandboxCreating
       };
@@ -1544,7 +1544,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       // Debug what we're sending
       console.log('[chat] Sending context to AI:');
       console.log('[chat] - sandboxId:', fullContext.sandboxId);
-      console.log('[chat] - isEdit:', conversationContext.appliedКод.length > 0);
+      console.log('[chat] - isEdit:', conversationContext.appliedCode.length > 0);
       
       const response = await fetch('/api/generate-ai-code-stream', {
         method: 'POST',
@@ -1553,7 +1553,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           prompt: message,
           model: aiModel,
           context: fullContext,
-          isEdit: conversationContext.appliedКод.length > 0
+          isEdit: conversationContext.appliedCode.length > 0
         })
       });
       
@@ -1563,7 +1563,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
       
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-      let generatedКод = '';
+      let generatedCode = '';
       let explanation = '';
       
       if (reader) {
@@ -1609,13 +1609,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   }
                 } else if (data.type === 'stream' && data.raw) {
                   setGenerationProgress(prev => {
-                    const newStreamedКод = prev.streamedКод + data.text;
+                    const newStreamedCode = prev.streamedCode + data.text;
                     
                     // Tab is already switched after scraping
                     
                     const updatedState = { 
                       ...prev, 
-                      streamedКод: newStreamedКод,
+                      streamedCode: newStreamedCode,
                       isStreaming: true,
                       isThinking: false,
                       status: 'Генерация кода...'
@@ -1626,7 +1626,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     let match;
                     const processedFiles = new Set(prev.files.map(f => f.path));
                     
-                    while ((match = fileRegex.exec(newStreamedКод)) !== null) {
+                    while ((match = fileRegex.exec(newStreamedCode)) !== null) {
                       const filePath = match[1];
                       const fileContent = match[2];
                       
@@ -1674,7 +1674,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     }
                     
                     // Check for current file being generated (incomplete file at the end)
-                    const lastFileMatch = newStreamedКод.match(/<file path="([^"]+)">([^]*?)$/);
+                    const lastFileMatch = newStreamedCode.match(/<file path="([^"]+)">([^]*?)$/);
                     if (lastFileMatch && !lastFileMatch[0].includes('</file>')) {
                       const filePath = lastFileMatch[1];
                       const partialContent = lastFileMatch[2];
@@ -1725,13 +1725,13 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                     status: data.message || `Installing ${data.name}`
                   }));
                 } else if (data.type === 'complete') {
-                  generatedКод = data.generatedКод;
+                  generatedCode = data.generatedCode;
                   explanation = data.explanation;
                   
                   // Save the last generated code
                   setConversationContext(prev => ({
                     ...prev,
-                    lastGeneratedКод: generatedКод
+                    lastGeneratedCode: generatedCode
                   }));
                   
                   // Clear thinking state when generation completes
@@ -1754,7 +1754,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   const parsedFiles: Array<{path: string; content: string; type: string; completed: boolean}> = [];
                   let fileMatch;
                   
-                  while ((fileMatch = fileRegex.exec(data.generatedКод)) !== null) {
+                  while ((fileMatch = fileRegex.exec(data.generatedCode)) !== null) {
                     const filePath = fileMatch[1];
                     const fileContent = fileMatch[2];
                     const fileExt = filePath.split('.').pop() || '';
@@ -1791,12 +1791,12 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         }
       }
       
-      if (generatedКод) {
+      if (generatedCode) {
         // Parse files from generated code for metadata
         const fileRegex = /<file path="([^"]+)">([^]*?)<\/file>/g;
         const generatedFiles = [];
         let match;
-        while ((match = fileRegex.exec(generatedКод)) !== null) {
+        while ((match = fileRegex.exec(generatedCode)) !== null) {
           generatedFiles.push(match[1]);
         }
         
@@ -1818,7 +1818,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           });
         }
         
-        setPromptInput(generatedКод);
+        setPromptInput(generatedCode);
         // Don't show the Generated Код panel by default
         // setLeftPanelVisible(true);
         
@@ -1835,9 +1835,9 @@ Tip: I automatically detect and install npm packages from your code imports (lik
           }
         }
         
-        if (sandboxData && generatedКод) {
+        if (sandboxData && generatedCode) {
           // Use isEdit flag that was determined at the start
-          await applyGeneratedКод(generatedКод, isEdit);
+          await applyGeneratedCode(generatedCode, isEdit);
         }
       }
       
@@ -1867,7 +1867,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
         status: '',
         components: [],
         currentComponent: 0,
-        streamedКод: '',
+        streamedCode: '',
         isStreaming: false,
         isThinking: false,
         thinkingText: undefined,
@@ -1930,7 +1930,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
   };
 
   const reapplyLastGeneration = async () => {
-    if (!conversationContext.lastGeneratedКод) {
+    if (!conversationContext.lastGeneratedCode) {
       addChatMessage('No previous generation to re-apply', 'system');
       return;
     }
@@ -1941,8 +1941,8 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     }
     
     addChatMessage('Re-applying last generation...', 'system');
-    const isEdit = conversationContext.appliedКод.length > 0;
-    await applyGeneratedКод(conversationContext.lastGeneratedКод, isEdit);
+    const isEdit = conversationContext.appliedCode.length > 0;
+    await applyGeneratedCode(conversationContext.lastGeneratedCode, isEdit);
   };
 
   // Auto-scroll code display to bottom when streaming
@@ -1950,7 +1950,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     if (codeDisplayRef.current && generationProgress.isStreaming) {
       codeDisplayRef.current.scrollTop = codeDisplayRef.current.scrollHeight;
     }
-  }, [generationProgress.streamedКод, generationProgress.isStreaming]);
+  }, [generationProgress.streamedCode, generationProgress.isStreaming]);
 
   const toggleFolder = (folderPath: string) => {
     const newExpanded = new Set(expandedFolders);
@@ -2109,7 +2109,7 @@ Focus on the key sections and content, making it clean and modern while preservi
         status: 'Initializing AI...',
         components: [],
         currentComponent: 0,
-        streamedКод: '',
+        streamedCode: '',
         isStreaming: true,
         isThinking: false,
         thinkingText: undefined,
@@ -2143,7 +2143,7 @@ Focus on the key sections and content, making it clean and modern while preservi
       
       const reader = aiResponse.body?.getReader();
       const decoder = new TextDecoder();
-      let generatedКод = '';
+      let generatedCode = '';
       let explanation = '';
       
       if (reader) {
@@ -2190,7 +2190,7 @@ Focus on the key sections and content, making it clean and modern while preservi
                 } else if (data.type === 'stream' && data.raw) {
                   setGenerationProgress(prev => ({ 
                     ...prev, 
-                    streamedКод: prev.streamedКод + data.text,
+                    streamedCode: prev.streamedCode + data.text,
                     lastProcessedPosition: prev.lastProcessedPosition || 0
                   }));
                 } else if (data.type === 'component') {
@@ -2205,13 +2205,13 @@ Focus on the key sections and content, making it clean and modern while preservi
                     currentComponent: prev.currentComponent + 1
                   }));
                 } else if (data.type === 'complete') {
-                  generatedКод = data.generatedКод;
+                  generatedCode = data.generatedCode;
                   explanation = data.explanation;
                   
                   // Save the last generated code
                   setConversationContext(prev => ({
                     ...prev,
-                    lastGeneratedКод: generatedКод
+                    lastGeneratedCode: generatedCode
                   }));
                 }
               } catch (e) {
@@ -2230,7 +2230,7 @@ Focus on the key sections and content, making it clean and modern while preservi
         isEdit: prev.isEdit
       }));
       
-      if (generatedКод) {
+      if (generatedCode) {
         addChatMessage('AI recreation generated!', 'system');
         
         // Add the explanation to chat if available
@@ -2238,7 +2238,7 @@ Focus on the key sections and content, making it clean and modern while preservi
           addChatMessage(explanation, 'ai');
         }
         
-        setPromptInput(generatedКод);
+        setPromptInput(generatedCode);
         // Don't show the Generated Код panel by default
         // setLeftPanelVisible(true);
         
@@ -2256,7 +2256,7 @@ Focus on the key sections and content, making it clean and modern while preservi
         }
         
         // First application for cloned site should not be in edit mode
-        await applyGeneratedКод(generatedКод, false);
+        await applyGeneratedCode(generatedCode, false);
         
         addChatMessage(
           `Successfully recreated ${url} as a modern React app${homeContextInput ? ` with your requested context: "${homeContextInput}"` : ''}! The scraped content is now in my context, so you can ask me to modify specific sections or add features based on the original site.`, 
@@ -2264,7 +2264,7 @@ Focus on the key sections and content, making it clean and modern while preservi
           {
             scrapedUrl: url,
             scrapedContent: scrapeData,
-            generatedКод: generatedКод
+            generatedCode: generatedCode
           }
         );
         
@@ -2470,7 +2470,7 @@ Focus on the key sections and content, making it clean and modern.`;
           status: 'Initializing AI...',
           components: [],
           currentComponent: 0,
-          streamedКод: '',
+          streamedCode: '',
           isStreaming: true,
           isThinking: false,
           thinkingText: undefined,
@@ -2501,7 +2501,7 @@ Focus on the key sections and content, making it clean and modern.`;
         
         const reader = aiResponse.body.getReader();
         const decoder = new TextDecoder();
-        let generatedКод = '';
+        let generatedCode = '';
         let explanation = '';
         
         while (true) {
@@ -2546,13 +2546,13 @@ Focus on the key sections and content, making it clean and modern.`;
                   }
                 } else if (data.type === 'stream' && data.raw) {
                   setGenerationProgress(prev => {
-                    const newStreamedКод = prev.streamedКод + data.text;
+                    const newStreamedCode = prev.streamedCode + data.text;
                     
                     // Tab is already switched after scraping
                     
                     const updatedState = { 
                       ...prev, 
-                      streamedКод: newStreamedКод,
+                      streamedCode: newStreamedCode,
                       isStreaming: true,
                       isThinking: false,
                       status: 'Генерация кода...'
@@ -2563,7 +2563,7 @@ Focus on the key sections and content, making it clean and modern.`;
                     let match;
                     const processedFiles = new Set(prev.files.map(f => f.path));
                     
-                    while ((match = fileRegex.exec(newStreamedКод)) !== null) {
+                    while ((match = fileRegex.exec(newStreamedCode)) !== null) {
                       const filePath = match[1];
                       const fileContent = match[2];
                       
@@ -2611,7 +2611,7 @@ Focus on the key sections and content, making it clean and modern.`;
                     }
                     
                     // Check for current file being generated (incomplete file at the end)
-                    const lastFileMatch = newStreamedКод.match(/<file path="([^"]+)">([^]*?)$/);
+                    const lastFileMatch = newStreamedCode.match(/<file path="([^"]+)">([^]*?)$/);
                     if (lastFileMatch && !lastFileMatch[0].includes('</file>')) {
                       const filePath = lastFileMatch[1];
                       const partialContent = lastFileMatch[2];
@@ -2640,13 +2640,13 @@ Focus on the key sections and content, making it clean and modern.`;
                     return updatedState;
                   });
                 } else if (data.type === 'complete') {
-                  generatedКод = data.generatedКод;
+                  generatedCode = data.generatedCode;
                   explanation = data.explanation;
                   
                   // Save the last generated code
                   setConversationContext(prev => ({
                     ...prev,
-                    lastGeneratedКод: generatedКод
+                    lastGeneratedCode: generatedCode
                   }));
                 }
               } catch (e) {
@@ -2663,7 +2663,7 @@ Focus on the key sections and content, making it clean and modern.`;
           status: 'Generation complete!'
         }));
         
-        if (generatedКод) {
+        if (generatedCode) {
           addChatMessage('AI recreation generated!', 'system');
           
           // Add the explanation to chat if available
@@ -2671,10 +2671,10 @@ Focus on the key sections and content, making it clean and modern.`;
             addChatMessage(explanation, 'ai');
           }
           
-          setPromptInput(generatedКод);
+          setPromptInput(generatedCode);
           
           // First application for cloned site should not be in edit mode
-          await applyGeneratedКод(generatedКод, false);
+          await applyGeneratedCode(generatedCode, false);
           
           addChatMessage(
             `Successfully recreated ${url} as a modern React app${homeContextInput ? ` with your requested context: "${homeContextInput}"` : ''}! The scraped content is now in my context, so you can ask me to modify specific sections or add features based on the original site.`, 
@@ -2682,14 +2682,14 @@ Focus on the key sections and content, making it clean and modern.`;
             {
               scrapedUrl: url,
               scrapedContent: scrapeData,
-              generatedКод: generatedКод
+              generatedCode: generatedCode
             }
           );
           
           setConversationContext(prev => ({
             ...prev,
             generatedComponents: [],
-            appliedКод: [...prev.appliedКод, {
+            appliedCode: [...prev.appliedCode, {
               files: [],
               timestamp: new Date()
             }]
@@ -3039,7 +3039,7 @@ Focus on the key sections and content, making it clean and modern.`;
             onClick={reapplyLastGeneration}
             size="sm"
             title="Повторно применить последнюю генерацию"
-            disabled={!conversationContext.lastGeneratedКод || !sandboxData}
+            disabled={!conversationContext.lastGeneratedCode || !sandboxData}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -3256,7 +3256,7 @@ Focus on the key sections and content, making it clean and modern.`;
                 </div>
                 
                 {/* Live streaming response display */}
-                {generationProgress.streamedКод && (
+                {generationProgress.streamedCode && (
                   <motion.div 
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
@@ -3286,7 +3286,7 @@ Focus on the key sections and content, making it clean and modern.`;
                         }}
                       >
                         {(() => {
-                          const lastContent = generationProgress.streamedКод.slice(-1000);
+                          const lastContent = generationProgress.streamedCode.slice(-1000);
                           // Show the last part of the stream, starting from a complete tag if possible
                           const startIndex = lastContent.indexOf('<');
                           return startIndex !== -1 ? lastContent.slice(startIndex) : lastContent;
