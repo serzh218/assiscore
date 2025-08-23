@@ -8,7 +8,11 @@ interface Message {
   text: string;
 }
 
-export default function BotEmulator() {
+interface BotEmulatorProps {
+  sandboxId: string;
+}
+
+export default function BotEmulator({ sandboxId }: BotEmulatorProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
@@ -25,7 +29,7 @@ export default function BotEmulator() {
       const res = await fetch('/api/sandbox/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userText }),
+        body: JSON.stringify({ sandboxId, message: userText }),
       });
       const data = await res.json();
       const reply = data.message ?? data.reply ?? '';

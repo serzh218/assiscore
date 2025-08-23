@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import FileTree from '@/components/FileTree'
+import BotEmulator from '@/components/studio/BotEmulator'
 import type { SandboxData } from '@/types/sandbox'
 
 export default function StudioPage() {
@@ -12,6 +13,7 @@ export default function StudioPage() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [currentFile, setCurrentFile] = useState<{ path: string; content: string } | null>(null)
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor')
+  const [projectType, setProjectType] = useState<'website' | 'application' | 'bot' | null>(null)
 
   useEffect(() => {
     const prepareSandbox = async () => {
@@ -26,6 +28,9 @@ export default function StudioPage() {
 
         setSandboxId(sandboxData.sandboxId)
         setSandboxUrl(sandboxData.url)
+        if (sandboxData.projectType) {
+          setProjectType(sandboxData.projectType as 'website' | 'application' | 'bot')
+        }
 
         try {
           const filesRes = await fetch('/api/files', {
@@ -144,9 +149,14 @@ export default function StudioPage() {
         </div>
       )}
 
-      {activeTab === 'preview' && sandboxUrl && (
-        <iframe src={sandboxUrl} className="w-full h-[500px] border rounded" />
+      {activeTab === 'preview' && projectType === 'bot' && sandboxId && (
+        <BotEmulator sandboxId={sandboxId} />
       )}
+      {activeTab === 'preview' &&
+        sandboxUrl &&
+        (projectType === 'website' || projectType === 'application') && (
+          <iframe src={sandboxUrl} className="w-full h-[500px] border rounded" />
+        )}
     </div>
   )
 }
