@@ -23,18 +23,28 @@ export default function StudioPage() {
       try {
         const sandboxRes = await fetch('/api/sandbox', { method: 'POST' })
         const sandboxData: SandboxResponse = await sandboxRes.json()
+
+        if (!sandboxData?.sandboxId) {
+          console.error('Sandbox ID не был получен')
+          return
+        }
+
         setSandboxId(sandboxData.sandboxId)
         setSandboxUrl(sandboxData.url)
 
-        const filesRes = await fetch('/api/files', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sandboxId: sandboxData.sandboxId })
-        })
-        const filesData = await filesRes.json()
-        setFileTree(filesData)
+        try {
+          const filesRes = await fetch('/api/files', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sandboxId: sandboxData.sandboxId })
+          })
+          const filesData = await filesRes.json()
+          setFileTree(filesData)
+        } catch (filesError) {
+          console.error('Не удалось загрузить список файлов', filesError)
+        }
       } catch (error) {
-        console.error('Failed to prepare sandbox', error)
+        console.error('Не удалось подготовить песочницу', error)
       } finally {
         setIsLoading(false)
       }
@@ -56,7 +66,11 @@ export default function StudioPage() {
   }
 
   const handleFileClick = async (path: string) => {
-    if (!sandboxId) return
+    if (!sandboxId) {
+      console.error('Sandbox ID не определён')
+      return
+    }
+
     try {
       const res = await fetch('/api/files/read', {
         method: 'POST',
@@ -67,7 +81,7 @@ export default function StudioPage() {
       setCurrentFile({ path, content: data.content || '' })
       setActiveTab('editor')
     } catch (error) {
-      console.error('Failed to read file', error)
+      console.error('Не удалось прочитать файл', error)
     }
   }
 
@@ -120,9 +134,13 @@ export default function StudioPage() {
             {currentFile ? (
               <>
                 <h3 className="mb-2 font-medium">{currentFile.path}</h3>
-                <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
-                  {currentFile.content}
-                </pre>
+                {currentFile.content ? (
+                  <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
+                    {currentFile.content}
+                  </pre>
+                ) : (
+                  <p className="text-sm text-gray-500">Нет содержимого для отображения</p>
+                )}
               </>
             ) : (
               <p className="text-sm text-gray-500">Выберите файл из списка</p>
