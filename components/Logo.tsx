@@ -7,7 +7,7 @@ interface LogoProps {
 
 export default function Logo({ className }: LogoProps) {
   return (
-    <span className={cn("h-8 flex items-center text-2xl font-bold text-[#8b5cf6]", className)}>
+    <span className={cn("text-accent", className)}>
       AssisCore
     </span>
   );
