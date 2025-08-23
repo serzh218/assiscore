@@ -24,7 +24,7 @@ export default function CodeApplicationProgress({ state }: CodeApplicationProgre
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.3 }}
-        className="inline-block bg-gray-100 rounded-[10px] p-3 mt-2"
+        className="inline-block bg-card rounded-[10px] p-3 mt-2"
       >
         <div className="flex items-center gap-3">
           {/* Rotating loading indicator */}
@@ -43,13 +43,13 @@ export default function CodeApplicationProgress({ state }: CodeApplicationProgre
                 strokeLinecap="round"
                 strokeDasharray="31.416"
                 strokeDashoffset="10"
-                className="text-gray-700"
+                className="text-accent"
               />
             </svg>
           </motion.div>
 
           {/* Simple loading text */}
-            <div className="text-sm font-medium text-gray-700">
+            <div className="text-sm font-medium text-text">
               Применение к песочнице...
             </div>
         </div>
