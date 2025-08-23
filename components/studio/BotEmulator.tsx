@@ -22,7 +22,13 @@ export default function BotEmulator({ sandboxId }: BotEmulatorProps) {
 
     const userText = input;
     const userMessage: Message = { id: Date.now(), sender: 'user', text: userText };
-    setMessages(prev => [...prev, userMessage]);
+    const placeholderId = userMessage.id + 1;
+    const typingMessage: Message = {
+      id: placeholderId,
+      sender: 'bot',
+      text: 'Бот печатает…',
+    };
+    setMessages(prev => [...prev, userMessage, typingMessage]);
     setInput('');
 
     try {
@@ -33,11 +39,15 @@ export default function BotEmulator({ sandboxId }: BotEmulatorProps) {
       });
       const data = await res.json();
       const reply = data.message ?? data.reply ?? '';
-      const botMessage: Message = { id: Date.now() + 1, sender: 'bot', text: reply };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages(prev =>
+        prev.map(m => (m.id === placeholderId ? { ...m, text: reply } : m)),
+      );
     } catch {
-      const botMessage: Message = { id: Date.now() + 1, sender: 'bot', text: 'Ошибка отправки' };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === placeholderId ? { ...m, text: 'Ошибка отправки' } : m,
+        ),
+      );
     }
   };
 
