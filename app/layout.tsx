@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Open AssisCore",
-  description: "Преобразуйте любой сайт за секунды с помощью конструктора сайтов на AI.",
+  title: "AssisCore",
+  description: "AssisCore — преобразуйте любой сайт за секунды с помощью конструктора сайтов на AI.",
 };
 
 export default function RootLayout({
