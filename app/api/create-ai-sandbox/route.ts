@@ -1,22 +1,52 @@
 import { NextResponse } from 'next/server';
-import { Sandbox } from '@e2b/code-interpreter';
+import { Sandbox, type WriteEntry } from '@e2b/code-interpreter';
 import type { SandboxState } from '@/types/sandbox';
 import { appConfig } from '@/config/app.config';
+import fs from 'fs';
+import path from 'path';
 
 // Store active sandbox globally
 declare global {
+  // eslint-disable-next-line no-var
   var activeSandbox: any;
+  // eslint-disable-next-line no-var
   var sandboxData: any;
+  // eslint-disable-next-line no-var
   var existingFiles: Set<string>;
+  // eslint-disable-next-line no-var
   var sandboxState: SandboxState;
 }
 
-export async function POST() {
+function collectTemplateFiles(dir: string, baseDir: string = dir): WriteEntry[] {
+  const entries: WriteEntry[] = [];
+  const items = fs.readdirSync(dir, { withFileTypes: true });
+  for (const item of items) {
+    const fullPath = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      entries.push(...collectTemplateFiles(fullPath, baseDir));
+    } else {
+      const rel = path.relative(baseDir, fullPath);
+      entries.push({
+        path: `/home/user/app/${rel}`.replace(/\\/g, '/'),
+        data: fs.readFileSync(fullPath, 'utf-8')
+      });
+    }
+  }
+  return entries;
+}
+
+export async function POST(request: Request) {
   let sandbox: any = null;
+  let projectType = 'website';
 
   try {
+    try {
+      const body = await request.json();
+      if (body?.projectType) projectType = body.projectType;
+    } catch {}
+
     console.log('[create-ai-sandbox] Creating base sandbox...');
-    
+
     // Kill existing sandbox if any
     if (global.activeSandbox) {
       console.log('[create-ai-sandbox] Killing existing sandbox...');
@@ -27,7 +57,7 @@ export async function POST() {
       }
       global.activeSandbox = null;
     }
-    
+
     // Clear existing files tracking
     if (global.existingFiles) {
       global.existingFiles.clear();
@@ -35,280 +65,62 @@ export async function POST() {
       global.existingFiles = new Set<string>();
     }
 
-    // Create base sandbox - we'll set up Vite ourselves for full control
+    // Create base sandbox
     console.log(`[create-ai-sandbox] Creating base E2B sandbox with ${appConfig.e2b.timeoutMinutes} minute timeout...`);
-    sandbox = await Sandbox.create({ 
+    sandbox = await Sandbox.create({
       apiKey: process.env.E2B_API_KEY,
       timeoutMs: appConfig.e2b.timeoutMs
     });
-    
+
     const sandboxId = (sandbox as any).sandboxId || Date.now().toString();
     const host = (sandbox as any).getHost(appConfig.e2b.vitePort);
-    
+
     console.log(`[create-ai-sandbox] Sandbox created: ${sandboxId}`);
     console.log(`[create-ai-sandbox] Sandbox host: ${host}`);
 
-    // Set up a basic Vite React app using Python to write files
-    console.log('[create-ai-sandbox] Setting up Vite React app...');
-    
-    // Write all files in a single Python script to avoid multiple executions
-    const setupScript = `
-import os
-import json
-
-print('Setting up React app with Vite and Tailwind...')
-
-# Create directory structure
-os.makedirs('/home/user/app/src', exist_ok=True)
-
-# Package.json
-package_json = {
-    "name": "sandbox-app",
-    "version": "1.0.0",
-    "type": "module",
-    "scripts": {
-        "dev": "vite --host",
-        "build": "vite build",
-        "preview": "vite preview"
-    },
-    "dependencies": {
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-react": "^4.0.0",
-        "vite": "^4.3.9",
-        "tailwindcss": "^3.3.0",
-        "postcss": "^8.4.31",
-        "autoprefixer": "^10.4.16"
+    // Upload template files
+    console.log(`[create-ai-sandbox] Uploading ${projectType} template...`);
+    const templateDir = path.join(process.cwd(), 'templates', projectType);
+    if (!fs.existsSync(templateDir)) {
+      throw new Error(`Template not found for project type: ${projectType}`);
     }
-}
+    const files = collectTemplateFiles(templateDir);
+    await sandbox.files.write(files);
 
-with open('/home/user/app/package.json', 'w') as f:
-    json.dump(package_json, f, indent=2)
-print('✓ package.json')
+    // Track initial files
+    for (const file of files) {
+      const relPath = file.path.replace('/home/user/app/', '');
+      global.existingFiles.add(relPath);
+    }
 
-# Vite config for E2B - with allowedHosts
-vite_config = """import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-// E2B-compatible Vite configuration
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    hmr: false,
-    allowedHosts: ['.e2b.app', 'localhost', '127.0.0.1']
-  }
-})"""
-
-with open('/home/user/app/vite.config.js', 'w') as f:
-    f.write(vite_config)
-print('✓ vite.config.js')
-
-# Tailwind config - standard without custom design tokens
-tailwind_config = """/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}"""
-
-with open('/home/user/app/tailwind.config.js', 'w') as f:
-    f.write(tailwind_config)
-print('✓ tailwind.config.js')
-
-# PostCSS config
-postcss_config = """export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}"""
-
-with open('/home/user/app/postcss.config.js', 'w') as f:
-    f.write(postcss_config)
-print('✓ postcss.config.js')
-
-# Index.html
-index_html = """<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sandbox App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>"""
-
-with open('/home/user/app/index.html', 'w') as f:
-    f.write(index_html)
-print('✓ index.html')
-
-# Main.jsx
-main_jsx = """import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)"""
-
-with open('/home/user/app/src/main.jsx', 'w') as f:
-    f.write(main_jsx)
-print('✓ src/main.jsx')
-
-# App.jsx with explicit Tailwind test
-app_jsx = """function App() {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4">
-      <div className="text-center max-w-2xl">
-        <p className="text-lg text-gray-400">
-          Sandbox Ready<br/>
-          Start building your React app with Vite and Tailwind CSS!
-        </p>
-      </div>
-    </div>
-  )
-}
-
-export default App"""
-
-with open('/home/user/app/src/App.jsx', 'w') as f:
-    f.write(app_jsx)
-print('✓ src/App.jsx')
-
-# Index.css with explicit Tailwind directives
-index_css = """@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Force Tailwind to load */
-@layer base {
-  :root {
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
-  }
-  
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background-color: rgb(17 24 39);
-}"""
-
-with open('/home/user/app/src/index.css', 'w') as f:
-    f.write(index_css)
-print('✓ src/index.css')
-
-print('\\nAll files created successfully!')
-`;
-
-    // Execute the setup script
-    await sandbox.runCode(setupScript);
-    
     // Install dependencies
     console.log('[create-ai-sandbox] Installing dependencies...');
-    await sandbox.runCode(`
-import subprocess
-import sys
+    const installCmd = `npm install${appConfig.packages.useLegacyPeerDeps ? ' --legacy-peer-deps' : ''}`;
+    await sandbox.commands.run(installCmd, { cwd: '/home/user/app' });
 
-print('Installing npm packages...')
-result = subprocess.run(
-    ['npm', 'install'],
-    cwd='/home/user/app',
-    capture_output=True,
-    text=True
-)
+    // Start project
+    const startCmd = projectType === 'bot' ? 'npm start' : 'npm run dev';
+    console.log(`[create-ai-sandbox] Starting project with: ${startCmd}`);
+    await sandbox.commands.run(startCmd, { cwd: '/home/user/app', background: true });
 
-if result.returncode == 0:
-    print('✓ Dependencies installed successfully')
-else:
-    print(f'⚠ Warning: npm install had issues: {result.stderr}')
-    # Continue anyway as it might still work
-    `);
-    
-    // Start Vite dev server
-    console.log('[create-ai-sandbox] Starting Vite dev server...');
-    await sandbox.runCode(`
-import subprocess
-import os
-import time
-
-os.chdir('/home/user/app')
-
-# Kill any existing Vite processes
-subprocess.run(['pkill', '-f', 'vite'], capture_output=True)
-time.sleep(1)
-
-# Start Vite dev server
-env = os.environ.copy()
-env['FORCE_COLOR'] = '0'
-
-process = subprocess.Popen(
-    ['npm', 'run', 'dev'],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    env=env
-)
-
-print(f'✓ Vite dev server started with PID: {process.pid}')
-print('Waiting for server to be ready...')
-    `);
-    
-    // Wait for Vite to be fully ready
-    await new Promise(resolve => setTimeout(resolve, appConfig.e2b.viteStartupDelay));
-    
-    // Force Tailwind CSS to rebuild by touching the CSS file
-    await sandbox.runCode(`
-import os
-import time
-
-# Touch the CSS file to trigger rebuild
-css_file = '/home/user/app/src/index.css'
-if os.path.exists(css_file):
-    os.utime(css_file, None)
-    print('✓ Triggered CSS rebuild')
-    
-# Also ensure PostCSS processes it
-time.sleep(2)
-print('✓ Tailwind CSS should be loaded')
-    `);
+    if (projectType !== 'bot') {
+      await new Promise(resolve => setTimeout(resolve, appConfig.e2b.viteStartupDelay));
+    }
 
     // Store sandbox globally
     global.activeSandbox = sandbox;
     global.sandboxData = {
       sandboxId,
-      url: `https://${host}`
+      url: `https://${host}`,
+      projectType
     };
-    
+
     // Set extended timeout on the sandbox instance if method available
     if (typeof sandbox.setTimeout === 'function') {
       sandbox.setTimeout(appConfig.e2b.timeoutMs);
       console.log(`[create-ai-sandbox] Set sandbox timeout to ${appConfig.e2b.timeoutMinutes} minutes`);
     }
-    
+
     // Initialize sandbox state
     global.sandboxState = {
       fileCache: {
@@ -319,32 +131,23 @@ print('✓ Tailwind CSS should be loaded')
       sandbox,
       sandboxData: {
         sandboxId,
-        url: `https://${host}`
+        url: `https://${host}`,
+        projectType
       }
     };
-    
-    // Track initial files
-    global.existingFiles.add('src/App.jsx');
-    global.existingFiles.add('src/main.jsx');
-    global.existingFiles.add('src/index.css');
-    global.existingFiles.add('index.html');
-    global.existingFiles.add('package.json');
-    global.existingFiles.add('vite.config.js');
-    global.existingFiles.add('tailwind.config.js');
-    global.existingFiles.add('postcss.config.js');
-    
+
     console.log('[create-ai-sandbox] Sandbox ready at:', `https://${host}`);
-    
+
     return NextResponse.json({
       success: true,
       sandboxId,
       url: `https://${host}`,
-      message: 'Sandbox created and Vite React app initialized'
+      projectType,
+      message: 'Sandbox created'
     });
-
   } catch (error) {
     console.error('[create-ai-sandbox] Error:', error);
-    
+
     // Clean up on error
     if (sandbox) {
       try {
@@ -353,9 +156,9 @@ print('✓ Tailwind CSS should be loaded')
         console.error('Не удалось закрыть песочницу при ошибке:', e);
       }
     }
-    
+
     return NextResponse.json(
-      { 
+      {
         error: error instanceof Error ? error.message : 'Не удалось создать песочницу',
         details: error instanceof Error ? error.stack : undefined
       },
