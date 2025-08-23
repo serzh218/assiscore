@@ -77,6 +77,7 @@ export default function AISandboxPage() {
   const [activeTab, setActiveTab] = useState<'generation' | 'preview'>('preview');
   const [showStyleSelector, setShowStyleSelector] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
+  const [projectType, setProjectType] = useState<'website' | 'application' | 'bot'>('website');
   const [showLoadingBackground, setShowLoadingBackground] = useState(false);
   const [urlScreenshot, setUrlScreenshot] = useState<string | null>(null);
   const [isCapturingScreenshot, setIsCapturingScreenshot] = useState(false);
@@ -93,14 +94,20 @@ export default function AISandboxPage() {
     appliedCode: Array<{ files: string[]; timestamp: Date }>;
     currentProject: string;
     lastGeneratedCode?: string;
+    projectType: 'website' | 'application' | 'bot';
   }>({
     scrapedWebsites: [],
     generatedComponents: [],
     appliedCode: [],
     currentProject: '',
-    lastGeneratedCode: undefined
+    lastGeneratedCode: undefined,
+    projectType: 'website'
   });
-  
+
+  useEffect(() => {
+    setConversationContext(prev => ({ ...prev, projectType }));
+  }, [projectType]);
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
   const codeDisplayRef = useRef<HTMLDivElement>(null);
@@ -382,7 +389,7 @@ export default function AISandboxPage() {
       const response = await fetch('/api/create-ai-sandbox', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+        body: JSON.stringify({ projectType })
       });
       
       const data = await response.json();
@@ -2869,7 +2876,20 @@ Focus on the key sections and content, making it clean and modern.`;
                     </svg>
                   </button>
                 </div>
-                  
+
+                <div className="flex justify-center gap-2 mt-4">
+                  {(['website', 'application', 'bot'] as const).map(type => (
+                    <Button
+                      key={type}
+                      type="button"
+                      variant={projectType === type ? 'default' : 'outline'}
+                      onClick={() => setProjectType(type)}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Button>
+                  ))}
+                </div>
+
                   {/* Style Selector - Slides out when valid domain is entered */}
                   {showStyleSelector && (
                     <div className="overflow-hidden mt-4">
