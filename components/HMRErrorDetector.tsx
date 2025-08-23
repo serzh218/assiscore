@@ -40,7 +40,7 @@ export default function HMRErrorDetector({ iframeRef, onErrorDetected }: HMRErro
 
                 onErrorDetected([{
                   type: 'npm-missing',
-                  message: `Failed to resolve import "${packageName}"`,
+                    message: `Не удалось разрешить импорт "${packageName}"`,
                   package: finalPackage
                 }]);
               }

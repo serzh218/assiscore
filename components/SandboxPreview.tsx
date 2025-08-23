@@ -36,7 +36,7 @@ export default function SandboxPreview({
     return (
       <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
         <div className="font-mono text-sm whitespace-pre-wrap text-gray-300">
-          {output || 'No output yet...'}
+            {output || 'Вывода пока нет...'}
         </div>
       </div>
     );
@@ -47,9 +47,9 @@ export default function SandboxPreview({
       {/* Preview Controls */}
       <div className="flex items-center justify-between bg-gray-800 rounded-lg p-3 border border-gray-700">
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-400">
-            {type === 'vite' ? '⚡ Vite' : '▲ Next.js'} Preview
-          </span>
+            <span className="text-sm text-gray-400">
+              {type === 'vite' ? '⚡ Vite' : '▲ Next.js'} Предпросмотр
+            </span>
           <code className="text-xs bg-gray-900 px-2 py-1 rounded text-blue-400">
             {previewUrl}
           </code>
@@ -58,14 +58,14 @@ export default function SandboxPreview({
           <button
             onClick={() => setShowConsole(!showConsole)}
             className="p-2 hover:bg-gray-700 rounded transition-colors"
-            title="Toggle console"
+              title="Переключить консоль"
           >
             <Terminal className="w-4 h-4" />
           </button>
           <button
             onClick={handleRefresh}
             className="p-2 hover:bg-gray-700 rounded transition-colors"
-            title="Refresh preview"
+              title="Обновить предпросмотр"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -74,7 +74,7 @@ export default function SandboxPreview({
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 hover:bg-gray-700 rounded transition-colors"
-            title="Open in new tab"
+              title="Открыть в новой вкладке"
           >
             <ExternalLink className="w-4 h-4" />
           </a>
@@ -87,9 +87,9 @@ export default function SandboxPreview({
           <div className="absolute inset-0 bg-gray-900/80 flex items-center justify-center z-10">
             <div className="text-center">
               <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
-              <p className="text-sm text-gray-400">
-                {type === 'vite' ? 'Starting Vite dev server...' : 'Starting Next.js dev server...'}
-              </p>
+                <p className="text-sm text-gray-400">
+                  {type === 'vite' ? 'Запуск dev-сервера Vite...' : 'Запуск dev-сервера Next.js...'}
+                </p>
             </div>
           </div>
         )}
@@ -98,7 +98,7 @@ export default function SandboxPreview({
           key={iframeKey}
           src={previewUrl}
           className="w-full h-[600px] bg-white"
-          title={`${type} preview`}
+            title={`предпросмотр ${type}`}
           sandbox="allow-scripts allow-same-origin allow-forms"
         />
       </div>
@@ -107,7 +107,7 @@ export default function SandboxPreview({
       {showConsole && output && (
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-gray-400">Console Output</span>
+            <span className="text-sm font-semibold text-gray-400">Вывод консоли</span>
           </div>
           <div className="font-mono text-xs whitespace-pre-wrap text-gray-300 max-h-48 overflow-y-auto">
             {output}
