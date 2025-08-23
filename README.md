@@ -1,40 +1,43 @@
-# Open Lovable
+# AssisCore: Интеллектуальная среда для создания цифровых продуктов
 
-Chat with AI to build React apps instantly. An example app made by the [Firecrawl](https://firecrawl.dev/?ref=open-lovable-github) team. For a complete cloud solution, check out [Lovable.dev ❤️](https://lovable.dev/).
+**AssisCore** — это не просто инструмент, а IDE нового поколения, работающая в браузере. Мы меняем сам подход к разработке, делая его доступным для всех и на порядок быстрее для профессионалов.
 
-<img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZtaHFleGRsMTNlaWNydGdianI4NGQ4dHhyZjB0d2VkcjRyeXBucCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZFVLWMa6dVskQX0qu1/giphy.gif" alt="Open Lovable Demo" width="100%"/>
+## 🚀 Главная идея
 
+AssisCore позволяет пользователям превращать идеи в готовые цифровые продукты — веб-сайты, веб-приложения и Telegram-ботов — ведя диалог с умным AI-ассистентом. Мы объединяем мощь AI-генерации с полным контролем над исходным кодом, предоставляя лучшее из обоих миров.
 
+-----
 
-## Setup
+## ✨ Как это работает?
 
-1. **Clone & Install**
-```bash
-git clone https://github.com/mendableai/open-lovable.git
-cd open-lovable
-npm install
-```
+Весь процесс от идеи до работающего продукта состоит из нескольких интуитивно понятных шагов:
 
-2. **Add `.env.local`**
-```env
-# Required
-E2B_API_KEY=your_e2b_api_key  # Get from https://e2b.dev (Sandboxes)
-FIRECRAWL_API_KEY=your_firecrawl_api_key  # Get from https://firecrawl.dev (Web scraping)
+1.  **Запрос и выбор типа:** Пользователь выбирает, что хочет создать (**Сайт**, **Приложение** или **Телеграм-бот**), а затем описывает свою идею на естественном языке. Этот выбор определяет всю дальнейшую логику генерации и предпросмотра.
 
-# Optional (need at least one AI provider)
-ANTHROPIC_API_KEY=your_anthropic_api_key  # Get from https://console.anthropic.com
-OPENAI_API_KEY=your_openai_api_key  # Get from https://platform.openai.com (GPT-5)
-GEMINI_API_KEY=your_gemini_api_key  # Get from https://aistudio.google.com/app/apikey
-GROQ_API_KEY=your_groq_api_key  # Get from https://console.groq.com (Fast inference - Kimi K2 recommended)
-```
+2.  **Мгновенная генерация:** AI-ассистент анализирует запрос, выбирает подходящий шаблон и за несколько минут создает полную, рабочую структуру проекта со всеми необходимыми файлами и базовым кодом.
 
-3. **Run**
-```bash
-npm run dev
-```
+3.  **Интерактивная "Студия":** Пользователь попадает в единое рабочее пространство, адаптированное под его задачу:
+      * **Для Сайта/Приложения:** В центре находится **живой предпросмотр (`Live Preview`)**, мгновенно отображающий все изменения.
+      * **Для Телеграм-бота:** В центре располагается **эмулятор бота**, имитирующий экран телефона для тестирования логики и ответов в реальном времени.
+      * **Всегда доступны:** Дерево файлов проекта, редактор кода и чат с AI-ассистентом.
 
-Open [http://localhost:3000](http://localhost:3000)  
+4.  **Разработка через диалог:** Пользователь дорабатывает проект, просто общаясь с AI в чате. Запросы вроде *"Сделай фон темнее"* или *"Добавь кнопку 'Контакты' в главное меню бота"* AI превращает в реальные изменения в коде, которые тут же отображаются в предпросмотре.
 
-## License
+5.  **Полный контроль:** В любой момент пользователь может скачать весь исходный код или отправить его на GitHub. Мы не "запираем" пользователей — они получают чистый, профессиональный код.
 
-MIT
+-----
+
+## 🎯 Ключевые преимущества
+
+  * **Скорость:** От идеи до работающего MVP за минуты, а не недели.
+  * **Доступность:** Стирает границы между новичками и профессионалами.
+  * **Прозрачность:** Полный доступ к качественному, читаемому исходному коду.
+  * **Адаптивность:** Уникальный интерфейс, который подстраивается под конкретную задачу.
+
+## 💻 Технологический стек
+
+  * **Фронтенд:** Next.js, React, TypeScript, Tailwind CSS, shadcn/ui
+  * **Бэкенд:** Next.js API Routes, Node.js
+  * **AI:** OpenRouter для доступа к ведущим языковым моделям (Claude, GPT и др.)
+  * **Среда выполнения:** E2B (e2b.dev) для создания безопасных и изолированных "песочниц"
+
