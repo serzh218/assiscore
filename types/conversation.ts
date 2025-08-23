@@ -10,6 +10,7 @@ export interface ConversationMessage {
     addedPackages?: string[]; // Packages added in this interaction
     editType?: string; // Type of edit performed
     sandboxId?: string; // Sandbox ID at time of message
+    projectType?: 'website' | 'application' | 'bot'; // Project type at time of message
   };
 }
 

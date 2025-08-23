@@ -109,7 +109,8 @@ export async function POST(request: NextRequest) {
       content: prompt,
       timestamp: Date.now(),
       metadata: {
-        sandboxId: context?.sandboxId
+        sandboxId: context?.sandboxId,
+        projectType
       }
     };
     global.conversationState.context.messages.push(userMessage);
@@ -556,10 +557,10 @@ Remember: You are a SURGEON making a precise incision, not an artist repainting 
         
         // Build system prompt with conversation awareness
         const projectInfo = global.conversationState.context.projectType
-          ? `\nCurrent project type: ${global.conversationState.context.projectType}.`
+          ? `\nThe current project is a ${global.conversationState.context.projectType}. Tailor your responses accordingly.`
           : '';
-        const systemPrompt = `You are an expert React developer with perfect memory of the conversation. You maintain context across messages and remember scraped websites, generated components, and applied code. Generate clean, modern React code for Vite applications.${projectInfo}
-${conversationContext}
+        const systemPrompt = `You are an expert React developer with perfect memory of the conversation. You maintain context across messages and remember scraped websites, generated components, and applied code.${projectInfo}
+Generate clean, modern React code for Vite applications.${conversationContext}
 
 🚨 CRITICAL RULES - YOUR MOST IMPORTANT INSTRUCTIONS:
 1. **DO EXACTLY WHAT IS ASKED - NOTHING MORE, NOTHING LESS**
