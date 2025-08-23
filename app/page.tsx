@@ -22,7 +22,7 @@ import {
   SiJson 
 } from '@/lib/icons';
 import { motion, AnimatePresence } from 'framer-motion';
-import КодApplicationProgress, { type КодApplicationState } from '@/components/КодApplicationProgress';
+import CodeApplicationProgress, { type CodeApplicationState } from '@/components/CodeApplicationProgress';
 import Logo from '@/components/Logo';
 
 interface SandboxData {
@@ -106,7 +106,7 @@ export default function AISandboxPage() {
   const chatMessagesRef = useRef<HTMLDivElement>(null);
   const codeDisplayRef = useRef<HTMLDivElement>(null);
   
-  const [codeApplicationState, setКодApplicationState] = useState<КодApplicationState>({
+  const [codeApplicationState, setCodeApplicationState] = useState<CodeApplicationState>({
     stage: null
   });
   
@@ -473,7 +473,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
     
     try {
       // Show progress component instead of individual messages
-      setКодApplicationState({ stage: 'analyzing' });
+      setCodeApplicationState({ stage: 'analyzing' });
       
       // Get pending packages from tool calls
       const pendingPackages = ((window as any).pendingPackages || []).filter((pkg: any) => pkg && typeof pkg === 'string');
@@ -519,18 +519,18 @@ Tip: I automatically detect and install npm packages from your code imports (lik
               switch (data.type) {
                 case 'start':
                   // Don't add as chat message, just update state
-                  setКодApplicationState({ stage: 'analyzing' });
+                  setCodeApplicationState({ stage: 'analyzing' });
                   break;
                   
                 case 'step':
                   // Update progress state based on step
                   if (data.message.includes('Installing') && data.packages) {
-                    setКодApplicationState({ 
+                    setCodeApplicationState({ 
                       stage: 'installing', 
                       packages: data.packages 
                     });
                   } else if (data.message.includes('Creating files') || data.message.includes('Applying')) {
-                    setКодApplicationState({ 
+                    setCodeApplicationState({ 
                       stage: 'applying',
                       filesGenerated: results.filesCreated 
                     });
@@ -540,7 +540,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                 case 'package-progress':
                   // Handle package installation progress
                   if (data.installedPackages) {
-                    setКодApplicationState(prev => ({ 
+                    setCodeApplicationState(prev => ({ 
                       ...prev,
                       installedPackages: data.installedPackages 
                     }));
@@ -556,7 +556,7 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   
                 case 'success':
                   if (data.installedPackages) {
-                    setКодApplicationState(prev => ({ 
+                    setCodeApplicationState(prev => ({ 
                       ...prev,
                       installedPackages: data.installedPackages 
                     }));
@@ -591,10 +591,10 @@ Tip: I automatically detect and install npm packages from your code imports (lik
                   
                 case 'complete':
                   finalData = data;
-                  setКодApplicationState({ stage: 'complete' });
+                  setCodeApplicationState({ stage: 'complete' });
                   // Clear the state after a delay
                   setTimeout(() => {
-                    setКодApplicationState({ stage: null });
+                    setCodeApplicationState({ stage: null });
                   }, 3000);
                   break;
                   
@@ -3222,7 +3222,7 @@ Focus on the key sections and content, making it clean and modern.`;
             
             {/* Код application progress */}
             {codeApplicationState.stage && (
-              <КодApplicationProgress state={codeApplicationState} />
+              <CodeApplicationProgress state={codeApplicationState} />
             )}
             
             {/* File generation progress - inline display (during generation) */}
