@@ -5,7 +5,10 @@
   "scripts": {
     "start": "ts-node src/index.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "openai": "^4.28.4",
+    "dotenv": "^16.4.5"
+  },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "ts-node": "^10.9.1",
