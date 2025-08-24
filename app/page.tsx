@@ -5,6 +5,15 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { appConfig } from '@/config/app.config';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 // Import icons from centralized module to avoid Turbopack chunk issues
@@ -82,7 +91,9 @@ export default function AISandboxPage() {
   const [loadingStage, setLoadingStage] = useState<'gathering' | 'planning' | 'generating' | null>(null);
   const [sandboxFiles, setSandboxFiles] = useState<Record<string, string>>({});
   const [fileStructure, setFileStructure] = useState<string>('');
-  
+  const [repoName, setRepoName] = useState('');
+  const [githubToken, setGithubToken] = useState('');
+
   const [conversationContext, setConversationContext] = useState<{
     scrapedWebsites: Array<{ url: string; content: any; timestamp: Date }>;
     generatedComponents: Array<{ name: string; path: string; content: string }>;
@@ -3418,14 +3429,45 @@ Focus on the key sections and content, making it clean and modern.`;
               )}
               {sandboxData && !generationProgress.isGenerating && (
                 <>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="code" size="sm">
+                        Экспорт
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Экспорт проекта</DialogTitle>
+                        <DialogDescription>
+                          Укажите имя репозитория и токен GitHub.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <Input
+                          placeholder="Имя нового репозитория"
+                          value={repoName}
+                          onChange={e => setRepoName(e.target.value)}
+                        />
+                        <Input
+                          placeholder="Ваш GitHub Personal Access Token"
+                          type="password"
+                          value={githubToken}
+                          onChange={e => setGithubToken(e.target.value)}
+                        />
+                        <Button onClick={() => console.log(repoName, githubToken)}>
+                          Экспортировать на GitHub
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <Button
                     variant="code"
                     size="sm"
                     asChild
                   >
-                    <a 
-                      href={sandboxData.url} 
-                      target="_blank" 
+                    <a
+                      href={sandboxData.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       title="Открыть в новой вкладке"
                     >
