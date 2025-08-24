@@ -95,31 +95,29 @@ export default function StudioPage() {
   }
 
   const handleExport = async () => {
-    if (!repoName || !githubToken) return
-    setExporting(true)
-    setExportError(null)
+    if (!repoName || !githubToken || !sandboxId) {
+      // Здесь можно показать уведомление пользователю
+      console.error("Не все данные для экспорта предоставлены")
+      return
+    }
     try {
-      const zipRes = await fetch('/api/create-zip', { method: 'POST' })
-      const zipData = await zipRes.json()
-      if (!zipData?.dataUrl) {
-        throw new Error(zipData?.error || 'Не удалось создать архив')
-      }
-      const res = await fetch('/api/export/github', {
+      const response = await fetch('/api/export/github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: githubToken, repoName, zipData: zipData.dataUrl })
+        body: JSON.stringify({ sandboxId, repoName, githubToken })
       })
-      const data = await res.json()
-      if (!data?.url) {
-        throw new Error(data?.error || 'Не удалось экспортировать')
+
+      const result = await response.json()
+
+      if (response.ok) {
+        // Показать уведомление об успехе со ссылкой
+        alert(`Проект успешно экспортирован! Ссылка: ${result.url}`)
+      } else {
+        throw new Error(result.message || 'Не удалось экспортировать проект')
       }
-      setRepoUrl(data.url)
-      setShowExportModal(false)
     } catch (error) {
-      console.error('Export failed', error)
-      setExportError((error as Error).message)
-    } finally {
-      setExporting(false)
+      console.error('Ошибка при экспорте:', error)
+      alert(`Ошибка: ${(error as Error).message}`)
     }
   }
 
