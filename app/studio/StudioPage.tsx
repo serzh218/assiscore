@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import FileTree from '@/components/FileTree'
 import BotEmulator from '@/components/studio/BotEmulator'
-import LogPanel from '@/components/studio/LogPanel'
+import { Terminal } from '@/components/studio/Terminal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,7 +16,7 @@ export default function StudioPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [currentFile, setCurrentFile] = useState<{ path: string; content: string } | null>(null)
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview' | 'logs'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor')
   const [projectType, setProjectType] = useState<'website' | 'application' | 'bot' | null>(null)
   const [showExportModal, setShowExportModal] = useState(false)
   const [repoName, setRepoName] = useState('')
@@ -169,12 +169,6 @@ export default function StudioPage() {
         >
           Превью
         </button>
-        <button
-          className={activeTab === 'logs' ? 'font-semibold' : ''}
-          onClick={() => setActiveTab('logs')}
-        >
-          Логи
-        </button>
       </div>
 
       {activeTab === 'editor' && (
@@ -206,15 +200,21 @@ export default function StudioPage() {
         </div>
       )}
 
-      {activeTab === 'preview' && projectType === 'bot' && sandboxId ? (
-        <BotEmulator sandboxId={sandboxId} />
-      ) : null}
-      {activeTab === 'preview' &&
-        sandboxUrl &&
-        (projectType === 'website' || projectType === 'application') && (
-          <iframe src={sandboxUrl} className="w-full h-[500px] border rounded" />
-        )}
-      {activeTab === 'logs' && sandboxId && <LogPanel sandboxId={sandboxId} />}
+      {activeTab === 'preview' && (
+        <div className="flex flex-col h-[500px]">
+          <div className="h-3/5 border-b border-gray-700">
+            {projectType === 'bot' && sandboxId ? (
+              <BotEmulator sandboxId={sandboxId} />
+            ) : sandboxUrl &&
+              (projectType === 'website' || projectType === 'application') ? (
+              <iframe src={sandboxUrl} className="w-full h-full border rounded" />
+            ) : null}
+          </div>
+          <div className="h-2/5">
+            {sandboxId && <Terminal sandboxId={sandboxId} />}
+          </div>
+        </div>
+      )}
       {showExportModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-card p-4 rounded w-96 space-y-4">

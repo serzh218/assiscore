@@ -1,30 +1,22 @@
-import { Router } from 'express';
-import { getSandboxEntry } from '../sandboxManager';
+import { Router, Request, Response } from 'express';
+import { Sandbox } from 'e2b';
 
 const router = Router();
 
-router.post('/execute', async (req, res) => {
+router.post('/', async (req: Request, res: Response) => {
+  const { sandboxId, cmd } = req.body;
+
+  if (!sandboxId || !cmd) {
+    return res.status(400).json({ error: 'sandboxId and cmd are required' });
+  }
+
   try {
-    const { sandboxId, command, cwd = '/home/user/app' } = req.body;
-    if (!sandboxId || !command) {
-      return res.status(400).json({ error: 'sandboxId and command are required' });
-    }
-
-    const { sandbox, emitter } = await getSandboxEntry(sandboxId);
-
-    // Start command execution without waiting for completion
-    sandbox.commands
-      .run(command, {
-        cwd,
-        on_stdout: (data: string) => emitter.emit('stdout', data),
-        on_stderr: (data: string) => emitter.emit('stderr', data),
-      })
-      .catch((err: any) => emitter.emit('stderr', err.message));
-
-    return res.json({ success: true });
-  } catch (error: any) {
-    console.error('[execute] Error:', error);
-    return res.status(500).json({ error: error.message });
+    const sandbox = await Sandbox.reconnect(sandboxId);
+    // Запускаем процесс, но НЕ ждем его завершения
+    sandbox.process.start({ cmd });
+    res.json({ message: 'Команда запущена' });
+  } catch (error) {
+    res.status(500).json({ error: 'Не удалось выполнить команду' });
   }
 });
 
