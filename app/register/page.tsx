@@ -4,16 +4,20 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Toaster, toast } from 'sonner';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage('');
+    if (!email || !password) {
+      toast.error('Email and password are required');
+      return;
+    }
+
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -24,9 +28,10 @@ export default function RegisterPage() {
       if (!res.ok) {
         throw new Error(data.message || 'Registration failed');
       }
-      router.push('/');
+      toast.success('Registration successful');
+      router.push('/login');
     } catch (err: any) {
-      setMessage(err.message);
+      toast.error(err.message || 'Registration failed');
     }
   };
 
@@ -49,7 +54,7 @@ export default function RegisterPage() {
         />
         <Button type="submit">Register</Button>
       </form>
-      {message && <p className="mt-2 text-sm text-red-600">{message}</p>}
+      <Toaster />
     </div>
   );
 }
