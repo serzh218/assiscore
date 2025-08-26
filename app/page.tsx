@@ -31,12 +31,12 @@ export default function HomePage() {
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-text">
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="move-glow absolute left-1/2 top-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-accent via-pink-500 to-yellow-500 opacity-30 blur-3xl" />
+        <div className="animate-[move-glow_20s_ease-in-out_infinite_alternate] absolute left-1/2 top-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-accent via-pink-500 to-yellow-500 opacity-30 blur-3xl" />
       </div>
 
-      <header className="fadeInDown py-6 text-center text-3xl font-bold">AssisCore</header>
+      <header className="animate-[fadeInDown_0.8s_ease-out_0.5s_forwards] py-6 text-center text-3xl font-bold">AssisCore</header>
 
-      <main className="fadeInUp flex flex-1 flex-col items-center justify-center px-4">
+      <main className="animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] flex flex-1 flex-col items-center justify-center px-4">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-2xl space-y-4"
@@ -103,49 +103,6 @@ export default function HomePage() {
       <footer className="py-4 text-center text-xs text-gray-500">
         © 2024 AssisCore
       </footer>
-
-      <style jsx>{`
-        @keyframes move-glow {
-          0% {
-            transform: translate(-50%, -50%) scale(1);
-          }
-          50% {
-            transform: translate(-40%, -60%) scale(1.2);
-          }
-          100% {
-            transform: translate(-50%, -50%) scale(1);
-          }
-        }
-        .move-glow {
-          animation: move-glow 20s ease-in-out infinite;
-        }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .fadeInUp {
-          animation: fadeInUp 0.6s ease forwards;
-        }
-        @keyframes fadeInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .fadeInDown {
-          animation: fadeInDown 0.6s ease forwards;
-        }
-      `}</style>
     </div>
   );
 }
