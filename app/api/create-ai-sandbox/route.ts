@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Sandbox, type WriteEntry } from '@e2b/code-interpreter';
+import { Sandbox } from '@e2b/code-interpreter';
 import type { SandboxState } from '@/types/sandbox';
 import { appConfig } from '@/config/app.config';
 import fs from 'fs';
@@ -17,6 +17,8 @@ declare global {
   // eslint-disable-next-line no-var
   var sandboxState: SandboxState;
 }
+
+type WriteEntry = { path: string; data: string };
 
 function collectTemplateFiles(dir: string, baseDir: string = dir): WriteEntry[] {
   const entries: WriteEntry[] = [];

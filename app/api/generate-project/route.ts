@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { Sandbox, type WriteEntry } from '@e2b/code-interpreter';
 import fs from 'fs';

@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input, Button } from '@/components/ui';
 import { Toaster, toast } from 'sonner';
 
 export default function RegisterPage() {
