@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 
 export default function HomePage() {
   const [prompt, setPrompt] = useState('');
   const [projectType, setProjectType] = useState<'website' | 'application' | 'bot'>('website');
   const [status, setStatus] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ export default function HomePage() {
       const res = await fetch('/api/generate-project', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, projectType })
+        body: JSON.stringify({ prompt, projectType }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -29,32 +29,124 @@ export default function HomePage() {
   };
 
   return (
-    <main className="max-w-2xl mx-auto p-8 space-y-6">
-      <h1 className="text-3xl font-bold text-center">AssisCore</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Textarea
-          value={prompt}
-          onChange={e => setPrompt(e.target.value)}
-          placeholder="Опишите ваш проект..."
-          className="min-h-[160px]"
-        />
-        <div className="flex justify-center gap-2">
-          {(['website','application','bot'] as const).map(type => (
-            <Button
-              key={type}
-              type="button"
-              variant={projectType === type ? 'default' : 'outline'}
-              onClick={() => setProjectType(type)}
-            >
-              {type === 'website' ? 'Сайт' : type === 'application' ? 'Приложение' : 'Бот'}
-            </Button>
-          ))}
-        </div>
-        <div className="flex justify-center">
-          <Button type="submit" disabled={!prompt.trim()}>Сгенерировать</Button>
-        </div>
-      </form>
-      {status && <p className="text-center text-sm text-gray-600">{status}</p>}
-    </main>
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-text">
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="move-glow absolute left-1/2 top-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-accent via-pink-500 to-yellow-500 opacity-30 blur-3xl" />
+      </div>
+
+      <header className="fadeInDown py-6 text-center text-3xl font-bold">AssisCore</header>
+
+      <main className="fadeInUp flex flex-1 flex-col items-center justify-center px-4">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-2xl space-y-4"
+        >
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder="Опишите ваш проект..."
+            className={`min-h-[160px] w-full rounded-md border bg-transparent p-4 focus:outline-none ${
+              isFocused ? 'border-accent' : 'border-gray-300'
+            }`}
+          />
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-2">
+              {(['website', 'application', 'bot'] as const).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setProjectType(type)}
+                  className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                    projectType === type
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-card text-text border-gray-300'
+                  }`}
+                >
+                  {type === 'website'
+                    ? 'Сайт'
+                    : type === 'application'
+                    ? 'Приложение'
+                    : 'Бот'}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={isPrivate}
+                  onChange={(e) => setIsPrivate(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                Приватный
+              </label>
+              <button
+                type="submit"
+                disabled={!prompt.trim()}
+                className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+              >
+                Сгенерировать
+              </button>
+            </div>
+          </div>
+        </form>
+
+        {status && (
+          <p className="mt-4 text-center text-sm text-gray-500">{status}</p>
+        )}
+      </main>
+
+      <footer className="py-4 text-center text-xs text-gray-500">
+        © 2024 AssisCore
+      </footer>
+
+      <style jsx>{`
+        @keyframes move-glow {
+          0% {
+            transform: translate(-50%, -50%) scale(1);
+          }
+          50% {
+            transform: translate(-40%, -60%) scale(1.2);
+          }
+          100% {
+            transform: translate(-50%, -50%) scale(1);
+          }
+        }
+        .move-glow {
+          animation: move-glow 20s ease-in-out infinite;
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .fadeInUp {
+          animation: fadeInUp 0.6s ease forwards;
+        }
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .fadeInDown {
+          animation: fadeInDown 0.6s ease forwards;
+        }
+      `}</style>
+    </div>
   );
 }
+
