@@ -1,0 +1,81 @@
+// Prisma schema for AssisCore
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum Visibility {
+  public
+  private
+}
+
+enum ProjectStatus {
+  draft
+  building
+  ready
+  error
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String?  @unique
+  password     String?
+  name         String?
+  plan         Plan     @default(FREE)
+  tokens       Int      @default(500)
+  githubLinked Boolean  @default(false)
+  projects     Project[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Project {
+  id         String        @id @default(cuid())
+  ownerId    String
+  owner      User          @relation(fields: [ownerId], references: [id])
+  visibility Visibility    @default(public)
+  title      String
+  type       String
+  spec       Json
+  files      Json?
+  previewUrl String?
+  repoUrl    String?
+  deployUrl  String?
+  status     ProjectStatus @default(draft)
+  createdAt  DateTime      @default(now())
+  generations Generation[]
+  patches    Patch[]
+
+  @@index([ownerId])
+  @@index([status])
+}
+
+model Generation {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  costTokens Int
+  logs       String   @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model Patch {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  diff       String   @db.Text
+  costTokens Int
+  createdAt  DateTime @default(now())
+}

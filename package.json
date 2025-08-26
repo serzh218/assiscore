@@ -13,7 +13,10 @@
     "test:integration": "node tests/e2b-integration.test.js",
     "test:api": "node tests/api-endpoints.test.js",
     "test:code": "node tests/code-execution.test.js",
-    "test:all": "npm run test:integration && npm run test:api && npm run test:code"
+    "test:all": "npm run test:integration && npm run test:api && npm run test:code",
+    "prisma:gen": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.1",
@@ -23,6 +26,7 @@
     "@anthropic-ai/sdk": "^0.57.0",
     "@e2b/code-interpreter": "^1.5.1",
     "@octokit/rest": "^22.0.0",
+    "@prisma/client": "^5.22.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.5",
@@ -58,7 +62,18 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.4.3",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prisma": "^5.22.0",
     "tailwindcss": "^4.1.11",
+    "tsx": "^4.19.2",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma"
+    ]
   }
 }
