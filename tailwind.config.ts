@@ -20,6 +20,7 @@ const config: Config = {
         background: "#111827",
         card: "#1f2937",
         accent: "#8b5cf6",
+        "accent-2": "#d946ef",
         text: "#e2e8f0",
       },
       borderRadius: {

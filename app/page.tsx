@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import GradientCard from '@/components/GradientCard';
 
 export default function HomePage() {
   const [prompt, setPrompt] = useState('');
@@ -98,6 +99,10 @@ export default function HomePage() {
         {status && (
           <p className="mt-4 text-center text-sm text-gray-500">{status}</p>
         )}
+
+        <div className="mt-8 w-full max-w-md">
+          <GradientCard />
+        </div>
       </main>
 
       <footer className="py-4 text-center text-xs text-gray-500">
