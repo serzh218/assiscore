@@ -39,6 +39,30 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'error',
     '@typescript-eslint/no-floating-promises': 'error',
     'react/react-in-jsx-scope': 'off',
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: 'react-diff-viewer-continued',
+            message: "Импортируй через '@/components/ui/DiffViewer.client'.",
+          },
+          {
+            name: 'react-diff-viewer',
+            message: "Импортируй через '@/components/ui/DiffViewer.client'.",
+          },
+          {
+            name: 'react-diff-viewer-2',
+            message: "Импортируй через '@/components/ui/DiffViewer.client'.",
+          },
+          {
+            name: '@/components/ui',
+            importNames: ['DiffViewer'],
+            message: 'DiffViewer нельзя экспортировать из барреля ui.',
+          },
+        ],
+      },
+    ],
   },
   settings: {
     'import/resolver': {
