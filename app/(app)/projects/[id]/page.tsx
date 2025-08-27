@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { COSTS } from "@/lib/limits";
 import { Badge, Tabs, TabsList, TabsTrigger, TabsContent, Button, Textarea } from "@/components/ui";
 
 export default function ProjectPage() {
   const params = useParams<{ id: string }>();
   const projectId = params.id;
+  const { data: session } = useSession();
+  const isPro = session?.user?.plan === "PRO";
+  const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [patches, setPatches] = useState<any[]>([]);
@@ -52,11 +56,33 @@ export default function ProjectPage() {
     alert("Откат скоро появится");
   };
 
+  const toggleVisibility = async () => {
+    const newVis = visibility === "public" ? "private" : "public";
+    if (newVis === "private" && !isPro) {
+      alert("Приватные проекты доступны на PRO");
+      return;
+    }
+    const res = await fetch(`/api/projects/${projectId}/visibility`, {
+      method: "POST",
+      body: JSON.stringify({ visibility: newVis }),
+    });
+    if (res.ok) {
+      setVisibility(newVis);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <h1 className="text-display-3 font-semibold">Название проекта</h1>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={visibility === "public"} onChange={toggleVisibility} />
+          {visibility === "public" ? "Публичный" : "Приватный (PRO)"}
+        </label>
         <Badge>Черновик</Badge>
+      </div>
+      <div className="text-xs text-muted">
+        Публичные проекты попадают в Галерею и могут быть скопированы другими пользователями.
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         <div className="flex h-64 items-center justify-center rounded bg-border">iFrame preview</div>
