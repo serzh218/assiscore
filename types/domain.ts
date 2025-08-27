@@ -1,7 +1,7 @@
-import { Plan, Visibility, ProjectStatus, NotificationType, type Prisma } from '@prisma/client';
+import { Plan, Visibility, ProjectStatus, NotificationType, ProjectRole, type Prisma } from '@prisma/client';
 
 // Re-export enums for use across layers
-export { Plan, Visibility, ProjectStatus, NotificationType };
+export { Plan, Visibility, ProjectStatus, NotificationType, ProjectRole };
 
 // Minimal DTOs for sending to the client (no passwords or sensitive fields)
 export interface UserDTO {
