@@ -1,0 +1,14 @@
+{
+  "home": {
+    "title": "AssisCore",
+    "placeholder": "Describe your project...",
+    "website": "Website",
+    "application": "Application",
+    "bot": "Bot",
+    "private": "Private",
+    "generate": "Generate",
+    "generationStarted": "Generation started...",
+    "generationLaunched": "Generation launched in sandbox",
+    "generationFailed": "Failed to start generation"
+  }
+}

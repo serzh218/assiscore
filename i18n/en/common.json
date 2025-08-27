@@ -1,0 +1,27 @@
+{
+  "appName": "AssisCore",
+  "nav": {
+    "studio": "Studio",
+    "projects": "Projects",
+    "explore": "Explore",
+    "billing": "Billing",
+    "settings": "Settings"
+  },
+  "auth": {
+    "guest": "Guest",
+    "signIn": "Sign in"
+  },
+  "plan": "Plan: {plan} • Tokens: {tokens}",
+  "actions": {
+    "generate": "Generate",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "publish": "Publish"
+  },
+  "language": {
+    "switch": "Switch language",
+    "ru": "Русский",
+    "en": "English"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "required": "Authentication required"
+  },
+  "pro": {
+    "required": "PRO only"
+  },
+  "tokens": {
+    "insufficient": "Not enough tokens"
+  },
+  "request": {
+    "failed": "Request failed"
+  }
+}

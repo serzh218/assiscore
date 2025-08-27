@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { Input, Button } from '@/components/ui';
 import { Toaster, toast } from 'sonner';
 
 export default function SignUpPage() {
   const router = useRouter();
+  const locale = useLocale();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +23,7 @@ export default function SignUpPage() {
     });
     if (res.ok) {
       toast.success('Аккаунт создан. Войдите, чтобы продолжить.');
-      router.push('/auth/sign-in');
+      router.push(`/${locale}/auth/sign-in`);
     } else if (res.status === 409) {
       toast.error('Пользователь с такой почтой уже существует.');
     } else {
@@ -56,7 +58,7 @@ export default function SignUpPage() {
         <Button type="submit">Продолжить</Button>
       </form>
       <p className="mt-4 text-sm">
-        <Link href="/auth/sign-in" className="text-primary hover:underline">
+        <Link href={`/${locale}/auth/sign-in`} className="text-primary hover:underline">
           Войти
         </Link>
       </p>

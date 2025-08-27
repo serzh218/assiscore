@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { signIn } from 'next-auth/react';
 import { Input, Button } from '@/components/ui';
 import { Toaster, toast } from 'sonner';
 
 export default function SignInPage() {
   const router = useRouter();
+  const locale = useLocale();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,7 +24,7 @@ export default function SignInPage() {
     if (res?.error) {
       toast.error('Неверная почта или пароль.');
     } else {
-      router.push('/studio');
+      router.push(`/${locale}/studio`);
     }
   };
 
@@ -47,7 +49,7 @@ export default function SignInPage() {
         <Button type="submit">Войти</Button>
       </form>
       <p className="mt-4 text-sm">
-        <Link href="/auth/sign-up" className="text-primary hover:underline">
+        <Link href={`/${locale}/auth/sign-up`} className="text-primary hover:underline">
           Создать аккаунт
         </Link>
       </p>
