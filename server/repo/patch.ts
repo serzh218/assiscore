@@ -6,6 +6,8 @@ const toPatchDTO = (patch: Patch): PatchDTO => ({
   id: patch.id,
   projectId: patch.projectId,
   diff: patch.diff,
+  status: patch.status,
+  notes: patch.notes ?? undefined,
   costTokens: patch.costTokens,
   createdAt: patch.createdAt,
 });
@@ -13,14 +15,18 @@ const toPatchDTO = (patch: Patch): PatchDTO => ({
 export async function createPatch({
   projectId,
   diff,
+  status,
+  notes,
   costTokens,
 }: {
   projectId: string;
   diff: string;
+  status: string;
+  notes?: string;
   costTokens: number;
 }): Promise<PatchDTO> {
   const patch = await prisma.patch.create({
-    data: { projectId, diff, costTokens },
+    data: { projectId, diff, status: status as any, notes, costTokens },
   });
   return toPatchDTO(patch);
 }

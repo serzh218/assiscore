@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import axios from 'axios';
 import { FileBundle, TFileBundle } from './schema';
+import { DiffBundle, TDiffBundle } from './diffSchema';
 
 interface Attachment {
   name: string;
@@ -86,4 +87,42 @@ export async function generateFileBundle(params: GenerateParams): Promise<TFileB
     }
   }
   throw lastErr || new Error('Failed to generate bundle');
+}
+
+export async function generateDiffBundle({
+  message,
+  files,
+}: {
+  message: string;
+  files: Record<string, string>;
+}): Promise<TDiffBundle> {
+  const system =
+    'Ты — ассистент-кодогенератор. Верни только JSON по схеме DiffBundle: diffs:[{path,diff}], где diff — стандартный unified diff. Не возвращай весь файл — только минимальные изменения. Только для разрешённых путей (app/, components/, styles/, public/, lib/, templates/).';
+  const fileList = Object.entries(files)
+    .slice(0, 5)
+    .map(([p, c]) => `# ${p}\n${c.slice(0, 1000)}`)
+    .join('\n');
+  const user = [message, 'Файлы:', fileList, 'Верни только diff JSON.'].join('\n');
+  const headers = {
+    Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    'Content-Type': 'application/json',
+  } as Record<string, string>;
+  const res = await axios.post(
+    OPENROUTER_URL,
+    {
+      model: 'gpt-4.1-mini',
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+      response_format: { type: 'json_object' },
+    },
+    { timeout: 90_000, headers },
+  );
+  const content = res.data.choices?.[0]?.message?.content || '{}';
+  const jsonStart = content.indexOf('{');
+  const jsonEnd = content.lastIndexOf('}');
+  const json = content.slice(jsonStart, jsonEnd + 1);
+  const parsed = JSON.parse(json);
+  return DiffBundle.parse(parsed);
 }

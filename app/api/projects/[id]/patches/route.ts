@@ -11,5 +11,5 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
   const patches = await listPatches(project.id);
-  return NextResponse.json({ patches: patches.map(p => ({ id: p.id, costTokens: p.costTokens, createdAt: p.createdAt })) });
+  return NextResponse.json({ patches: patches.map(p => ({ id: p.id, status: p.status, notes: p.notes, costTokens: p.costTokens, createdAt: p.createdAt })) });
 }

@@ -86,6 +86,8 @@ model Patch {
   projectId  String
   project    Project  @relation(fields: [projectId], references: [id])
   diff       String   @db.Text
+  status     ProjectStatus @default(draft)
+  notes      String?
   costTokens Int
   createdAt  DateTime @default(now())
 }

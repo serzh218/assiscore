@@ -56,6 +56,8 @@ export interface PatchDTO {
   id: string;
   projectId: string;
   diff: string;
+  status: string;
+  notes?: string;
   costTokens: number;
   createdAt: Date;
 }
