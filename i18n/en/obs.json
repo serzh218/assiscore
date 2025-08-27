@@ -1,0 +1,17 @@
+{
+  "slo": {
+    "title": "Quality Objectives (SLO)"
+  },
+  "sla": {
+    "title": "SLA for PRO",
+    "status": {
+      "ok": "SLA met",
+      "breached": "SLA breached"
+    }
+  },
+  "alert": {
+    "errorRate": "Error: error rate above threshold",
+    "latency": "Error: latency exceeded limit",
+    "tokens": "Error: token usage exceeded"
+  }
+}
