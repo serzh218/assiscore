@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm test:all",
+    "test": "vitest run",
     "test:integration": "node tests/e2b-integration.test.js",
     "test:api": "node tests/api-endpoints.test.js",
     "test:code": "node tests/code-execution.test.js",
@@ -68,7 +68,8 @@
     "prisma": "^5.22.0",
     "tailwindcss": "^4.1.11",
     "tsx": "^4.19.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.0.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
