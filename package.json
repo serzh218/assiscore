@@ -4,20 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:integration": "node tests/e2b-integration.test.js",
-    "test:api": "node tests/api-endpoints.test.js",
-    "test:code": "node tests/code-execution.test.js",
-    "test:all": "npm run test:integration && npm run test:api && npm run test:code",
+    "typecheck": "tsc --noEmit -p tsconfig.check.json",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "test": "vitest run --reporter=verbose",
+    "test:watch": "vitest",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "db:seed": "tsx scripts/seed.ts",
-    "billing:webhook": "tsx scripts/mockYookassaWebhook.ts"
+    "dx:check": "pnpm lint && pnpm typecheck && pnpm test",
+    "ci:verify": "pnpm prisma:gen && pnpm dx:check && pnpm build",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.1",
@@ -65,9 +64,17 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "@vitest/coverage-v8": "^2.0.5",
+    "eslint": "^9.34.0",
     "eslint-config-next": "15.4.3",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
     "prisma": "^5.22.0",
     "tailwindcss": "^4.1.11",
     "tsx": "^4.19.2",
@@ -80,6 +87,15 @@
       "@prisma/engines",
       "esbuild",
       "prisma"
+    ]
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,css,json}": [
+      "prettier --write"
     ]
   }
 }

@@ -1,5 +1,6 @@
-import { defineConfig } from 'vitest/config';
-import path from 'path';
+import path from 'path'
+
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   resolve: {
@@ -9,5 +10,10 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    coverage: {
+      enabled: true,
+      provider: 'v8',
+      lines: 50,
+    },
   },
-});
+})
