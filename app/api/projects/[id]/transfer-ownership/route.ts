@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { assertProjectPermission } from '@/server/guards/acl'
 import { setOwner } from '@/server/repo/members'
 import { writeAudit } from '@/server/repo/audit'

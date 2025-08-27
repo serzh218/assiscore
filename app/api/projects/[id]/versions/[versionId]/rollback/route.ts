@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { getProjectById, setProjectFiles, touchProjectBuild } from '@/server/repo/project'
 import { getVersion, saveVersion } from '@/server/repo/version'
 import { enqueueRebuild } from '@/server/queue/generationQueue'

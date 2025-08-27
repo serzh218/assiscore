@@ -1,5 +1,5 @@
 import React from 'react'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { listPayments } from '@/server/repo/payment'
 import {
   Card,

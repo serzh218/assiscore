@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { assertProjectPermission } from '@/server/guards/acl'
 import { handleCopilotSocket } from '@/server/copilot/ws'
 

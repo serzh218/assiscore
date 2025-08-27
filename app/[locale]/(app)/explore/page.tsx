@@ -1,19 +1,19 @@
-import Link from 'next/link';
-import { Card, CardContent, CardTitle, Button } from '@/components/ui';
-import { ForkButton } from './ForkButton';
-import { getCurrentUser } from '@/lib/auth';
+import Link from 'next/link'
+import { Card, CardContent, CardTitle, Button } from '@/components/ui'
+import { ForkButton } from './ForkButton'
+import { getCurrentUser } from '@/auth'
 
 export const generateMetadata = () => ({
   title: 'Галерея проектов',
   description: 'Публичные проекты пользователей',
-});
+})
 
 export default async function ExplorePage({ searchParams }: { searchParams: { order?: string } }) {
-  const order = searchParams.order === 'popular' ? 'popular' : 'new';
-  const base = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-  const res = await fetch(`${base}/api/explore?order=${order}`, { cache: 'no-store' });
-  const data = await res.json();
-  const user = await getCurrentUser();
+  const order = searchParams.order === 'popular' ? 'popular' : 'new'
+  const base = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const res = await fetch(`${base}/api/explore?order=${order}`, { cache: 'no-store' })
+  const data = await res.json()
+  const user = await getCurrentUser()
   return (
     <div className="space-y-4">
       <div className="flex gap-4">
@@ -32,7 +32,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: { or
             <Card key={p.id}>
               <CardContent className="space-y-2 p-4">
                 <div className="h-32 rounded bg-border overflow-hidden">
-                  {p.previewUrl ? <img src={p.previewUrl} alt="preview" className="h-full w-full object-cover" /> : null}
+                  {p.previewUrl ? (
+                    <img src={p.previewUrl} alt="preview" className="h-full w-full object-cover" />
+                  ) : null}
                 </div>
                 <CardTitle className="text-base truncate">{p.title}</CardTitle>
                 <div className="text-sm text-muted">{p.author?.name}</div>
@@ -48,5 +50,5 @@ export default async function ExplorePage({ searchParams }: { searchParams: { or
         </div>
       )}
     </div>
-  );
+  )
 }

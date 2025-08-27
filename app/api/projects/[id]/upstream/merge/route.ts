@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { getProjectLight } from '@/server/repo/project'
 import { mergeUpstream } from '@/server/merge/orchestrator'
 

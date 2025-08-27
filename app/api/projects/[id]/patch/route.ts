@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { COSTS } from '@/lib/limits'
 import { getProjectById } from '@/server/repo/project'
 import { runPatchPipeline } from '@/server/ai/patchOrchestrator'

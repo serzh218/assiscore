@@ -36,7 +36,7 @@ vi.mock('@/server/repo/generation', () => ({
   appendGenerationLogs: vi.fn(async () => {}),
 }))
 
-vi.mock('@/lib/auth', () => ({
+vi.mock('@/auth', () => ({
   getCurrentUser: vi.fn(async () => ({ id: 'u1' })),
 }))
 
