@@ -4,7 +4,7 @@ import { estimateGenerationCost } from '@/lib/tokens';
 import { assertCanGenerate, spendTokens } from '@/server/guards/limits';
 import { createProject } from '@/server/repo/project';
 import { createGeneration } from '@/server/repo/generation';
-import { enqueueGeneration } from '@/server/queue/generationQueue';
+import { runGenerationPipeline } from '@/server/ai/orchestrator';
 import type { Visibility } from '@prisma/client';
 
 export async function POST(req: Request) {
@@ -42,7 +42,9 @@ export async function POST(req: Request) {
 
     await spendTokens(user.id, estimatedCost, 'generation', { projectId: project.id });
 
-    enqueueGeneration(project.id, project.spec, generation.id);
+    runGenerationPipeline({ user, project, spec: project.spec, generationId: generation.id }).catch((e) => {
+      console.error('pipeline error', e);
+    });
 
     return NextResponse.json({ projectId: project.id });
   } catch (err: any) {

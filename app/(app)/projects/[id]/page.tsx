@@ -27,6 +27,8 @@ export default function ProjectPage() {
   const [deployStatus, setDeployStatus] = useState<{ stepStatus: string; logs: string[] }>({ stepStatus: "upload", logs: [] });
   const [polling, setPolling] = useState(false);
   const [lastDeployedAt, setLastDeployedAt] = useState<Date | null>(null);
+  const [genStatus, setGenStatus] = useState<string>("plan");
+  const [genLogs, setGenLogs] = useState<string[]>([]);
   const domainValid = !domain || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(domain);
 
   const fetchPatches = async () => {
@@ -36,6 +38,21 @@ export default function ProjectPage() {
       setPatches(data.patches || []);
     }
   };
+
+  useEffect(() => {
+    const poll = setInterval(async () => {
+      const res = await fetch(`/api/generate/status?projectId=${projectId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setGenStatus(data.status);
+        setGenLogs(data.logs || []);
+        if (data.status === "ready") {
+          clearInterval(poll);
+        }
+      }
+    }, 1000);
+    return () => clearInterval(poll);
+  }, [projectId]);
 
   useEffect(() => {
     fetchPatches();
@@ -159,7 +176,22 @@ export default function ProjectPage() {
         Публичные проекты попадают в Галерею и могут быть скопированы другими пользователями.
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="flex h-64 items-center justify-center rounded bg-border">iFrame preview</div>
+        <div className="relative flex h-64 items-center justify-center rounded bg-border">
+          {genStatus === "ready" ? (
+            <>
+              <iframe src={`/api/projects/${projectId}/preview`} className="w-full h-full" sandbox="" />
+              <a
+                href={`/api/projects/${projectId}/preview`}
+                target="_blank"
+                className="absolute right-2 top-2 text-xs underline"
+              >
+                Открыть в новой вкладке
+              </a>
+            </>
+          ) : (
+            <div>Статус: {genStatus}</div>
+          )}
+        </div>
         <Tabs defaultValue="files" className="w-full">
           <TabsList>
             <TabsTrigger value="files">Файлы</TabsTrigger>
@@ -195,7 +227,11 @@ export default function ProjectPage() {
           </TabsContent>
         </Tabs>
       </div>
-      <div className="h-40 overflow-auto rounded bg-bg-elev p-4 font-mono text-sm">логи...</div>
+      <div className="h-40 overflow-auto rounded bg-bg-elev p-4 font-mono text-sm">
+        {genLogs.map((l, i) => (
+          <div key={i}>{l}</div>
+        ))}
+      </div>
       <div className="flex flex-wrap gap-4">
         <Button variant="secondary">Скачать ZIP</Button>
         <div className="space-y-1">
