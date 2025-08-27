@@ -61,9 +61,16 @@ model Project {
   status         ProjectStatus @default(draft)
   likes          Int           @default(0)
   tags           String[]      @default([])
+  // fork/upstream relationship
+  forkOfId        String?
+  forkOf          Project?      @relation("ForkUpstream", fields: [forkOfId], references: [id])
+  forks           Project[]     @relation("ForkUpstream")
+  forkBase        Json?
+  upstreamMergedAt DateTime?
   createdAt      DateTime      @default(now())
   generations    Generation[]
   patches        Patch[]
+  snapshots      ProjectSnapshot[]
 
   @@index([ownerId])
   @@index([status])
@@ -117,4 +124,15 @@ model Payment {
   updatedAt  DateTime @updatedAt
 
   @@index([userId, createdAt])
+}
+
+model ProjectSnapshot {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  label     String
+  files     Json
+  createdAt DateTime @default(now())
+
+  @@index([projectId, createdAt])
 }

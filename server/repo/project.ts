@@ -44,6 +44,16 @@ export async function getProjectById(id: string): Promise<ProjectDTO | null> {
   return project ? toProjectDTO(project) : null;
 }
 
+export async function getProjectLight(
+  id: string
+): Promise<{ id: string; ownerId: string; visibility: Visibility; title: string } | null> {
+  const project = await prisma.project.findUnique({
+    where: { id },
+    select: { id: true, ownerId: true, visibility: true, title: true },
+  });
+  return project;
+}
+
 export async function listProjectsByOwner(
   ownerId: string,
   { limit = 20, offset = 0 }: { limit?: number; offset?: number }
@@ -134,6 +144,43 @@ export async function getProjectFiles(id: string): Promise<Record<string, string
 
 export async function setProjectFiles(id: string, files: Record<string, string>): Promise<void> {
   await prisma.project.update({ where: { id }, data: { files } });
+}
+
+export async function setForkUpstream(
+  forkId: string,
+  upstreamId: string,
+  baseFiles: Record<string, string>
+): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    await tx.project.update({
+      where: { id: forkId },
+      data: { forkOfId: upstreamId, forkBase: baseFiles },
+    });
+    await tx.projectSnapshot.create({
+      data: { projectId: forkId, label: 'fork-base', files: baseFiles },
+    });
+  });
+}
+
+export async function getUpstreamInfo(
+  forkId: string
+): Promise<{ upstreamId: string | null; forkBase: Record<string, string> | null; upstreamMergedAt: Date | null }> {
+  const proj = await prisma.project.findUnique({
+    where: { id: forkId },
+    select: { forkOfId: true, forkBase: true, upstreamMergedAt: true },
+  });
+  if (!proj) {
+    throw new Error('Project not found');
+  }
+  return {
+    upstreamId: proj.forkOfId ?? null,
+    forkBase: (proj.forkBase as Record<string, string> | null) ?? null,
+    upstreamMergedAt: proj.upstreamMergedAt ?? null,
+  };
+}
+
+export async function markUpstreamMerged(id: string, date: Date): Promise<void> {
+  await prisma.project.update({ where: { id }, data: { upstreamMergedAt: date } });
 }
 
 export async function touchProjectBuild(id: string, status: ProjectStatus): Promise<void> {
