@@ -75,7 +75,7 @@ export default function StudioPage() {
         </Button>
         {useFigma && (
           <Input
-            placeholder="Ссылка на Figma"
+            placeholder="Вставьте ссылку или загрузите JSON-экспорт"
             value={figma}
             onChange={(e) => setFigma(e.target.value)}
             className="max-w-xs"

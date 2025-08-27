@@ -76,6 +76,11 @@ AssisCore позволяет пользователям превращать и�
 
 Подробнее о схеме и возможностях см. в `lib/ai` и `server/ai`.
 
+## Импорт из Figma
+
+Чтобы подтянуть дизайн из Figma, получите [Personal Access Token](https://www.figma.com/developers/api#access-tokens) и пропишите его в `.env` как `FIGMA_PERSONAL_ACCESS_TOKEN`.
+Пример ссылки: `https://www.figma.com/file/FILE_KEY/name?node-id=NODE_ID`.
+
 ## Разработка
 
 1. Установите зависимости:
