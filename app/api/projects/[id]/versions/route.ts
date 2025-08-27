@@ -1,15 +1,16 @@
-import { NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth';
-import { getProjectById } from '@/server/repo/project';
-import { listVersions } from '@/server/repo/version';
+import { NextResponse } from 'next/server'
+import { getCurrentUser } from '@/lib/auth'
+import { getProjectById } from '@/server/repo/project'
+import { listVersions } from '@/server/repo/version'
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const project = await getProjectById(params.id);
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { id } = await params
+  const project = await getProjectById(id)
   if (!project || project.ownerId !== user.id) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
-  const versions = await listVersions(project.id);
-  return NextResponse.json({ versions });
+  const versions = await listVersions(project.id)
+  return NextResponse.json({ versions })
 }
