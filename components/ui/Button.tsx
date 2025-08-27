@@ -2,9 +2,10 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { clsx } from "clsx";
+import { Loader2 } from "lucide-react";
 
 const buttonStyles = cva(
-  "inline-flex items-center justify-center font-medium rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transition-colors duration-150",
+  "inline-flex items-center justify-center font-medium rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transition-base",
   {
     variants: {
       variant: {
@@ -33,18 +34,22 @@ export interface ButtonProps
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, loading, asChild, children, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return (
-      <Comp
-        ref={ref as any}
-        className={clsx(buttonStyles({ variant, size }), className)}
-        disabled={loading || props.disabled}
-        {...props}
-      >
-        {loading ? "..." : children}
-      </Comp>
-    );
-  }
+    ({ className, variant, size, loading, asChild, children, ...props }, ref) => {
+      const Comp = asChild ? Slot : "button";
+      return (
+        <Comp
+          ref={ref as any}
+          className={clsx(buttonStyles({ variant, size }), className)}
+          disabled={loading || props.disabled}
+          aria-busy={loading}
+          {...props}
+        >
+          {loading && (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+          )}
+          {children}
+        </Comp>
+      );
+    }
 );
 Button.displayName = "Button";
