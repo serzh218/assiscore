@@ -1,6 +1,18 @@
+"use client";
+
 import { Input, Button } from "@/components/ui";
+import { signIn, useSession } from "next-auth/react";
 
 export default function SettingsPage() {
+  const { data: session, update } = useSession();
+  const githubLinked = session?.user.githubLinked;
+  const githubUsername = session?.user.githubUsername;
+
+  const disconnect = async () => {
+    await fetch("/api/settings/github/disconnect", { method: "POST" });
+    await update();
+  };
+
   return (
     <div className="space-y-6">
       <section className="space-y-2">
@@ -10,10 +22,16 @@ export default function SettingsPage() {
       </section>
       <section className="space-y-2">
         <h2 className="text-display-3 font-semibold">Интеграции</h2>
-        <div className="flex gap-4">
-          <Button size="sm">Connect GitHub</Button>
-          <Button size="sm" variant="secondary">Disconnect</Button>
-        </div>
+        {!githubLinked ? (
+          <Button size="sm" onClick={() => signIn("github")}>Подключить GitHub</Button>
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="text-sm">GitHub подключён как {githubUsername}</div>
+            <Button size="sm" variant="secondary" onClick={disconnect}>
+              Отключить
+            </Button>
+          </div>
+        )}
       </section>
       <section className="space-y-2">
         <h2 className="text-display-3 font-semibold">Приватность</h2>

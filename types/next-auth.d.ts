@@ -11,5 +11,7 @@ declare module 'next-auth/jwt' {
     userId: string;
     plan: SessionUser['plan'];
     tokens: number;
+    githubLinked: boolean;
+    githubUsername?: string | null;
   }
 }
