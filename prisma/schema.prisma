@@ -313,3 +313,27 @@ model CodeIndex {
 
   @@index([projectId, path])
 }
+
+model TestCycle {
+  id         String   @id @default(cuid())
+  projectId  String
+  userId     String
+  status     String
+  targetPath String?
+  prompt     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  runs       TestRun[]
+}
+
+model TestRun {
+  id          String    @id @default(cuid())
+  cycleId     String
+  cycle       TestCycle @relation(fields: [cycleId], references: [id])
+  status      String
+  testsTotal  Int      @default(0)
+  testsFailed Int      @default(0)
+  reportJson  Json?
+  logs        String?
+  createdAt   DateTime @default(now())
+}
