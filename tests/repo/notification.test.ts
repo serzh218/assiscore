@@ -8,7 +8,7 @@ vi.mock('@/lib/db', () => ({
   prisma: {
     notification: {
       create: vi.fn(async ({ data }: any) => {
-        const rec = { ...data, id: `n${records.length + 1}`, createdAt: new Date() };
+        const rec = { ...data, id: `n${records.length + 1}`, createdAt: new Date(Date.now() + records.length) };
         records.push(rec);
         return rec;
       }),

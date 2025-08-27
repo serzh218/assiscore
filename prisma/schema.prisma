@@ -19,6 +19,12 @@ enum Visibility {
   private
 }
 
+enum ProjectRole {
+  OWNER
+  COLLABORATOR
+  VIEWER
+}
+
 enum ProjectStatus {
   draft
   building
@@ -37,6 +43,8 @@ model User {
   githubLinked      Boolean            @default(false)
   githubUsername    String?
   projects          Project[]
+  projectMembers    ProjectMember[]
+  auditLogs         AuditLog[]
   tokenTransactions TokenTransaction[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
@@ -74,10 +82,54 @@ model Project {
   patches        Patch[]
   snapshots      ProjectSnapshot[]
   versions       ProjectVersion[]
+  members        ProjectMember[]
+  invites        ProjectInvite[]
+  auditLogs      AuditLog[]
 
   @@index([ownerId])
   @@index([status])
   @@index([visibility, createdAt])
+}
+
+model ProjectMember {
+  id         String      @id @default(cuid())
+  projectId  String
+  project    Project     @relation(fields: [projectId], references: [id])
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  role       ProjectRole
+  createdAt  DateTime    @default(now())
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+model ProjectInvite {
+  id         String      @id @default(cuid())
+  projectId  String
+  project    Project     @relation(fields: [projectId], references: [id])
+  email      String
+  role       ProjectRole
+  token      String      @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  invitedBy  String
+  createdAt  DateTime    @default(now())
+
+  @@index([projectId, email])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  meta       Json?
+  createdAt  DateTime @default(now())
+
+  @@index([projectId, createdAt])
 }
 
 model Generation {
