@@ -2,6 +2,8 @@ import path from 'path'
 
 import { defineConfig } from 'vitest/config'
 
+import { QUALITY } from './quality.config'
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -13,7 +15,10 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: 'v8',
-      lines: 50,
+      lines: QUALITY.coverage.global.lines,
+      statements: QUALITY.coverage.global.statements,
+      branches: QUALITY.coverage.global.branches,
+      functions: QUALITY.coverage.global.functions,
     },
   },
 })

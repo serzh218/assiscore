@@ -1,0 +1,108 @@
+name: PR Quality
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: echo "setup complete"
+  typecheck:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test -- --coverage
+      - run: pnpm exec tsx scripts/coverage-diff.ts
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec tsx scripts/bundle-size.ts > bundle.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle
+          path: bundle.json
+  ai-cost:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsx scripts/ai-cost-estimate.ts > ai-cost.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ai-cost
+          path: ai-cost.json
+  preview:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - run: pnpm exec tsx scripts/pr-preview.ts ${{ github.event.number }} > preview.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview
+          path: preview.json
+  report:
+    runs-on: ubuntu-latest
+    needs: [build, ai-cost, preview]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: ai-cost
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview
+          path: .
+      - run: pnpm exec tsx scripts/pr-comment.ts coverage/coverage-final.json bundle.json ai-cost.json $(cat preview.json | jq -r '.deployUrl')
