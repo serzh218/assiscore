@@ -9,6 +9,7 @@ const toUserDTO = (user: User): UserDTO => ({
   plan: user.plan,
   tokens: user.tokens,
   githubLinked: user.githubLinked,
+  githubUsername: user.githubUsername ?? undefined,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
 });
@@ -69,9 +70,15 @@ export async function updateUserTokens(id: string, delta: number): Promise<UserD
   }
 }
 
-export async function linkGithub(id: string, linked: boolean): Promise<UserDTO | null> {
+export async function linkGithub(id: string, linked: boolean, username?: string): Promise<UserDTO | null> {
+  const data: Prisma.UserUpdateInput = { githubLinked: linked };
+  if (!linked) {
+    data.githubUsername = null;
+  } else if (username) {
+    data.githubUsername = username;
+  }
   try {
-    const user = await prisma.user.update({ where: { id }, data: { githubLinked: linked } });
+    const user = await prisma.user.update({ where: { id }, data });
     return toUserDTO(user);
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {

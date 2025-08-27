@@ -11,6 +11,7 @@ export interface UserDTO {
   plan: Plan;
   tokens: number;
   githubLinked: boolean;
+  githubUsername?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +22,8 @@ export interface SessionUser {
   name?: string | null;
   plan: Plan;
   tokens: number;
+  githubLinked: boolean;
+  githubUsername?: string | null;
 }
 
 export interface ProjectDTO {

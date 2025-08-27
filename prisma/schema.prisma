@@ -34,6 +34,7 @@ model User {
   plan         Plan     @default(FREE)
   tokens       Int      @default(500)
   githubLinked Boolean  @default(false)
+  githubUsername String?
   projects     Project[]
   tokenTransactions TokenTransaction[]
   createdAt    DateTime @default(now())
