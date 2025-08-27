@@ -1,0 +1,12 @@
+{
+  "title": "Test-first mode",
+  "start": "Generate tests and run",
+  "failed": "{n} tests failed",
+  "passed": "All tests passed",
+  "proposeFix": "Propose fix",
+  "applyFix": "Apply fix",
+  "preview": "Preview changes",
+  "noTokens": "Not enough tokens",
+  "limitExceeded": "Cycle limit exceeded",
+  "diffTooLarge": "Diff is too large"
+}
