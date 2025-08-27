@@ -1,0 +1,23 @@
+{
+  "notify": {
+    "generation": {
+      "ready": { "title": "Project ready", "body": "{projectTitle} built" },
+      "error": { "title": "Generation error", "body": "See logs for details" }
+    },
+    "deploy": {
+      "ready": { "title": "Site deployed", "body": "Link: {deployUrl}" },
+      "error": { "title": "Deploy error", "body": "Check logs" }
+    },
+    "billing": {
+      "created": { "title": "Payment created", "body": "Proceed to confirm" },
+      "succeeded": { "title": "Payment succeeded", "body": "Plan activated" },
+      "canceled": { "title": "Payment canceled", "body": "Payment was cancelled" }
+    }
+  },
+  "ui": {
+    "notifications": "Notifications",
+    "markAll": "Mark all as read",
+    "settings": "Notification settings",
+    "empty": "No notifications yet"
+  }
+}

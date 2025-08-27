@@ -41,6 +41,8 @@ model User {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   Payment           Payment[]
+  notifications     Notification[]
+  notificationPreference NotificationPreference?
 }
 
 model Project {
@@ -148,4 +150,47 @@ model ProjectVersion {
   createdAt  DateTime @default(now())
 
   @@index([projectId, createdAt])
+}
+
+enum NotificationType {
+  GENERATION_READY
+  GENERATION_ERROR
+  PATCH_READY
+  PATCH_ERROR
+  DEPLOY_READY
+  DEPLOY_ERROR
+  BILLING_CREATED
+  BILLING_SUCCEEDED
+  BILLING_CANCELED
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  title     String
+  body      String
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model NotificationPreference {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  emailOn     Boolean  @default(true)
+  locale      String   @default("ru")
+  genReady    Boolean  @default(true)
+  genError    Boolean  @default(true)
+  patchReady  Boolean  @default(true)
+  patchError  Boolean  @default(true)
+  deployReady Boolean  @default(true)
+  deployError Boolean  @default(true)
+  billing     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

@@ -1,7 +1,7 @@
-import { Plan, Visibility, ProjectStatus, type Prisma } from '@prisma/client';
+import { Plan, Visibility, ProjectStatus, NotificationType, type Prisma } from '@prisma/client';
 
 // Re-export enums for use across layers
-export { Plan, Visibility, ProjectStatus };
+export { Plan, Visibility, ProjectStatus, NotificationType };
 
 // Minimal DTOs for sending to the client (no passwords or sensitive fields)
 export interface UserDTO {
@@ -72,4 +72,27 @@ export interface PaymentDTO {
   externalId: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface NotificationDTO {
+  id: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  data?: Prisma.JsonValue | null;
+  readAt?: Date | null;
+  createdAt: Date;
+}
+
+export interface NotificationPreferenceDTO {
+  userId: string;
+  emailOn: boolean;
+  locale: string;
+  genReady: boolean;
+  genError: boolean;
+  patchReady: boolean;
+  patchError: boolean;
+  deployReady: boolean;
+  deployError: boolean;
+  billing: boolean;
 }
