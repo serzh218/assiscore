@@ -23,6 +23,7 @@ enum ProjectStatus {
   draft
   building
   ready
+  deploying
   error
 }
 
@@ -53,6 +54,9 @@ model Project {
   previewUrl String?
   repoUrl    String?
   deployUrl  String?
+  deployProvider String?
+  domain        String?
+  lastDeployedAt DateTime?
   status     ProjectStatus @default(draft)
   likes      Int           @default(0)
   tags       String[]    @default([])

@@ -13,6 +13,9 @@ const toProjectDTO = (project: Project): ProjectDTO => ({
   previewUrl: project.previewUrl ?? undefined,
   repoUrl: project.repoUrl ?? undefined,
   deployUrl: project.deployUrl ?? undefined,
+  deployProvider: project.deployProvider ?? undefined,
+  domain: project.domain ?? undefined,
+  lastDeployedAt: project.lastDeployedAt ?? undefined,
   status: project.status,
   createdAt: project.createdAt,
 });
@@ -73,13 +76,30 @@ export async function updateProjectArtifacts(
     previewUrl,
     repoUrl,
     deployUrl,
-  }: { files?: Prisma.JsonValue; previewUrl?: string; repoUrl?: string; deployUrl?: string }
+    deployProvider,
+    domain,
+    status,
+    lastDeployedAt,
+  }: {
+    files?: Prisma.JsonValue;
+    previewUrl?: string;
+    repoUrl?: string;
+    deployUrl?: string;
+    deployProvider?: string | null;
+    domain?: string | null;
+    status?: ProjectStatus;
+    lastDeployedAt?: Date;
+  }
 ): Promise<ProjectDTO | null> {
   const data: Prisma.ProjectUpdateInput = {};
   if (files !== undefined) data.files = files;
   if (previewUrl !== undefined) data.previewUrl = previewUrl;
   if (repoUrl !== undefined) data.repoUrl = repoUrl;
   if (deployUrl !== undefined) data.deployUrl = deployUrl;
+  if (deployProvider !== undefined) data.deployProvider = deployProvider;
+  if (domain !== undefined) data.domain = domain;
+  if (status !== undefined) data.status = status;
+  if (lastDeployedAt !== undefined) data.lastDeployedAt = lastDeployedAt;
 
   try {
     const project = await prisma.project.update({ where: { id }, data });

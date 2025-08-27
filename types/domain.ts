@@ -37,6 +37,9 @@ export interface ProjectDTO {
   previewUrl?: string | null;
   repoUrl?: string | null;
   deployUrl?: string | null;
+  deployProvider?: string | null;
+  domain?: string | null;
+  lastDeployedAt?: Date | null;
   status: ProjectStatus;
   createdAt: Date;
 }
