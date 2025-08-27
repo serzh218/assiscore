@@ -17,7 +17,8 @@
     "dx:check": "pnpm lint && pnpm typecheck && pnpm test",
     "ci:verify": "pnpm prisma:gen && pnpm dx:check && pnpm build",
     "i18n:check": "tsx scripts/i18n-check.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "quality:local": "pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.1",

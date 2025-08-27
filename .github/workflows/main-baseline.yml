@@ -1,0 +1,26 @@
+name: Main baseline
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec tsx scripts/bundle-size.ts > bundle-baseline.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-baseline
+          path: bundle-baseline.json

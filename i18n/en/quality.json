@@ -1,0 +1,22 @@
+{
+  "report": {
+    "title": "Quality Report"
+  },
+  "coverage": {
+    "global": "Coverage (project): {p}% (threshold {t}%)",
+    "perFile": {
+      "fail": "Insufficient coverage for changed files"
+    }
+  },
+  "bundle": {
+    "delta": "Bundle size change: {kb} KB"
+  },
+  "aiCost": {
+    "delta": "AI cost increase estimate: ~{tokens} tokens"
+  },
+  "preview": "Preview",
+  "status": {
+    "pass": "All checks passed",
+    "fail": "Fix required"
+  }
+}

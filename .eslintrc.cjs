@@ -1,6 +1,10 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
+  },
   plugins: ['@typescript-eslint', 'import', 'jsx-a11y'],
   extends: [
     'next/core-web-vitals',
@@ -17,6 +21,10 @@ module.exports = {
     'lib/**',
     'templates/**',
     'eslint.config.cjs',
+    '.eslintrc.cjs',
+    'server/**',
+    'server.ts',
+    'postcss.config.mjs',
   ],
   rules: {
     '@typescript-eslint/no-unused-vars': [
@@ -27,6 +35,9 @@ module.exports = {
     'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc' } }],
     'jsx-a11y/alt-text': 'warn',
     'jsx-a11y/iframe-has-title': 'warn',
+    'jsx-a11y/label-has-associated-control': 'error',
+    'jsx-a11y/anchor-is-valid': 'error',
+    '@typescript-eslint/no-floating-promises': 'error',
     'react/react-in-jsx-scope': 'off',
   },
   settings: {
