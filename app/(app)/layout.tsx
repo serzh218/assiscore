@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import "@/styles/tokens.css";
+import "@/styles/animations.css";
 import { getCurrentUser } from "@/lib/auth";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {

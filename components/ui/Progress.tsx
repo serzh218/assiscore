@@ -14,7 +14,7 @@ export const Progress = ({ step }: ProgressProps) => {
     <div className="w-full">
       <div className="h-2 w-full rounded bg-border">
         <div
-          className="h-full rounded bg-primary transition-all duration-150"
+          className="h-full rounded bg-primary transition-base"
           style={{ width: `${pct}%` }}
         />
       </div>

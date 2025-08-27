@@ -13,8 +13,8 @@ export const TabsList = ({ className, ...props }: TabsPrimitive.TabsListProps) =
 export const TabsTrigger = ({ className, ...props }: TabsPrimitive.TabsTriggerProps) => (
   <TabsPrimitive.Trigger
     className={clsx(
-      "relative px-3 py-2 text-sm text-muted transition-colors duration-150 data-[state=active]:text-text",
-      "after:absolute after:left-0 after:-bottom-0.5 after:h-0.5 after:w-full after:bg-primary after:scale-x-0 after:origin-left after:transition-transform after:duration-150 data-[state=active]:after:scale-x-100",
+      "tabs-trigger relative px-3 py-2 text-sm text-muted transition-base data-[state=active]:text-text",
+      "after:absolute after:left-0 after:-bottom-0.5 after:h-0.5 after:w-full after:bg-primary after:scale-x-0 after:origin-left data-[state=active]:after:scale-x-100",
       className
     )}
     {...props}
