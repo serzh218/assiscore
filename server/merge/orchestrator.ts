@@ -2,6 +2,7 @@ import { threeWayMerge } from '@/lib/merge';
 import { getProjectLight, getProjectFiles, setProjectFiles, getUpstreamInfo, markUpstreamMerged, updateProjectStatus } from '@/server/repo/project';
 import { saveSnapshot } from '@/server/repo/snapshot';
 import { enqueueRebuild } from '@/server/queue/generationQueue';
+import { saveVersion } from '@/server/repo/version';
 
 export async function mergeUpstream({ forkId, userId }: { forkId: string; userId: string }) {
   const project = await getProjectLight(forkId);
@@ -27,6 +28,10 @@ export async function mergeUpstream({ forkId, userId }: { forkId: string; userId
   await saveSnapshot(forkId, `pre-merge`, ours);
   await setProjectFiles(forkId, mergedFiles);
   await updateProjectStatus(forkId, 'building');
+  const clean = { ...mergedFiles } as Record<string, string>;
+  delete clean["__preview.zip"];
+  delete clean["__previewPath"];
+  await saveVersion(forkId, userId, "merge", clean);
   await enqueueRebuild(forkId, 'merge');
   await markUpstreamMerged(forkId, new Date());
   return { ok: true, changed: mergeRes.changed };

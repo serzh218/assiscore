@@ -71,6 +71,7 @@ model Project {
   generations    Generation[]
   patches        Patch[]
   snapshots      ProjectSnapshot[]
+  versions       ProjectVersion[]
 
   @@index([ownerId])
   @@index([status])
@@ -133,6 +134,18 @@ model ProjectSnapshot {
   label     String
   files     Json
   createdAt DateTime @default(now())
+
+  @@index([projectId, createdAt])
+}
+
+model ProjectVersion {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  label      String
+  files      Json
+  createdBy  String
+  createdAt  DateTime @default(now())
 
   @@index([projectId, createdAt])
 }

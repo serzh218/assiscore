@@ -17,6 +17,10 @@ vi.mock('@/server/queue/generationQueue', () => ({
   enqueueRebuild: vi.fn(async () => {}),
 }));
 
+vi.mock('@/server/repo/version', () => ({
+  saveVersion: vi.fn(async () => 'v1'),
+}));
+
 describe('figma import API', () => {
   it('parses json upload', async () => {
     const { POST } = await import('@/app/api/figma/parse/route');

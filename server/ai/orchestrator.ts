@@ -7,6 +7,7 @@ import {
   pushGenerationUpdate,
   finishGeneration,
 } from '@/server/queue/generationQueue'
+import { saveVersion } from '@/server/repo/version'
 import { appendGenerationLogs } from '@/server/repo/generation'
 import { updateProjectArtifacts, updateProjectStatus } from '@/server/repo/project'
 
@@ -48,6 +49,7 @@ export async function runGenerationPipeline({
       previewUrl: `/api/projects/${project.id}/preview`,
       status: 'ready',
     })
+    await saveVersion(project.id, _user.id, 'generation', sanitized.files)
     await appendGenerationLogs(generationId || '', 'Generation completed\n')
     await finishGeneration(project.id, 'ready', 'Готово')
   } catch (err: any) {
