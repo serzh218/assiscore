@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: assiscore
+          POSTGRES_PASSWORD: assiscore
+          POSTGRES_DB: assiscore
+        options: >-
+          --health-cmd="pg_isready -U assiscore" --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: |
+          echo "DATABASE_URL=postgresql://assiscore:assiscore@localhost:5432/assiscore?schema=public" >> $GITHUB_ENV
+          echo "NEXTAUTH_SECRET=test-secret" >> $GITHUB_ENV
+      - run: pnpm prisma:gen
+      - run: pnpm prisma migrate deploy
+      - run: pnpm db:seed
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage
+      - run: pnpm build

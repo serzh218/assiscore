@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: assiscore
+      POSTGRES_PASSWORD: assiscore
+      POSTGRES_DB: assiscore
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U assiscore']
+      interval: 10s
+      timeout: 5s
+      retries: 5

@@ -1,22 +1,23 @@
-import express from 'express';
-import cors from 'cors';
-import exportRouter from './server/routes/export';
-import executeRouter from './server/routes/execute';
-import logsRouter from './server/routes/logs';
-import authRouter from './server/routes/auth';
+import cors from 'cors'
+import express from 'express'
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+import { authRouter } from './server/routes/auth'
+import { executeRouter } from './server/routes/execute'
+import { exportRouter } from './server/routes/export'
+import { logsRouter } from './server/routes/logs'
 
-app.use('/api/export', exportRouter);
-app.use('/api/execute', executeRouter);
-app.use('/api/logs', logsRouter);
-app.use('/api/auth', authRouter);
+const app = express()
+app.use(cors())
+app.use(express.json())
 
-const port = process.env.PORT || 3001;
+app.use('/api/export', exportRouter)
+app.use('/api/execute', executeRouter)
+app.use('/api/logs', logsRouter)
+app.use('/api/auth', authRouter)
+
+const port = process.env.PORT || 3001
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+  console.log(`Server listening on port ${port}`)
+})
 
-export default app;
+export default app
