@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import JSZip from 'jszip'
 import { getProjectById } from '@/server/repo/project'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

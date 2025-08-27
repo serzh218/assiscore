@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { getProjectLight, getProjectFiles, setForkUpstream } from '@/server/repo/project'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {

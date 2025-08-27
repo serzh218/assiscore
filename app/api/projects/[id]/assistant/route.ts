@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { applyUnifiedDiff } from '@/lib/diff'
 import {
   getProjectById,

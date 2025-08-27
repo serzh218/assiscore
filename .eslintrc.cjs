@@ -60,6 +60,11 @@ module.exports = {
             importNames: ['DiffViewer'],
             message: 'DiffViewer нельзя экспортировать из барреля ui.',
           },
+          { name: 'bcrypt', message: 'Используй bcryptjs.' },
+          {
+            name: 'bcryptjs',
+            message: 'Только в серверных файлах. Не импортируй из клиентских компонентов.',
+          },
         ],
       },
     ],

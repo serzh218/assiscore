@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser } from '@/auth'
 import { assertProjectOwnership } from '@/server/guards/privacy'
 import { isPro } from '@/server/repo/user'
 import { getProjectById, getProjectFiles, updateProjectArtifacts } from '@/server/repo/project'

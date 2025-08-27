@@ -1,6 +1,7 @@
-import { randomUUID } from 'crypto'
+import 'server-only'
 
-import bcrypt from 'bcrypt'
+import { randomUUID } from 'crypto'
+import bcrypt from 'bcryptjs'
 import { Router, Request, Response } from 'express'
 
 interface User {
