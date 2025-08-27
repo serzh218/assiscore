@@ -53,12 +53,15 @@ model Project {
   repoUrl    String?
   deployUrl  String?
   status     ProjectStatus @default(draft)
+  likes      Int           @default(0)
+  tags       String[]    @default([])
   createdAt  DateTime      @default(now())
   generations Generation[]
   patches    Patch[]
 
   @@index([ownerId])
   @@index([status])
+  @@index([visibility, createdAt])
 }
 
 model Generation {

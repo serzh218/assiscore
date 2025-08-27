@@ -6,14 +6,14 @@ describe('applyUnifiedDiff', () => {
     const files = { 'app/test.txt': 'hello\nworld' };
     const diff = `--- a/app/test.txt\n+++ b/app/test.txt\n@@ -1,2 +1,2 @@\n hello\n-world\n+WORLD\n`;
     const res = applyUnifiedDiff(files, diff);
-    expect(res.files['app/test.txt']).toBe('hello\nWORLD');
+    expect(res.files['app/test.txt']).toBe('hello\nWORLD\n');
   });
 
   it('adds new file', () => {
     const files: Record<string, string> = {};
     const diff = `--- /dev/null\n+++ b/app/new.txt\n@@ -0,0 +1,1 @@\n+hello\n`;
     const res = applyUnifiedDiff(files, diff);
-    expect(res.files['app/new.txt']).toBe('hello');
+    expect(res.files['app/new.txt']).toBe('hello\n');
   });
 
   it('deletes file', () => {

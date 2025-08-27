@@ -119,3 +119,54 @@ export async function setProjectFiles(id: string, files: Record<string, string>)
 export async function touchProjectBuild(id: string, status: ProjectStatus): Promise<void> {
   await prisma.project.update({ where: { id }, data: { status } });
 }
+
+export async function listPublicProjects({
+  limit = 20,
+  offset = 0,
+  orderBy = 'new',
+}: {
+  limit?: number;
+  offset?: number;
+  orderBy?: 'new' | 'popular';
+} = {}): Promise<ProjectDTO[]> {
+  const order: Prisma.Enumerable<Prisma.ProjectOrderByWithRelationInput> =
+    orderBy === 'popular'
+      ? [{ likes: 'desc' }, { createdAt: 'desc' }]
+      : [{ createdAt: 'desc' }];
+  const projects = await prisma.project.findMany({
+    where: { visibility: 'public' },
+    take: limit,
+    skip: offset,
+    orderBy: order,
+  });
+  return projects.map(toProjectDTO);
+}
+
+export async function forkProject({
+  sourceProjectId,
+  newOwnerId,
+}: {
+  sourceProjectId: string;
+  newOwnerId: string;
+}): Promise<ProjectDTO> {
+  const source = await prisma.project.findUnique({ where: { id: sourceProjectId } });
+  if (!source) {
+    throw new Error('Source project not found');
+  }
+  const spec =
+    typeof source.spec === 'object' && source.spec !== null
+      ? { ...(source.spec as any), forkOf: sourceProjectId }
+      : { forkOf: sourceProjectId };
+  const project = await prisma.project.create({
+    data: {
+      ownerId: newOwnerId,
+      visibility: 'public',
+      title: source.title,
+      type: source.type,
+      spec,
+      files: source.files ?? undefined,
+      status: 'draft',
+    },
+  });
+  return toProjectDTO(project);
+}

@@ -54,7 +54,7 @@ export async function chargeTokens(
       throw err;
     }
     await tx.user.update({ where: { id: userId }, data: { tokens: { increment: amount } } });
-    await tx.tokenTransaction.create({ data: { userId, amount, reason, meta } });
+    await (tx as any).tokenTransaction.create({ data: { userId, amount, reason, meta } });
   });
 }
 

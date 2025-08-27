@@ -80,3 +80,8 @@ export async function linkGithub(id: string, linked: boolean): Promise<UserDTO |
     throw e;
   }
 }
+
+export async function isPro(userId: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { plan: true } });
+  return user?.plan === 'PRO';
+}
