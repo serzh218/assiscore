@@ -67,6 +67,18 @@ export async function listProjectsByOwner(
   return projects.map(toProjectDTO);
 }
 
+export async function updateProjectSpec(id: string, spec: Prisma.JsonValue): Promise<ProjectDTO | null> {
+  try {
+    const project = await prisma.project.update({ where: { id }, data: { spec } });
+    return toProjectDTO(project);
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
+      return null;
+    }
+    throw e;
+  }
+}
+
 export async function updateProjectStatus(id: string, status: ProjectStatus): Promise<ProjectDTO | null> {
   try {
     const project = await prisma.project.update({ where: { id }, data: { status } });

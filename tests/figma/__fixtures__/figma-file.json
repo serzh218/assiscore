@@ -1,0 +1,29 @@
+{
+  "name": "Test File",
+  "document": {
+    "id": "0:0",
+    "name": "Document",
+    "type": "DOCUMENT",
+    "children": [
+      {
+        "id": "1:1",
+        "name": "Hero",
+        "type": "FRAME",
+        "children": [
+          { "id": "2:2", "type": "TEXT", "characters": "Welcome" }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "1:fill": {
+      "styleType": "FILL",
+      "paints": [ { "type": "SOLID", "color": { "r": 1, "g": 0, "b": 0 } } ]
+    },
+    "1:text": {
+      "styleType": "TEXT",
+      "fontFamily": "Roboto",
+      "fontWeight": 400
+    }
+  }
+}
