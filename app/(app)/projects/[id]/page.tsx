@@ -90,11 +90,19 @@ export default function ProjectPage() {
     }
   };
 
-  const showDiff = async (id: string) => {
-    const res = await fetch(`/api/projects/${projectId}/patches/${id}`);
-    if (res.ok) {
-      const data = await res.json();
-      alert(data.diff);
+  const toggleDiff = async (id: string) => {
+    const patch = patches.find((p) => p.id === id);
+    if (!patch) return;
+    if (!patch.diff) {
+      const res = await fetch(`/api/projects/${projectId}/patches/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPatches((prev) =>
+          prev.map((p) => (p.id === id ? { ...p, diff: data.diff, notes: data.notes, open: true } : p)),
+        );
+      }
+    } else {
+      setPatches((prev) => prev.map((p) => (p.id === id ? { ...p, open: !p.open } : p)));
     }
   };
 
@@ -211,16 +219,40 @@ export default function ProjectPage() {
           <TabsContent value="diffs">
             <ul className="space-y-2">
               {patches.map((p) => (
-                <li key={p.id} className="flex items-center gap-2">
-                  <span>
-                    {new Date(p.createdAt).toLocaleString()} – {p.costTokens} токенов
-                  </span>
-                  <Button size="sm" onClick={() => showDiff(p.id)}>
-                    Показать diff
-                  </Button>
-                  <Button size="sm" variant="secondary" onClick={() => removePatch(p.id)}>
-                    Откатить
-                  </Button>
+                <li key={p.id} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span>
+                      {new Date(p.createdAt).toLocaleString()} – {p.costTokens} токенов
+                    </span>
+                    <Badge variant="secondary">
+                      {p.status === 'ready' ? 'Готово' : p.status === 'error' ? 'Ошибка' : 'В процессе'}
+                    </Badge>
+                    {p.notes && <span className="text-xs text-muted">{p.notes}</span>}
+                    <Button size="sm" onClick={() => toggleDiff(p.id)}>
+                      {p.open ? 'Скрыть' : 'Показать'} diff
+                    </Button>
+                    <Button size="sm" variant="secondary" onClick={() => removePatch(p.id)}>
+                      Откатить
+                    </Button>
+                  </div>
+                  {p.open && p.diff && (
+                    <pre className="overflow-auto rounded bg-bg-elev p-2 text-xs">
+                      {p.diff.split('\n').map((line: string, i: number) => (
+                        <div
+                          key={i}
+                          className={
+                            line.startsWith('+')
+                              ? 'text-green-600'
+                              : line.startsWith('-')
+                              ? 'text-red-600'
+                              : ''
+                          }
+                        >
+                          {line}
+                        </div>
+                      ))}
+                    </pre>
+                  )}
                 </li>
               ))}
             </ul>

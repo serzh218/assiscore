@@ -14,7 +14,13 @@ export async function GET(_req: Request, { params }: { params: { id: string; pat
   if (!patch || patch.projectId !== project.id) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
-  return NextResponse.json({ diff: patch.diff });
+  return NextResponse.json({
+    id: patch.id,
+    status: patch.status,
+    diff: patch.diff,
+    notes: patch.notes ?? null,
+    createdAt: patch.createdAt,
+  });
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string; patchId: string } }) {

@@ -29,7 +29,7 @@ const MAX_FILES = 200;
 const MAX_TEXT_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_BINARY_SIZE = 2 * 1024 * 1024; // 2MB
 
-function isAllowed(p: string): boolean {
+export function isAllowed(p: string): boolean {
   return ALLOWED_PATHS.some((pat) => {
     if (pat.endsWith('/**')) {
       return p.startsWith(pat.slice(0, -3));
