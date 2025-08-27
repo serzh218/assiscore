@@ -6,9 +6,13 @@ export type Permission =
   | 'project:share'
   | 'project:deploy'
   | 'project:export'
-  | 'project:billing';
+  | 'project:billing'
+  | 'project:transfer'
+  | 'project:settings';
 
-export function resolvePermissions(role: 'OWNER' | 'COLLABORATOR' | 'VIEWER') {
+export function resolvePermissions(
+  role: 'OWNER' | 'MAINTAINER' | 'COLLABORATOR' | 'VIEWER'
+) {
   switch (role) {
     case 'OWNER':
       return new Set<Permission>([
@@ -18,6 +22,17 @@ export function resolvePermissions(role: 'OWNER' | 'COLLABORATOR' | 'VIEWER') {
         'project:deploy',
         'project:export',
         'project:billing',
+        'project:transfer',
+        'project:settings',
+      ]);
+    case 'MAINTAINER':
+      return new Set<Permission>([
+        'project:read',
+        'project:write',
+        'project:share',
+        'project:deploy',
+        'project:export',
+        'project:settings',
       ]);
     case 'COLLABORATOR':
       return new Set<Permission>([
@@ -66,7 +81,16 @@ export async function assertProjectPermission(
 export async function getProjectAccess(
   projectId: string,
   userId: string | null
-): Promise<{ role: 'OWNER' | 'COLLABORATOR' | 'VIEWER' | 'PUBLIC' | 'NONE'; permissions: Set<Permission> }> {
+): Promise<{
+  role:
+    | 'OWNER'
+    | 'MAINTAINER'
+    | 'COLLABORATOR'
+    | 'VIEWER'
+    | 'PUBLIC'
+    | 'NONE';
+  permissions: Set<Permission>;
+}> {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: { ownerId: true, visibility: true },
@@ -83,12 +107,19 @@ export async function getProjectAccess(
       select: { role: true },
     });
     if (member) {
-      return { role: member.role, permissions: resolvePermissions(member.role) } as any;
+      return {
+        role: member.role,
+        permissions: resolvePermissions(member.role as any),
+      } as any;
     }
   }
   if (project.visibility === 'public') {
     return { role: 'PUBLIC', permissions: new Set<Permission>(['project:read']) };
   }
   return { role: 'NONE', permissions: new Set() };
+}
+
+export function canTransferOwnership(role: 'OWNER' | 'MAINTAINER' | 'COLLABORATOR' | 'VIEWER') {
+  return role === 'OWNER';
 }
 
