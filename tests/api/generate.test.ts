@@ -30,6 +30,10 @@ vi.mock('@/server/repo/generation', () => ({
   listGenerations: vi.fn(async () => [{ id: 'g1', projectId: 'p1', costTokens: 10, logs: genLogs, createdAt: new Date() }])
 }));
 
+vi.mock('@/server/ai/orchestrator', () => ({
+  runGenerationPipeline: vi.fn(async () => {})
+}));
+
 vi.mock('@/server/guards/limits', () => ({
   assertCanGenerate: vi.fn(async () => {}),
   spendTokens: vi.fn(async () => {})
