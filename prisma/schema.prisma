@@ -21,6 +21,7 @@ enum Visibility {
 
 enum ProjectRole {
   OWNER
+  MAINTAINER
   COLLABORATOR
   VIEWER
 }
@@ -214,6 +215,7 @@ enum NotificationType {
   BILLING_CREATED
   BILLING_SUCCEEDED
   BILLING_CANCELED
+  PROJECT_OWNERSHIP_TRANSFERRED
 }
 
 model Notification {
