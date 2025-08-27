@@ -103,3 +103,19 @@ export async function setProjectVisibility(id: string, visibility: Visibility): 
     throw e;
   }
 }
+
+export async function getProjectFiles(id: string): Promise<Record<string, string>> {
+  const project = await prisma.project.findUnique({ where: { id }, select: { files: true } });
+  if (!project) {
+    throw new Error('Project not found');
+  }
+  return (project.files as Record<string, string>) || {};
+}
+
+export async function setProjectFiles(id: string, files: Record<string, string>): Promise<void> {
+  await prisma.project.update({ where: { id }, data: { files } });
+}
+
+export async function touchProjectBuild(id: string, status: ProjectStatus): Promise<void> {
+  await prisma.project.update({ where: { id }, data: { status } });
+}
