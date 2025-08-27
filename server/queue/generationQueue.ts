@@ -56,3 +56,14 @@ export function getStatus(projectId: string): { status: string; logs: string[] }
   if (!entry) return null;
   return { status: entry.status, logs: entry.logs };
 }
+
+export function enqueueRebuild(projectId: string, _reason: 'patch'): void {
+  const entry: QueueEntry = { status: 'build', logs: ['Rebuild started (patch)'], updatedAt: Date.now() };
+  queue.set(projectId, entry);
+  setTimeout(async () => {
+    entry.logs.push('Rebuild done');
+    entry.status = 'ready';
+    entry.updatedAt = Date.now();
+    await updateProjectStatus(projectId, 'ready');
+  }, 1000);
+}

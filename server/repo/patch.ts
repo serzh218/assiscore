@@ -32,3 +32,19 @@ export async function listPatches(projectId: string): Promise<PatchDTO[]> {
   });
   return patches.map(toPatchDTO);
 }
+
+export async function getPatchById(id: string): Promise<PatchDTO | null> {
+  const patch = await prisma.patch.findUnique({ where: { id } });
+  return patch ? toPatchDTO(patch) : null;
+}
+
+export async function deletePatch(id: string): Promise<void> {
+  try {
+    await prisma.patch.delete({ where: { id } });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
+      return;
+    }
+    throw e;
+  }
+}
