@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import "@/styles/tokens.css";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  const user = await getCurrentUser();
   return (
     <div className="min-h-screen bg-bg text-text">
       <header className="border-b border-border">
@@ -15,7 +17,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Link href="/billing" className="hover:text-primary transition-colors">Биллинг</Link>
             <Link href="/settings" className="hover:text-primary transition-colors">Настройки</Link>
           </nav>
-          <div className="text-sm text-muted">Баланс токенов: ХХХ</div>
+          {user ? (
+            <div className="text-sm text-muted">
+              План: {user.plan} • Токенов: {user.tokens}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <span>Гость</span>
+              <Link href="/auth/sign-in" className="text-primary hover:underline">
+                Войти
+              </Link>
+            </div>
+          )}
         </div>
       </header>
       <main className="mx-auto w-full max-w-[1280px] px-4 py-8">{children}</main>

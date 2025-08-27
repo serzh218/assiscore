@@ -15,6 +15,14 @@ export interface UserDTO {
   updatedAt: Date;
 }
 
+export interface SessionUser {
+  id: string;
+  email?: string | null;
+  name?: string | null;
+  plan: Plan;
+  tokens: number;
+}
+
 export interface ProjectDTO {
   id: string;
   ownerId: string;
