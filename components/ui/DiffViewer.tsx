@@ -1,22 +1,11 @@
 import * as React from "react";
+import ReactDiffViewer from "react-diff-viewer-continued";
 
 export interface DiffViewerProps {
-  diff: string;
+  oldValue: string;
+  newValue: string;
 }
 
-export const DiffViewer = ({ diff }: DiffViewerProps) => (
-  <pre className="overflow-auto rounded-md bg-bg-elev p-4 font-mono text-sm leading-relaxed">
-    {diff.split('\n').map((line, i) => {
-      const cls = line.startsWith('+')
-        ? 'text-green-400'
-        : line.startsWith('-')
-        ? 'text-red-400'
-        : '';
-      return (
-        <div key={i} className={cls}>
-          {line}
-        </div>
-      );
-    })}
-  </pre>
+export const DiffViewer = ({ oldValue, newValue }: DiffViewerProps) => (
+  <ReactDiffViewer oldValue={oldValue} newValue={newValue} splitView={false} />
 );

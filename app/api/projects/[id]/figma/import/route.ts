@@ -4,6 +4,7 @@ import { getProjectById, getProjectFiles, setProjectFiles, updateProjectSpec } f
 import { resolveUrl, getFile, getNodes } from "@/lib/figma/api";
 import { parseFile, parseJsonUpload } from "@/lib/figma/parse";
 import { mapFigmaTokensToCss, mapSectionsToScaffold } from "@/lib/figma/mapToTokens";
+import { saveVersion } from "@/server/repo/version";
 import { enqueueRebuild } from "@/server/queue/generationQueue";
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
@@ -52,6 +53,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         if (!(p in files)) files[p] = c;
       }
       await setProjectFiles(project.id, files);
+      const clean = { ...files } as Record<string, string>;
+      delete clean["__preview.zip"];
+      delete clean["__previewPath"];
+      await saveVersion(project.id, user.id, "figma-import", clean);
       await enqueueRebuild(project.id, "figma-import");
       hasApplied = true;
     }

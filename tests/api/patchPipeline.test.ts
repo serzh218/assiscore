@@ -36,6 +36,10 @@ vi.mock('@/server/queue/generationQueue', () => ({
   enqueueRebuild: vi.fn(async () => {}),
 }));
 
+vi.mock('@/server/repo/version', () => ({
+  saveVersion: vi.fn(async () => 'v1'),
+}));
+
 describe('patch pipeline API', () => {
   beforeEach(() => {
     files = { 'index.html': '<h1>Hi</h1>\n' };
