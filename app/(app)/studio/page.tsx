@@ -1,18 +1,64 @@
 "use client";
 
-import { useState } from "react";
-import { Textarea, Button, Progress, Input } from "@/components/ui";
+import { useEffect, useRef, useState } from "react";
+import { Textarea, Button, Progress, Input, Badge, Card } from "@/components/ui";
 import { useSession } from "next-auth/react";
 import { estimateGenerationCost } from "@/lib/tokens";
+import { useRouter } from "next/navigation";
 
 export default function StudioPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [text, setText] = useState("");
   const [useFigma, setUseFigma] = useState(false);
   const [figma, setFigma] = useState("");
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
+  const logsEndRef = useRef<HTMLDivElement | null>(null);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const stepMap: Record<string, number> = { plan: 0, code: 1, test: 2, build: 3, ready: 4 };
   const cost = estimateGenerationCost({ textLen: text.length, hasFigma: useFigma && figma.trim().length > 0 });
   const tokens = (session?.user as any)?.tokens ?? 0;
   const canAfford = tokens >= cost;
+
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [logs]);
+
+  const startPolling = (id: string) => {
+    pollingRef.current = setInterval(async () => {
+      const res = await fetch(`/api/generate/status?projectId=${id}`);
+      const data = await res.json();
+      setStatus(data.status);
+      setLogs(data.logs ?? []);
+      if (data.status === "ready" && pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    }, 2000);
+  };
+
+  const handleGenerate = async () => {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: text, figmaUrl: useFigma ? figma : undefined }),
+    });
+    const data = await res.json();
+    if (data.projectId) {
+      setProjectId(data.projectId);
+      setStatus("plan");
+      setLogs([]);
+      startPolling(data.projectId);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -41,14 +87,28 @@ export default function StudioPage() {
           Приватный проект (PRO)
         </label>
       </div>
-      <Button disabled={!canAfford}>Создать сайт</Button>
+      <Button disabled={!canAfford} onClick={handleGenerate}>
+        Создать сайт
+      </Button>
       <p className="text-sm text-muted">
         Ориентировочная стоимость: ~{cost} токенов
         {!canAfford && tokens > 0 && (
           <span className="ml-2">Недостаточно токенов</span>
         )}
       </p>
-      <Progress step={0} />
+      {status && <Progress step={stepMap[status]} />}
+      {status && <Badge>{status}</Badge>}
+      {logs.length > 0 && (
+        <Card className="h-40 overflow-y-auto p-2 font-mono text-sm">
+          {logs.map((l, i) => (
+            <div key={i}>{l}</div>
+          ))}
+          <div ref={logsEndRef} />
+        </Card>
+      )}
+      {status === "ready" && projectId && (
+        <Button onClick={() => router.push(`/projects/${projectId}`)}>Открыть проект</Button>
+      )}
     </div>
   );
 }
