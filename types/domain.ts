@@ -59,3 +59,15 @@ export interface PatchDTO {
   costTokens: number;
   createdAt: Date;
 }
+
+export interface PaymentDTO {
+  id: string;
+  userId: string;
+  type: string;
+  amount: number;
+  tokens?: number;
+  status: string;
+  externalId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

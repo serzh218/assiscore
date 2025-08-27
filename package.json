@@ -16,7 +16,8 @@
     "test:all": "npm run test:integration && npm run test:api && npm run test:code",
     "prisma:gen": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "billing:webhook": "tsx scripts/mockYookassaWebhook.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.1",
@@ -34,6 +35,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "ai": "^5.0.0",
     "autoprefixer": "^10.4.21",
+    "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

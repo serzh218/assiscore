@@ -28,41 +28,42 @@ enum ProjectStatus {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String?  @unique
-  password     String?
-  name         String?
-  plan         Plan     @default(FREE)
-  tokens       Int      @default(500)
-  githubLinked Boolean  @default(false)
-  githubUsername String?
-  projects     Project[]
+  id                String             @id @default(cuid())
+  email             String?            @unique
+  password          String?
+  name              String?
+  plan              Plan               @default(FREE)
+  tokens            Int                @default(500)
+  githubLinked      Boolean            @default(false)
+  githubUsername    String?
+  projects          Project[]
   tokenTransactions TokenTransaction[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  Payment           Payment[]
 }
 
 model Project {
-  id         String        @id @default(cuid())
-  ownerId    String
-  owner      User          @relation(fields: [ownerId], references: [id])
-  visibility Visibility    @default(public)
-  title      String
-  type       String
-  spec       Json
-  files      Json?
-  previewUrl String?
-  repoUrl    String?
-  deployUrl  String?
+  id             String        @id @default(cuid())
+  ownerId        String
+  owner          User          @relation(fields: [ownerId], references: [id])
+  visibility     Visibility    @default(public)
+  title          String
+  type           String
+  spec           Json
+  files          Json?
+  previewUrl     String?
+  repoUrl        String?
+  deployUrl      String?
   deployProvider String?
-  domain        String?
+  domain         String?
   lastDeployedAt DateTime?
-  status     ProjectStatus @default(draft)
-  likes      Int           @default(0)
-  tags       String[]    @default([])
-  createdAt  DateTime      @default(now())
-  generations Generation[]
-  patches    Patch[]
+  status         ProjectStatus @default(draft)
+  likes          Int           @default(0)
+  tags           String[]      @default([])
+  createdAt      DateTime      @default(now())
+  generations    Generation[]
+  patches        Patch[]
 
   @@index([ownerId])
   @@index([status])
@@ -97,6 +98,21 @@ model TokenTransaction {
   reason    String
   meta      Json?
   createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  type       String
+  amount     Int
+  tokens     Int?
+  status     String
+  externalId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([userId, createdAt])
 }
