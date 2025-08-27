@@ -1,6 +1,9 @@
 import { getRequestConfig } from 'next-intl/server'
 
-export default getRequestConfig(async ({ locale }) => {
+import { defaultLocale } from './config'
+
+export default getRequestConfig(async ({ locale, requestLocale }) => {
+  const l = locale ?? (await requestLocale) ?? defaultLocale
   const [
     common,
     pages,
@@ -13,18 +16,19 @@ export default getRequestConfig(async ({ locale }) => {
     quality,
     obs,
   ] = await Promise.all([
-    import(`./${locale}/common.json`).then((m) => m.default),
-    import(`./${locale}/pages.json`).then((m) => m.default),
-    import(`./${locale}/errors.json`).then((m) => m.default),
-    import(`./${locale}/billing.json`).then((m) => m.default),
-    import(`./${locale}/projects.json`).then((m) => m.default),
-    import(`./${locale}/notifications.json`).then((m) => m.default),
-    import(`./${locale}/copilot.json`).then((m) => m.default),
-    import(`./${locale}/testfirst.json`).then((m) => m.default),
-    import(`./${locale}/quality.json`).then((m) => m.default),
-    import(`./${locale}/obs.json`).then((m) => m.default),
+    import(`./${l}/common.json`).then((m) => m.default),
+    import(`./${l}/pages.json`).then((m) => m.default),
+    import(`./${l}/errors.json`).then((m) => m.default),
+    import(`./${l}/billing.json`).then((m) => m.default),
+    import(`./${l}/projects.json`).then((m) => m.default),
+    import(`./${l}/notifications.json`).then((m) => m.default),
+    import(`./${l}/copilot.json`).then((m) => m.default),
+    import(`./${l}/testfirst.json`).then((m) => m.default),
+    import(`./${l}/quality.json`).then((m) => m.default),
+    import(`./${l}/obs.json`).then((m) => m.default),
   ])
   return {
+    locale: l,
     messages: {
       common,
       pages,

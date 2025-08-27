@@ -1,19 +1,20 @@
-import { NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/auth';
-import { getProjectLight } from '@/server/repo/project';
-import { mergeUpstream } from '@/server/merge/orchestrator';
+import { NextResponse } from 'next/server'
+import { getCurrentUser } from '@/lib/auth'
+import { getProjectLight } from '@/server/repo/project'
+import { mergeUpstream } from '@/server/merge/orchestrator'
 
-export async function POST(_req: Request, { params }: { params: { id: string } }) {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const project = await getProjectLight(params.id);
+export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { id } = await params
+  const project = await getProjectLight(id)
   if (!project || project.ownerId !== user.id) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
   try {
-    const res = await mergeUpstream({ forkId: params.id, userId: user.id });
-    return NextResponse.json(res);
+    const res = await mergeUpstream({ forkId: id, userId: user.id })
+    return NextResponse.json(res)
   } catch (e) {
-    return NextResponse.json({ error: 'Merge failed' }, { status: 400 });
+    return NextResponse.json({ error: 'Merge failed' }, { status: 400 })
   }
 }

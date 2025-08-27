@@ -1,23 +1,23 @@
-import type { ReactNode } from "react";
-import Link from "next/link";
-import "@/styles/tokens.css";
-import "@/styles/animations.css";
-import { getCurrentUser } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { formatTokens } from "@/lib/i18n/format";
+import type { ReactNode } from 'react'
+import Link from 'next/link'
+import '@/styles/tokens.css'
+import '@/styles/animations.css'
+import { getCurrentUser } from '@/lib/auth'
+import { getTranslations } from 'next-intl/server'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { formatTokens } from '@/lib/i18n/format'
 
 export default async function AppLayout({
   children,
   params,
 }: {
-  children: ReactNode;
-  params: { locale: string };
+  children: ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = params;
-  const t = await getTranslations({ locale, namespace: 'common' });
-  const user = await getCurrentUser();
-  const prefix = `/${locale}`;
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'common' })
+  const user = await getCurrentUser()
+  const prefix = `/${locale}`
   return (
     <div className="min-h-screen bg-bg text-text">
       <header className="border-b border-border">
@@ -61,5 +61,5 @@ export default async function AppLayout({
       </header>
       <main className="mx-auto w-full max-w-[1280px] px-4 py-8">{children}</main>
     </div>
-  );
+  )
 }

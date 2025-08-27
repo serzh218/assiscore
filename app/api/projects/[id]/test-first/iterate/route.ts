@@ -6,15 +6,16 @@ import { proposeFixes } from '@/server/ai/tests/fixer'
 import { runTestsInSandbox } from '@/server/tests/runner'
 import { getCycleData, setCycleData } from '@/server/tests/orchestrator'
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const body = await req.json()
   const { cycleId, acceptDiff } = body as { cycleId: string; acceptDiff: boolean }
   const cycle = getCycleData(cycleId)
   if (!cycle) {
     return new Response(JSON.stringify({ error: 'not_found' }), { status: 404 })
   }
+  const { id } = await params
   const diff = await proposeFixes({
-    projectId: params.id,
+    projectId: id,
     report: cycle.lastReport,
     logs: cycle.lastLogs,
   })
@@ -42,7 +43,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     fs.mkdirSync(path.dirname(p), { recursive: true })
     fs.writeFileSync(p, c, 'utf8')
   }
-  const res = await runTestsInSandbox({ projectId: params.id, filesOverride: cycle.tests })
+  const res = await runTestsInSandbox({ projectId: id, filesOverride: cycle.tests })
   const run = await prisma.testRun.create({
     data: {
       cycleId,
