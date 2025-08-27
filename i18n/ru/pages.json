@@ -1,0 +1,14 @@
+{
+  "home": {
+    "title": "AssisCore",
+    "placeholder": "Опишите ваш проект...",
+    "website": "Сайт",
+    "application": "Приложение",
+    "bot": "Бот",
+    "private": "Приватный",
+    "generate": "Сгенерировать",
+    "generationStarted": "Генерация запущена...",
+    "generationLaunched": "Генерация запущена в песочнице",
+    "generationFailed": "Не удалось начать генерацию"
+  }
+}

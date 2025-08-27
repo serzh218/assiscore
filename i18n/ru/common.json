@@ -1,0 +1,27 @@
+{
+  "appName": "AssisCore",
+  "nav": {
+    "studio": "Студия",
+    "projects": "Проекты",
+    "explore": "Галерея",
+    "billing": "Биллинг",
+    "settings": "Настройки"
+  },
+  "auth": {
+    "guest": "Гость",
+    "signIn": "Войти"
+  },
+  "plan": "План: {plan} • Токенов: {tokens}",
+  "actions": {
+    "generate": "Сгенерировать",
+    "create": "Создать",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "publish": "Опубликовать"
+  },
+  "language": {
+    "switch": "Сменить язык",
+    "ru": "Русский",
+    "en": "English"
+  }
+}

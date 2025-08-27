@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import GradientCard from '@/components/GradientCard';
+import { useTranslations } from 'next-intl';
 
 export default function HomePage() {
+  const t = useTranslations('pages.home');
   const [prompt, setPrompt] = useState('');
   const [projectType, setProjectType] = useState<'website' | 'application' | 'bot'>('website');
   const [status, setStatus] = useState('');
@@ -12,7 +14,7 @@ export default function HomePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('Генерация запущена...');
+    setStatus(t('generationStarted'));
     try {
       const res = await fetch('/api/generate-project', {
         method: 'POST',
@@ -21,9 +23,9 @@ export default function HomePage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Не удалось начать генерацию');
+        throw new Error(data.error || t('generationFailed'));
       }
-      setStatus('Генерация запущена в песочнице');
+      setStatus(t('generationLaunched'));
     } catch (err: any) {
       setStatus(err.message);
     }
@@ -35,7 +37,7 @@ export default function HomePage() {
         <div className="animate-[move-glow_20s_ease-in-out_infinite_alternate] absolute left-1/2 top-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-accent via-pink-500 to-yellow-500 opacity-30 blur-3xl" />
       </div>
 
-      <header className="animate-[fadeInDown_0.8s_ease-out_0.5s_forwards] py-6 text-center text-3xl font-bold">AssisCore</header>
+      <header className="animate-[fadeInDown_0.8s_ease-out_0.5s_forwards] py-6 text-center text-3xl font-bold">{t('title')}</header>
 
       <main className="animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] flex flex-1 flex-col items-center justify-center px-4">
         <form
@@ -47,7 +49,7 @@ export default function HomePage() {
             onChange={(e) => setPrompt(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Опишите ваш проект..."
+            placeholder={t('placeholder')}
             className={`min-h-[160px] w-full rounded-md border bg-transparent p-4 focus:outline-none ${
               isFocused ? 'border-accent' : 'border-gray-300'
             }`}
@@ -66,11 +68,7 @@ export default function HomePage() {
                       : 'bg-card text-text border-gray-300'
                   }`}
                 >
-                  {type === 'website'
-                    ? 'Сайт'
-                    : type === 'application'
-                    ? 'Приложение'
-                    : 'Бот'}
+                  {t(type)}
                 </button>
               ))}
             </div>
@@ -83,14 +81,14 @@ export default function HomePage() {
                   onChange={(e) => setIsPrivate(e.target.checked)}
                   className="h-4 w-4"
                 />
-                Приватный
+                {t('private')}
               </label>
               <button
                 type="submit"
                 disabled={!prompt.trim()}
                 className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition-opacity disabled:opacity-50"
               >
-                Сгенерировать
+                {t('generate')}
               </button>
             </div>
           </div>
