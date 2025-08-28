@@ -1,7 +1,10 @@
 import axios from 'axios'
+import { config as loadEnv } from 'dotenv'
 import { prisma } from '@/lib/db'
 import { updateUserPlan, updateUserTokens } from '@/server/repo/user'
 import type { Features } from '@/server/billing/plans'
+
+loadEnv()
 
 export async function createPayment(
   userId: string,

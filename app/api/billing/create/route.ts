@@ -46,7 +46,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ confirmationUrl })
   } catch (err) {
-    console.error('[billing/create]', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[billing/create]', msg)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

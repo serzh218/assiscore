@@ -66,6 +66,7 @@ CREATE TABLE "PaymentLog" (
     "currency" TEXT NOT NULL,
     "status" TEXT NOT NULL,
     "externalId" TEXT NOT NULL,
+    "raw" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "PaymentLog_pkey" PRIMARY KEY ("id")
 );

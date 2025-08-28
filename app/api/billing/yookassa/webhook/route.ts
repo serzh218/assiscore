@@ -4,6 +4,16 @@ import { getPaymentByExternalId } from '@/server/repo/payment'
 import { prisma } from '@/lib/db'
 import type { Features } from '@/server/billing/plans'
 
+function maskPii(data: any) {
+  const clone = JSON.parse(JSON.stringify(data))
+  if (clone?.object) {
+    delete clone.object.payment_method
+    if (clone.object.recipient) delete clone.object.recipient
+    if (clone.object.payer) delete clone.object.payer
+  }
+  return clone
+}
+
 export async function POST(req: Request) {
   const url = new URL(req.url)
   const token = url.searchParams.get('token')
@@ -73,11 +83,13 @@ export async function POST(req: Request) {
         currency: plan?.currency || 'RUB',
         status,
         externalId,
+        raw: maskPii(body),
       },
     })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('[billing/yookassa/webhook]', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[billing/yookassa/webhook]', msg)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
