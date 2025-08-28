@@ -1,0 +1,84 @@
+name: Preview Deploy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  preview:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with: { version: 9 }
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install deps
+        run: pnpm i --frozen-lockfile
+
+      - name: Build docker image
+        run: docker build -t assiscore:pr-${{ github.event.number }} .
+
+      - name: Install flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Create or update preview app
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: assiscore-pr-${{ github.event.number }}
+        run: |
+          if ! flyctl status -a $APP_NAME >/dev/null 2>&1; then
+            flyctl apps create $APP_NAME
+          fi
+          # Заливаем образ через deploy (fly сам соберёт из Dockerfile,
+          # либо можно пушнуть в регистр и указать image:)
+          flyctl deploy --app $APP_NAME --remote-only --build-arg BUILDKIT_INLINE_CACHE=1
+
+      - name: Set secrets
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: assiscore-pr-${{ github.event.number }}
+        run: |
+          flyctl secrets set \
+            NEXTAUTH_URL=https://$APP_NAME.fly.dev \
+            NEXTAUTH_SECRET=preview-secret \
+            AUTH_TRUST_HOST=true \
+            DATABASE_URL=${{ secrets.DATABASE_URL_PREVIEW }} \
+            OPENROUTER_API_KEY= \
+            E2B_API_KEY= \
+            YOOKASSA_SHOP_ID= \
+            YOOKASSA_SECRET_KEY= \
+            --app $APP_NAME
+
+      - name: Run migrations (deploy)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: assiscore-pr-${{ github.event.number }}
+        run: |
+          flyctl ssh console -a $APP_NAME -C "pnpm prisma migrate deploy"
+
+      - name: Output preview URL
+        env:
+          APP_NAME: assiscore-pr-${{ github.event.number }}
+        run: echo "Preview: https://$APP_NAME.fly.dev"
+
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Destroy preview app
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: assiscore-pr-${{ github.event.number }}
+        run: |
+          flyctl apps destroy $APP_NAME -y
