@@ -18,7 +18,8 @@ export async function POST() {
 
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('[billing/free]', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[billing/free]', msg)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

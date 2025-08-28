@@ -284,6 +284,7 @@ model PaymentLog {
   currency  String
   status    String
   externalId String
+  raw       Json?
   createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
