@@ -9,8 +9,8 @@ export async function GET(
 ) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { id, versionId } = await params
-  const project = await getProjectById(id)
+  const { id: projectId, versionId } = await params
+  const project = await getProjectById(projectId)
   if (!project || project.ownerId !== user.id) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
@@ -18,6 +18,6 @@ export async function GET(
   if (!version || version.projectId !== project.id) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
-  const { id, label, createdAt, files } = version
-  return NextResponse.json({ id, label, createdAt, files })
+  const { id: vId, label, createdAt, files } = version
+  return NextResponse.json({ id: vId, label, createdAt, files })
 }
