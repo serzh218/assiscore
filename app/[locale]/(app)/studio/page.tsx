@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import UsageMeter from '@/components/billing/UsageMeter'
 import UpgradeBanner from '@/components/billing/UpgradeBanner'
+import ProjectChat from '@/components/chat/ProjectChat'
 
 const files = [
   { name: 'index.ts', ext: 'ts' },
@@ -78,7 +79,9 @@ export default function StudioPage() {
               <Card className="p-4 text-center text-muted">No diff</Card>
             </TabsContent>
             <TabsContent value="chat">
-              <Card className="p-4 text-center text-muted">Chat coming soon</Card>
+              <Card className="p-0 h-[60vh]">
+                <ProjectChat projectId="p1" />
+              </Card>
             </TabsContent>
             <TabsContent value="versions">
               <Card className="p-4 text-center text-muted">No versions</Card>
