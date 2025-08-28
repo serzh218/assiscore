@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "title": "Build with AI, launch in minutes",
+    "subtitle": "Create websites, apps, bots and integrations powered by AI.",
+    "ctaPrimary": "Try for free",
+    "ctaSecondary": "Demo projects"
+  },
+  "features": {
+    "title": "What you can build",
+    "sites": "Websites",
+    "apps": "Applications",
+    "bots": "Telegram bots",
+    "integrations": "Integrations"
+  },
+  "how": {
+    "title": "How it works",
+    "step1": "Describe",
+    "step2": "Generate",
+    "step3": "Edit in studio",
+    "step4": "Deploy"
+  },
+  "trust": {
+    "title": "Trusted integrations",
+    "integrations": "Works with familiar tools"
+  },
+  "cta": {
+    "title": "Ready to create?",
+    "button": "Create project",
+    "note": "No card required on the Free plan"
+  }
+}
