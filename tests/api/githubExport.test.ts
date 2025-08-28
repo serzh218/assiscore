@@ -1,9 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 let savedRepoUrl: string | null = null
+let allowEntitlement = false
 
 vi.mock('@/auth', () => ({
   getCurrentUser: vi.fn(),
+}))
+
+class PaywallError extends Error {}
+vi.mock('@/server/guards/entitlements', () => ({
+  assertEntitlement: vi.fn(async () => {
+    if (!allowEntitlement) throw new PaywallError()
+  }),
+  PaywallError,
 }))
 
 vi.mock('@/server/repo/project', () => ({
@@ -33,6 +42,7 @@ vi.mock('@/server/integrations/github', () => ({
 describe('github export API', () => {
   beforeEach(() => {
     savedRepoUrl = null
+    allowEntitlement = false
   })
 
   it('free user forbidden', async () => {
@@ -52,6 +62,7 @@ describe('github export API', () => {
   it('pro user without github', async () => {
     const { getCurrentUser } = await import('@/auth')
     ;(getCurrentUser as any).mockResolvedValue({ id: 'u1', plan: 'PRO', githubLinked: false })
+    allowEntitlement = true
     const { POST } = await import('@/app/api/projects/[id]/export/github/route')
     const res = await POST(
       new Request('http://test', {
@@ -71,6 +82,7 @@ describe('github export API', () => {
       githubLinked: true,
       githubUsername: 'gh',
     })
+    allowEntitlement = true
     const { POST } = await import('@/app/api/projects/[id]/export/github/route')
     const res = await POST(
       new Request('http://test', {
