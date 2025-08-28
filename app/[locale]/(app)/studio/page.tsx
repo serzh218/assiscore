@@ -14,6 +14,8 @@ import {
   FileImage,
   File as FileIcon,
 } from 'lucide-react'
+import UsageMeter from '@/components/billing/UsageMeter'
+import UpgradeBanner from '@/components/billing/UpgradeBanner'
 
 const files = [
   { name: 'index.ts', ext: 'ts' },
@@ -49,6 +51,7 @@ export default function StudioPage() {
         <header className="flex items-center justify-between border-b border-border px-6 py-3">
           <h2 className="text-lg font-semibold">My Project</h2>
           <div className="flex items-center gap-4">
+            <UsageMeter />
             <Bell className="h-5 w-5" />
             <div className="h-8 w-8 rounded-full bg-primary" />
           </div>
@@ -83,6 +86,7 @@ export default function StudioPage() {
           </Tabs>
         </main>
       </div>
+      <UpgradeBanner className="fixed bottom-0 left-0 right-0" />
     </div>
   )
 }

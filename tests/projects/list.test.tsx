@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { describe, it, expect } from 'vitest'
 import { NextIntlClientProvider } from 'next-intl'
 import projectsEn from '@/i18n/en/projects.json'
-import { ProjectsList, Project } from '@/app/[locale]/(app)/projects/page'
+import { ProjectsList, Project } from '@/app/[locale]/(app)/projects/ProjectsList'
 
 async function render(projects: Project[]) {
   const container = document.createElement('div')

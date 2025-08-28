@@ -8,8 +8,13 @@ export const generateMetadata = () => ({
   description: 'Публичные проекты пользователей',
 })
 
-export default async function ExplorePage({ searchParams }: { searchParams: { order?: string } }) {
-  const order = searchParams.order === 'popular' ? 'popular' : 'new'
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ order?: string }>
+}) {
+  const { order: spOrder } = await searchParams
+  const order = spOrder === 'popular' ? 'popular' : 'new'
   const base = process.env.NEXTAUTH_URL || 'http://localhost:3000'
   const res = await fetch(`${base}/api/explore?order=${order}`, { cache: 'no-store' })
   const data = await res.json()

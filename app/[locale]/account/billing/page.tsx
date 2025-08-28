@@ -11,6 +11,7 @@ import {
   Table,
 } from '@/components/ui'
 import { useTranslations } from 'next-intl'
+import UsageMeter from '@/components/billing/UsageMeter'
 
 function CancelButton() {
   'use client'
@@ -47,12 +48,13 @@ export default async function BillingPage() {
 
   return (
     <div className="space-y-8">
+      <UsageMeter />
       <Card>
         <CardHeader>
           <CardTitle>{t('currentPlan')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <p>{user.plan}</p>
+          <p>{String((user as any).plan)}</p>
           {subscription && (
             <div className="space-y-1 text-sm">
               <p>

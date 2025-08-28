@@ -67,6 +67,7 @@ export default async function BillingPage() {
   const user = await getCurrentUser()
   if (!user) return null
   const payments = await listPayments(user.id)
+  const planCode = (user as any).plan as string
   return (
     <div className="space-y-8">
       <Card>
@@ -75,9 +76,9 @@ export default async function BillingPage() {
         </CardHeader>
         <CardContent className="space-y-2">
           <p>Неограниченные приватные проекты, интеграция с GitHub, публикация на домены.</p>
-          {user.plan === 'PRO' && <Badge variant="success">PRO активен</Badge>}
+          {planCode === 'PRO' && <Badge variant="success">PRO активен</Badge>}
         </CardContent>
-        {user.plan !== 'PRO' && (
+        {planCode !== 'PRO' && (
           <CardFooter>
             <BuyButton type="PRO_SUBSCRIPTION">Перейти на PRO</BuyButton>
           </CardFooter>
@@ -107,7 +108,7 @@ export default async function BillingPage() {
           <CardTitle>История</CardTitle>
         </CardHeader>
         <CardContent>
-          {user.plan === 'PRO' && <p className="mb-2 text-green-600">План PRO активен</p>}
+          {planCode === 'PRO' && <p className="mb-2 text-green-600">План PRO активен</p>}
           <Table headers={['Тип', 'Сумма', 'Статус', 'Дата']}>
             {payments.map((p) => (
               <tr key={p.id}>
