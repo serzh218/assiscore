@@ -1,0 +1,16 @@
+{
+  "ui": {
+    "theme": { "light": "Light", "dark": "Dark", "system": "System", "toggle": "Toggle theme" },
+    "loading": "Loading…",
+    "error": "Error",
+    "retry": "Retry",
+    "openLogs": "Open logs",
+    "empty": "Empty",
+    "resizing": "Drag to resize"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "keyboardShortcuts": "Keyboard shortcuts",
+    "openHelp": "Open help"
+  }
+}

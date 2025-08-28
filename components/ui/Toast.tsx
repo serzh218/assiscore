@@ -1,10 +1,10 @@
-'use client';
-import { Toaster as SonnerToaster, toast } from "sonner";
+'use client'
+import { Toaster as SonnerToaster, toast, type ToasterProps } from 'sonner'
 
-export const Toaster = () => (
-  <SonnerToaster toastOptions={{ className: "fade-in transition-base" }} />
-);
+export const Toaster = (props: ToasterProps) => (
+  <SonnerToaster richColors position="top-right" {...props} />
+)
 
 export function useToast() {
-  return { toast };
+  return { toast }
 }
