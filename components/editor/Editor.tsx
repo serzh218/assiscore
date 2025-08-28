@@ -1,48 +1,63 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { useToast } from '@/components/ui/Toast'
 
 interface EditorProps {
   projectId: string
   initialContent?: string
   filePath?: string
+  projectFiles?: string[]
 }
 
-export function Editor({ projectId, initialContent = '', filePath = 'file.ts' }: EditorProps) {
+export function Editor({
+  projectId,
+  initialContent = '',
+  filePath = 'file.ts',
+  projectFiles = [],
+}: EditorProps) {
   const [content, setContent] = useState(initialContent)
   const [ghost, setGhost] = useState('')
-  const wsRef = useRef<WebSocket | null>(null)
+  const [accepted, setAccepted] = useState(false)
   const timer = useRef<NodeJS.Timeout | null>(null)
+  const { toast } = useToast()
+  const t = useTranslations('copilot')
 
-  useEffect(() => {
-    const ws = new WebSocket(`/api/projects/${projectId}/copilot`)
-    wsRef.current = ws
-    ws.addEventListener('message', (event) => {
-      const msg = JSON.parse((event as MessageEvent).data)
-      if (msg.type === 'suggestionChunk') {
-        setGhost((g) => g + msg.text)
-      } else if (msg.type === 'suggestionDone') {
-        setGhost(msg.fullText)
-      } else if (msg.type === 'error') {
-        setGhost('')
+  const fetchSuggestion = async (value: string, cursor: number) => {
+    toast(t('suggesting'))
+    const prefix = value.slice(0, cursor)
+    const suffix = value.slice(cursor)
+    const imports = Array.from(value.matchAll(/import\s.+?from\s+['\"](.*)['\"]/g)).map((m) => m[1])
+    try {
+      const res = await fetch(`/api/projects/${projectId}/copilot/suggest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filePath,
+          content: value,
+          cursorLine: 0,
+          cursorColumn: cursor,
+          prefix,
+          suffix,
+          imports,
+          files: projectFiles,
+        }),
+      })
+      const data = await res.json()
+      if (data.suggestions && data.suggestions[0]) {
+        setGhost(data.suggestions[0].text)
+      } else {
+        toast(t('noSuggestions'))
       }
-    })
-    return () => {
-      ws.close()
+    } catch {
+      toast(t('noSuggestions'))
     }
-  }, [projectId])
+  }
 
-  const sendUpdate = (value: string, cursor: number) => {
-    if (!wsRef.current) return
-    wsRef.current.send(
-      JSON.stringify({
-        type: 'cursorUpdate',
-        filePath,
-        content: value,
-        cursorLine: 0,
-        cursorCol: cursor,
-      }),
-    )
+  const schedule = (value: string, cursor: number) => {
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(() => fetchSuggestion(value, cursor), 500)
   }
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -50,18 +65,42 @@ export function Editor({ projectId, initialContent = '', filePath = 'file.ts' }:
     const cursor = e.target.selectionStart || 0
     setContent(value)
     setGhost('')
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => sendUpdate(value, cursor), 400)
+    schedule(value, cursor)
+  }
+
+  const logAction = (action: string, text: string) => {
+    fetch(`/api/projects/${projectId}/copilot/event`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filePath, action, text }),
+    })
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (!ghost) return
-    if (e.key === 'Tab' || e.key === 'Enter') {
+    if (e.key === 'Tab' && ghost) {
       e.preventDefault()
-      setContent((c) => c + ghost)
+      const g = ghost
+      const textarea = e.currentTarget
+      const start = textarea.selectionStart || 0
+      const end = textarea.selectionEnd || start
+      setContent((c) => c.slice(0, start) + g + c.slice(end))
       setGhost('')
-    } else if (e.key === 'Escape') {
+      setAccepted(true)
+      setTimeout(() => setAccepted(false), 200)
+      logAction('accepted', g)
+      toast(t('accepted'))
+    } else if (e.key === 'Escape' && ghost) {
+      const g = ghost
       setGhost('')
+      logAction('rejected', g)
+      toast(t('rejected'))
+    } else if (e.key === ' ' && e.ctrlKey) {
+      e.preventDefault()
+      const textarea = e.currentTarget
+      const value = textarea.value
+      const cursor = textarea.selectionStart || 0
+      setGhost('')
+      fetchSuggestion(value, cursor)
     }
   }
 
@@ -72,12 +111,12 @@ export function Editor({ projectId, initialContent = '', filePath = 'file.ts' }:
         value={content}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        className="font-mono w-full h-40"
+        className={`font-mono w-full h-40 bg-transparent relative z-10 ${accepted ? 'fade-in' : ''}`}
       />
       {ghost && (
         <div
           data-testid="ghost"
-          className="ghost-suggestion text-gray-500 opacity-50 pointer-events-none absolute top-0 left-0 whitespace-pre-wrap"
+          className="ghost-suggestion text-gray-500 opacity-50 pointer-events-none absolute top-0 left-0 whitespace-pre-wrap z-0"
         >
           {content}
           {ghost}

@@ -2,5 +2,9 @@
   "suggestionUnavailable": "Suggestions unavailable",
   "limitReached": "Daily suggestion limit reached",
   "insert": "Insert suggestion",
-  "dismiss": "Dismiss"
+  "dismiss": "Dismiss",
+  "suggesting": "Getting suggestion...",
+  "noSuggestions": "No suggestions",
+  "accepted": "Suggestion inserted",
+  "rejected": "Suggestion dismissed"
 }
