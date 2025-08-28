@@ -15,11 +15,17 @@ vi.mock('@/server/repo/project', () => ({
   setProjectVisibility: mockSet,
 }))
 
+class PaywallError extends Error {}
+
 vi.mock('@/server/guards/privacy', () => ({
   assertProjectOwnership: vi.fn(async () => {}),
-  assertCanSetPrivate: vi.fn(async () => {
-    throw Object.assign(new Error('Приватные проекты доступны на PRO'), { code: 'PRO_REQUIRED' })
+}))
+
+vi.mock('@/server/guards/entitlements', () => ({
+  assertEntitlements: vi.fn(async () => {
+    throw new PaywallError('upgrade')
   }),
+  PaywallError,
 }))
 
 vi.mock('@/auth', () => ({
@@ -40,14 +46,14 @@ describe('visibility API', () => {
       }),
       { params: { id: 'p1' } },
     )
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(402)
     const data = await res.json()
-    expect(data.code).toBe('PRO_REQUIRED')
+    expect(data.code).toBe('PAYWALL')
   })
 
   it('pro user can toggle', async () => {
-    const guards = await import('@/server/guards/privacy')
-    ;(guards.assertCanSetPrivate as any).mockImplementation(async () => {})
+    const ents = await import('@/server/guards/entitlements')
+    ;(ents.assertEntitlements as any).mockImplementation(async () => {})
     const auth = await import('@/auth')
     ;(auth.getCurrentUser as any).mockResolvedValue({ id: 'u1', plan: 'PRO' })
     const { POST } = await import('@/app/api/projects/[id]/visibility/route')

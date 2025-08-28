@@ -53,6 +53,11 @@ vi.mock('@/server/guards/limits', () => ({
   spendTokens: vi.fn(async () => {}),
 }))
 
+vi.mock('@/server/guards/entitlements', () => ({
+  assertEntitlements: vi.fn(async () => {}),
+  PaywallError: class extends Error {},
+}))
+
 describe('generate API', () => {
   beforeEach(() => {
     vi.useFakeTimers()
