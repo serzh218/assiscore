@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import '../globals.css'
+import '@/styles/theme.css'
 import { Toaster } from '@/components/ui'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { locales, defaultLocale } from '@/i18n/config'
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'AssisCore',
@@ -28,8 +31,12 @@ export default async function RootLayout({
     <html lang={locale} dir="ltr">
       <body className="font-sans">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-          <Toaster />
+          <div className="flex min-h-screen flex-col bg-bg text-text">
+            <Navbar locale={locale} />
+            <main className="flex-1">{children}</main>
+            <Footer locale={locale} />
+            <Toaster />
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>
