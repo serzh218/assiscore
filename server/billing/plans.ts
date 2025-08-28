@@ -44,3 +44,31 @@ export const PLANS: {
     },
   },
 ]
+
+export interface PlanWithFeatures {
+  code: string
+  priceCents: number
+  currency: string
+  features: Features
+  isActive?: boolean
+}
+
+export async function listPlans(): Promise<PlanWithFeatures[]> {
+  if (process.env.NODE_ENV === 'production') {
+    const { prisma } = await import('@/lib/db')
+    const plans = await prisma.plan.findMany({ where: { isActive: true } })
+    return plans.map((p) => ({
+      code: p.code,
+      priceCents: p.priceCents,
+      currency: p.currency,
+      features: p.features as Features,
+      isActive: p.isActive,
+    }))
+  }
+  return PLANS.filter((p) => p.isActive !== false)
+}
+
+export async function getPlan(code: string): Promise<PlanWithFeatures | undefined> {
+  const plans = await listPlans()
+  return plans.find((p) => p.code === code)
+}
