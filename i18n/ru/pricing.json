@@ -1,0 +1,15 @@
+{
+  "free": "Бесплатно",
+  "select": "Выбрать",
+  "yes": "Да",
+  "no": "Нет",
+  "features": {
+    "genPerMonth": "Генераций в месяц",
+    "privateProjects": "Приватные проекты",
+    "githubExport": "Экспорт в GitHub",
+    "deploy": "Деплой",
+    "monthlyTokens": "Токенов в месяц",
+    "assistantCallsPerHour": "Вызовов ассистента в час",
+    "testFirstCyclesPerMonth": "Циклов Test-first в месяц"
+  }
+}

@@ -15,6 +15,9 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
     testfirst,
     quality,
     obs,
+    pricing,
+    paywall,
+    account,
   ] = await Promise.all([
     import(`./${l}/common.json`).then((m) => m.default),
     import(`./${l}/pages.json`).then((m) => m.default),
@@ -26,6 +29,9 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
     import(`./${l}/testfirst.json`).then((m) => m.default),
     import(`./${l}/quality.json`).then((m) => m.default),
     import(`./${l}/obs.json`).then((m) => m.default),
+    import(`./${l}/pricing.json`).then((m) => m.default),
+    import(`./${l}/paywall.json`).then((m) => m.default),
+    import(`./${l}/account.json`).then((m) => m.default),
   ])
   return {
     locale: l,
@@ -40,6 +46,9 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
       testfirst,
       quality,
       obs,
+      pricing,
+      paywall,
+      account,
     },
   }
 })

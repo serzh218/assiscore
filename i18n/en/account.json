@@ -1,0 +1,13 @@
+{
+  "billing": {
+    "currentPlan": "Current plan",
+    "status": "Status",
+    "currentPeriodEnd": "Current period end",
+    "changePlan": "Change plan",
+    "cancelSubscription": "Cancel subscription",
+    "entitlements": "Entitlements",
+    "feature": "Feature",
+    "usage": "Usage",
+    "limit": "Limit"
+  }
+}

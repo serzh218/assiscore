@@ -1,22 +1,39 @@
 import { listPlans, type PlanWithFeatures } from '@/server/billing/plans'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, Button } from '@/components/ui'
+import { useTranslations } from 'next-intl'
 
 function PlanFeatures({ features }: { features: PlanWithFeatures['features'] }) {
+  const t = useTranslations('pricing')
   return (
     <ul className="space-y-1 text-sm">
-      <li>Generations per month: {features.genPerMonth}</li>
-      <li>Private projects: {features.privateProjects}</li>
-      <li>GitHub export: {features.githubExport ? 'Yes' : 'No'}</li>
-      <li>Deploy: {features.deploy ? 'Yes' : 'No'}</li>
-      <li>Monthly tokens: {features.monthlyTokens}</li>
-      <li>Assistant calls per hour: {features.assistantCallsPerHour}</li>
-      <li>Test-first cycles per month: {features.testFirstCyclesPerMonth}</li>
+      <li>
+        {t('features.genPerMonth')}: {features.genPerMonth}
+      </li>
+      <li>
+        {t('features.privateProjects')}: {features.privateProjects}
+      </li>
+      <li>
+        {t('features.githubExport')}: {features.githubExport ? t('yes') : t('no')}
+      </li>
+      <li>
+        {t('features.deploy')}: {features.deploy ? t('yes') : t('no')}
+      </li>
+      <li>
+        {t('features.monthlyTokens')}: {features.monthlyTokens}
+      </li>
+      <li>
+        {t('features.assistantCallsPerHour')}: {features.assistantCallsPerHour}
+      </li>
+      <li>
+        {t('features.testFirstCyclesPerMonth')}: {features.testFirstCyclesPerMonth}
+      </li>
     </ul>
   )
 }
 
 function SelectButton({ plan }: { plan: PlanWithFeatures }) {
   'use client'
+  const t = useTranslations('pricing')
   const handleClick = async () => {
     if (plan.priceCents === 0) {
       await fetch('/api/billing/free', { method: 'POST' })
@@ -33,11 +50,12 @@ function SelectButton({ plan }: { plan: PlanWithFeatures }) {
       }
     }
   }
-  return <Button onClick={handleClick}>Select</Button>
+  return <Button onClick={handleClick}>{t('select')}</Button>
 }
 
 export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
+  const t = useTranslations('pricing')
   const plans = await listPlans()
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -46,7 +64,8 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
           style: 'currency',
           currency: plan.currency,
         })
-        const price = plan.priceCents === 0 ? 'Free' : priceFormatter.format(plan.priceCents / 100)
+        const price =
+          plan.priceCents === 0 ? t('free') : priceFormatter.format(plan.priceCents / 100)
         return (
           <Card key={plan.code} className="flex flex-col">
             <CardHeader>
