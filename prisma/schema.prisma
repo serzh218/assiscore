@@ -9,11 +9,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Plan {
-  FREE
-  PRO
-}
-
 enum Visibility {
   public
   private
@@ -41,13 +36,23 @@ enum OrgRole {
   VIEWER
 }
 
+model Plan {
+  id         String         @id @default(cuid())
+  code       String         @unique
+  priceCents Int
+  currency   String
+  features   Json
+  isActive   Boolean        @default(true)
+  subscriptions Subscription[]
+  organizations Organization[]
+  paymentLogs  PaymentLog[]
+}
+
 model User {
   id                     String                  @id @default(cuid())
   email                  String?                 @unique
   password               String?
   name                   String?
-  plan                   Plan                    @default(FREE)
-  tokens                 Int                     @default(500)
   githubLinked           Boolean                 @default(false)
   githubUsername         String?
   projects               Project[]
@@ -55,6 +60,9 @@ model User {
   orgMembers             OrgMember[]
   auditLogs              AuditLog[]
   tokenTransactions      TokenTransaction[]
+  subscriptions          Subscription[]
+  entitlements           Entitlement[]
+  paymentLogs            PaymentLog[]
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   Payment                Payment[]
@@ -135,7 +143,8 @@ model Organization {
   id        String   @id @default(cuid())
   name      String
   slug      String   @unique
-  plan      Plan     @default(FREE)
+  planId    String?
+  plan      Plan?    @relation(fields: [planId], references: [id])
   tokens    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -231,6 +240,51 @@ model Payment {
   externalId String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  planId    String
+  plan      Plan     @relation(fields: [planId], references: [id])
+  status    String
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([planId])
+}
+
+model Entitlement {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  feature   String
+  usage     Int      @default(0)
+  limit     Int
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, feature])
+}
+
+model PaymentLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  planId    String?
+  plan      Plan?    @relation(fields: [planId], references: [id])
+  amount    Int
+  currency  String
+  status    String
+  externalId String
+  createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
 }
