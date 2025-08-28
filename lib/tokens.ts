@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
 import { COSTS } from '@/lib/limits'
-import type { Features } from '@/server/billing/plans'
+import { getEntitlements } from '@/server/guards/entitlements'
 
 export function estimateGenerationCost(opts: { textLen: number; hasFigma?: boolean }): number {
   const base = COSTS.generationBase
@@ -28,8 +28,7 @@ export async function canGenerate(
   user: { id: string; plan: string; tokens: number },
   estimatedCost: number,
 ): Promise<{ ok: true } | { ok: false; code: 'LIMIT' | 'TOKENS'; message: string }> {
-  const plan = await prisma.plan.findUnique({ where: { code: user.plan } })
-  const limits = (plan?.features as Features) || ({} as Partial<Features>)
+  const limits = await getEntitlements(user.id)
   const used = await monthlyGenerationCount(user.id)
   if (typeof limits.genPerMonth === 'number' && used >= limits.genPerMonth) {
     return { ok: false, code: 'LIMIT', message: 'Лимит генераций на месяц исчерпан' }

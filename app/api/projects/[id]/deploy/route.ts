@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/auth'
 import { assertProjectOwnership } from '@/server/guards/privacy'
-import { isPro } from '@/server/repo/user'
 import { getProjectById, getProjectFiles, updateProjectArtifacts } from '@/server/repo/project'
 import { deploySite } from '@/server/integrations/deploy'
 import { enqueueDeployment, getDeployStatus } from '@/server/queue/deployQueue'
+import { assertEntitlement, PaywallError } from '@/server/guards/entitlements'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -12,9 +12,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const { id } = await params
     await assertProjectOwnership(id, user.id)
-    const pro = await isPro(user.id)
-    if (!pro) {
-      return NextResponse.json({ error: 'PRO required', code: 'PRO_REQUIRED' }, { status: 403 })
+    try {
+      await assertEntitlement(user.id, 'deploy')
+    } catch (e) {
+      if (e instanceof PaywallError) {
+        return NextResponse.json({ error: 'PRO required', code: 'PRO_REQUIRED' }, { status: 403 })
+      }
+      throw e
     }
 
     const { provider, domain } = await req.json()

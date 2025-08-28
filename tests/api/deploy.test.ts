@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-let isProFlag = false
+let allowEntitlement = false
 let project: any = {
   id: 'p1',
   ownerId: 'u1',
@@ -18,8 +18,12 @@ vi.mock('@/server/guards/privacy', () => ({
   assertProjectOwnership: vi.fn(async () => {}),
 }))
 
-vi.mock('@/server/repo/user', () => ({
-  isPro: vi.fn(async () => isProFlag),
+class PaywallError extends Error {}
+vi.mock('@/server/guards/entitlements', () => ({
+  assertEntitlement: vi.fn(async () => {
+    if (!allowEntitlement) throw new PaywallError()
+  }),
+  PaywallError,
 }))
 
 vi.mock('@/server/repo/project', () => ({
@@ -41,7 +45,7 @@ vi.mock('@/server/integrations/deploy', () => ({
 describe('deploy API', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    isProFlag = false
+    allowEntitlement = false
     project.status = 'draft'
     project.deployUrl = undefined
     project.lastDeployedAt = undefined
@@ -64,7 +68,7 @@ describe('deploy API', () => {
   })
 
   it('returns error for empty project', async () => {
-    isProFlag = true
+    allowEntitlement = true
     const { POST } = await import('@/app/api/projects/[id]/deploy/route')
     const res = await POST(
       new Request('http://test', { method: 'POST', body: JSON.stringify({ provider: 'vercel' }) }),
@@ -74,7 +78,7 @@ describe('deploy API', () => {
   })
 
   it('deploys project and reports status', async () => {
-    isProFlag = true
+    allowEntitlement = true
     projectFiles = { 'index.html': '<h1>Hello</h1>' }
     const { POST, GET } = await import('@/app/api/projects/[id]/deploy/route')
     const res = await POST(
