@@ -5,6 +5,7 @@ import { assertCanGenerate, spendTokens } from '@/server/guards/limits'
 import { createProject } from '@/server/repo/project'
 import { createGeneration } from '@/server/repo/generation'
 import { runGenerationPipeline } from '@/server/ai/orchestrator'
+import { assertEntitlements, PaywallError } from '@/server/guards/entitlements'
 import type { Visibility } from '@prisma/client'
 
 export async function POST(req: Request) {
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
     }
 
     const estimatedCost = estimateGenerationCost({ textLen: prompt.length, hasFigma: !!figmaUrl })
+    await assertEntitlements(user, 'genPerMonth')
     await assertCanGenerate(user.id, estimatedCost)
 
     const attachmentsMeta = Array.isArray(attachments)
@@ -50,6 +52,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ projectId: project.id })
   } catch (err: any) {
+    if (err instanceof PaywallError) {
+      return NextResponse.json({ error: err.message, code: 'PAYWALL' }, { status: 402 })
+    }
     console.error('[generate] error', err)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
