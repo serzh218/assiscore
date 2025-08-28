@@ -1,0 +1,13 @@
+{
+  "billing": {
+    "currentPlan": "Текущий план",
+    "status": "Статус",
+    "currentPeriodEnd": "Конец текущего периода",
+    "changePlan": "Сменить план",
+    "cancelSubscription": "Отменить подписку",
+    "entitlements": "Лимиты",
+    "feature": "Функция",
+    "usage": "Использовано",
+    "limit": "Лимит"
+  }
+}

@@ -1,3 +1,12 @@
 {
-  "title": "Биллинг"
+  "title": "Биллинг",
+  "status": {
+    "active": "Активна",
+    "trialing": "Пробный период",
+    "past_due": "Просрочена",
+    "canceled": "Отменена",
+    "incomplete": "Не завершена",
+    "incomplete_expired": "Срок завершения истёк",
+    "unpaid": "Не оплачена"
+  }
 }

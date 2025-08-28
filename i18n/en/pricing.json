@@ -1,0 +1,15 @@
+{
+  "free": "Free",
+  "select": "Select",
+  "yes": "Yes",
+  "no": "No",
+  "features": {
+    "genPerMonth": "Generations per month",
+    "privateProjects": "Private projects",
+    "githubExport": "GitHub export",
+    "deploy": "Deploy",
+    "monthlyTokens": "Monthly tokens",
+    "assistantCallsPerHour": "Assistant calls per hour",
+    "testFirstCyclesPerMonth": "Test-first cycles per month"
+  }
+}
