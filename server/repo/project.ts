@@ -1,6 +1,6 @@
-import { Prisma, type Project } from '@prisma/client';
-import { prisma } from '@/lib/db';
-import type { ProjectDTO, ProjectStatus, Visibility } from '@/types/domain';
+import { Prisma, type Project } from '@prisma/client'
+import { prisma } from '@/lib/db'
+import type { ProjectDTO, ProjectStatus, Visibility } from '@/types/domain'
 
 const toProjectDTO = (project: Project): ProjectDTO => ({
   id: project.id,
@@ -18,7 +18,8 @@ const toProjectDTO = (project: Project): ProjectDTO => ({
   lastDeployedAt: project.lastDeployedAt ?? undefined,
   status: project.status,
   createdAt: project.createdAt,
-});
+  updatedAt: project.updatedAt,
+})
 
 export async function createProject({
   ownerId,
@@ -27,67 +28,75 @@ export async function createProject({
   type,
   spec,
 }: {
-  ownerId: string;
-  visibility: Visibility;
-  title: string;
-  type: string;
-  spec: Prisma.JsonValue;
+  ownerId: string
+  visibility: Visibility
+  title: string
+  type: string
+  spec: Prisma.JsonValue
 }): Promise<ProjectDTO> {
   const project = await prisma.project.create({
     data: { ownerId, visibility, title, type, spec },
-  });
-  return toProjectDTO(project);
+  })
+  return toProjectDTO(project)
 }
 
 export async function getProjectById(id: string): Promise<ProjectDTO | null> {
-  const project = await prisma.project.findUnique({ where: { id } });
-  return project ? toProjectDTO(project) : null;
+  const project = await prisma.project.findUnique({ where: { id } })
+  return project ? toProjectDTO(project) : null
 }
 
 export async function getProjectLight(
-  id: string
+  id: string,
 ): Promise<{ id: string; ownerId: string; visibility: Visibility; title: string } | null> {
   const project = await prisma.project.findUnique({
     where: { id },
     select: { id: true, ownerId: true, visibility: true, title: true },
-  });
-  return project;
+  })
+  return project
 }
 
 export async function listProjectsByOwner(
   ownerId: string,
-  { limit = 20, offset = 0 }: { limit?: number; offset?: number }
-): Promise<ProjectDTO[]> {
+  { limit = 20, cursor }: { limit?: number; cursor?: string },
+): Promise<{ items: ProjectDTO[]; nextCursor: string | null }> {
   const projects = await prisma.project.findMany({
     where: { ownerId },
-    take: limit,
-    skip: offset,
-    orderBy: { createdAt: 'desc' },
-  });
-  return projects.map(toProjectDTO);
+    orderBy: { updatedAt: 'desc' },
+    take: limit + 1,
+    cursor: cursor ? { id: cursor } : undefined,
+  })
+  const items = projects.slice(0, limit).map(toProjectDTO)
+  const nextCursor = projects.length > limit ? projects[limit].id : null
+  return { items, nextCursor }
 }
 
-export async function updateProjectSpec(id: string, spec: Prisma.JsonValue): Promise<ProjectDTO | null> {
+export async function updateProjectSpec(
+  id: string,
+  spec: Prisma.JsonValue,
+): Promise<ProjectDTO | null> {
   try {
-    const project = await prisma.project.update({ where: { id }, data: { spec } });
-    return toProjectDTO(project);
+    const project = await prisma.project.update({ where: { id }, data: { spec } })
+    return toProjectDTO(project)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
-      return null;
+      return null
     }
-    throw e;
+    throw e
   }
 }
 
-export async function updateProjectStatus(id: string, status: ProjectStatus): Promise<ProjectDTO | null> {
+export async function updateProjectStatus(
+  id: string,
+  status: ProjectStatus,
+): Promise<ProjectDTO | null> {
   try {
-    const project = await prisma.project.update({ where: { id }, data: { status } });
-    return toProjectDTO(project);
+    const project = await prisma.project.update({ where: { id }, data: { status } })
+    return toProjectDTO(project)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
-      return null;
+      return null
     }
-    throw e;
+    throw e
   }
 }
 
@@ -103,100 +112,107 @@ export async function updateProjectArtifacts(
     status,
     lastDeployedAt,
   }: {
-    files?: Prisma.JsonValue;
-    previewUrl?: string;
-    repoUrl?: string;
-    deployUrl?: string;
-    deployProvider?: string | null;
-    domain?: string | null;
-    status?: ProjectStatus;
-    lastDeployedAt?: Date;
-  }
+    files?: Prisma.JsonValue
+    previewUrl?: string
+    repoUrl?: string
+    deployUrl?: string
+    deployProvider?: string | null
+    domain?: string | null
+    status?: ProjectStatus
+    lastDeployedAt?: Date
+  },
 ): Promise<ProjectDTO | null> {
-  const data: Prisma.ProjectUpdateInput = {};
-  if (files !== undefined) data.files = files;
-  if (previewUrl !== undefined) data.previewUrl = previewUrl;
-  if (repoUrl !== undefined) data.repoUrl = repoUrl;
-  if (deployUrl !== undefined) data.deployUrl = deployUrl;
-  if (deployProvider !== undefined) data.deployProvider = deployProvider;
-  if (domain !== undefined) data.domain = domain;
-  if (status !== undefined) data.status = status;
-  if (lastDeployedAt !== undefined) data.lastDeployedAt = lastDeployedAt;
+  const data: Prisma.ProjectUpdateInput = {}
+  if (files !== undefined) data.files = files
+  if (previewUrl !== undefined) data.previewUrl = previewUrl
+  if (repoUrl !== undefined) data.repoUrl = repoUrl
+  if (deployUrl !== undefined) data.deployUrl = deployUrl
+  if (deployProvider !== undefined) data.deployProvider = deployProvider
+  if (domain !== undefined) data.domain = domain
+  if (status !== undefined) data.status = status
+  if (lastDeployedAt !== undefined) data.lastDeployedAt = lastDeployedAt
 
   try {
-    const project = await prisma.project.update({ where: { id }, data });
-    return toProjectDTO(project);
+    const project = await prisma.project.update({ where: { id }, data })
+    return toProjectDTO(project)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
-      return null;
+      return null
     }
-    throw e;
+    throw e
   }
 }
 
-export async function setProjectVisibility(id: string, visibility: Visibility): Promise<ProjectDTO | null> {
+export async function setProjectVisibility(
+  id: string,
+  visibility: Visibility,
+): Promise<ProjectDTO | null> {
   try {
-    const project = await prisma.project.update({ where: { id }, data: { visibility } });
-    return toProjectDTO(project);
+    const project = await prisma.project.update({ where: { id }, data: { visibility } })
+    return toProjectDTO(project)
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
-      return null;
+      return null
     }
-    throw e;
+    throw e
   }
 }
 
 export async function getProjectFiles(id: string): Promise<Record<string, string>> {
-  const project = await prisma.project.findUnique({ where: { id }, select: { files: true } });
+  const project = await prisma.project.findUnique({ where: { id }, select: { files: true } })
   if (!project) {
-    throw new Error('Project not found');
+    throw new Error('Project not found')
   }
-  return (project.files as Record<string, string>) || {};
+  return (project.files as Record<string, string>) || {}
 }
 
 export async function setProjectFiles(id: string, files: Record<string, string>): Promise<void> {
-  await prisma.project.update({ where: { id }, data: { files } });
+  await prisma.project.update({ where: { id }, data: { files } })
 }
 
 export async function setForkUpstream(
   forkId: string,
   upstreamId: string,
-  baseFiles: Record<string, string>
+  baseFiles: Record<string, string>,
 ): Promise<void> {
   await prisma.$transaction(async (tx) => {
     await tx.project.update({
       where: { id: forkId },
       data: { forkOfId: upstreamId, forkBase: baseFiles },
-    });
+    })
     await tx.projectSnapshot.create({
       data: { projectId: forkId, label: 'fork-base', files: baseFiles },
-    });
-  });
+    })
+  })
 }
 
 export async function getUpstreamInfo(
-  forkId: string
-): Promise<{ upstreamId: string | null; forkBase: Record<string, string> | null; upstreamMergedAt: Date | null }> {
+  forkId: string,
+): Promise<{
+  upstreamId: string | null
+  forkBase: Record<string, string> | null
+  upstreamMergedAt: Date | null
+}> {
   const proj = await prisma.project.findUnique({
     where: { id: forkId },
     select: { forkOfId: true, forkBase: true, upstreamMergedAt: true },
-  });
+  })
   if (!proj) {
-    throw new Error('Project not found');
+    throw new Error('Project not found')
   }
   return {
     upstreamId: proj.forkOfId ?? null,
     forkBase: (proj.forkBase as Record<string, string> | null) ?? null,
     upstreamMergedAt: proj.upstreamMergedAt ?? null,
-  };
+  }
 }
 
 export async function markUpstreamMerged(id: string, date: Date): Promise<void> {
-  await prisma.project.update({ where: { id }, data: { upstreamMergedAt: date } });
+  await prisma.project.update({ where: { id }, data: { upstreamMergedAt: date } })
 }
 
 export async function touchProjectBuild(id: string, status: ProjectStatus): Promise<void> {
-  await prisma.project.update({ where: { id }, data: { status } });
+  await prisma.project.update({ where: { id }, data: { status } })
 }
 
 export async function listPublicProjects({
@@ -204,38 +220,36 @@ export async function listPublicProjects({
   offset = 0,
   orderBy = 'new',
 }: {
-  limit?: number;
-  offset?: number;
-  orderBy?: 'new' | 'popular';
+  limit?: number
+  offset?: number
+  orderBy?: 'new' | 'popular'
 } = {}): Promise<ProjectDTO[]> {
   const order: Prisma.Enumerable<Prisma.ProjectOrderByWithRelationInput> =
-    orderBy === 'popular'
-      ? [{ likes: 'desc' }, { createdAt: 'desc' }]
-      : [{ createdAt: 'desc' }];
+    orderBy === 'popular' ? [{ likes: 'desc' }, { createdAt: 'desc' }] : [{ createdAt: 'desc' }]
   const projects = await prisma.project.findMany({
     where: { visibility: 'public' },
     take: limit,
     skip: offset,
     orderBy: order,
-  });
-  return projects.map(toProjectDTO);
+  })
+  return projects.map(toProjectDTO)
 }
 
 export async function forkProject({
   sourceProjectId,
   newOwnerId,
 }: {
-  sourceProjectId: string;
-  newOwnerId: string;
+  sourceProjectId: string
+  newOwnerId: string
 }): Promise<ProjectDTO> {
-  const source = await prisma.project.findUnique({ where: { id: sourceProjectId } });
+  const source = await prisma.project.findUnique({ where: { id: sourceProjectId } })
   if (!source) {
-    throw new Error('Source project not found');
+    throw new Error('Source project not found')
   }
   const spec =
     typeof source.spec === 'object' && source.spec !== null
       ? { ...(source.spec as any), forkOf: sourceProjectId }
-      : { forkOf: sourceProjectId };
+      : { forkOf: sourceProjectId }
   const project = await prisma.project.create({
     data: {
       ownerId: newOwnerId,
@@ -246,6 +260,6 @@ export async function forkProject({
       files: source.files ?? undefined,
       status: 'draft',
     },
-  });
-  return toProjectDTO(project);
+  })
+  return toProjectDTO(project)
 }

@@ -6,15 +6,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params
   const url = new URL(req.url)
   const limit = parseInt(url.searchParams.get('limit') || '20', 10)
-  const offset = parseInt(url.searchParams.get('offset') || '0', 10)
-  const messages = await prisma.chatMessage.findMany({
+  const cursor = url.searchParams.get('cursor')
+  const records = await prisma.chatMessage.findMany({
     where: { projectId: id },
     orderBy: { createdAt: 'desc' },
-    skip: offset,
-    take: limit,
-    select: { role: true, content: true, createdAt: true },
+    take: limit + 1,
+    cursor: cursor ? { id: cursor } : undefined,
+    select: { id: true, role: true, content: true, createdAt: true },
   })
-  return Response.json({ messages: messages.reverse() })
+  const messages = records
+    .slice(0, limit)
+    .reverse()
+    .map(({ id: _id, ...rest }) => rest)
+  const nextCursor = records.length > limit ? records[limit].id : null
+  return Response.json({ messages, nextCursor })
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
