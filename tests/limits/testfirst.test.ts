@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { COSTS, PLANS } from '@/lib/limits'
+import { COSTS } from '@/lib/limits'
+import { PLANS } from '@/server/billing/plans'
 
 describe('test-first limits', () => {
   it('has costs', () => {
@@ -7,7 +8,9 @@ describe('test-first limits', () => {
     expect(COSTS.testIteration).toBe(30)
   })
   it('plans have cycle limits', () => {
-    expect(PLANS.FREE.testFirstCyclesPerMonth).toBe(3)
-    expect(PLANS.PRO.testFirstCyclesPerMonth).toBe(30)
+    const free = PLANS.find((p) => p.code === 'FREE')!
+    const pro = PLANS.find((p) => p.code === 'PRO')!
+    expect(free.features.testFirstCyclesPerMonth).toBe(3)
+    expect(pro.features.testFirstCyclesPerMonth).toBe(30)
   })
 })
