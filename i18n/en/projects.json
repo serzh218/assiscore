@@ -1,3 +1,21 @@
 {
-  "title": "Projects"
+  "title": "Projects",
+  "search": "Search projects",
+  "filter": {
+    "all": "All",
+    "my": "My",
+    "recent": "Recent"
+  },
+  "sort": {
+    "updatedDesc": "Updated ↓",
+    "updatedAsc": "Updated ↑"
+  },
+  "empty": "No projects yet",
+  "create": "Create in studio",
+  "open": "Open",
+  "duplicate": "Duplicate",
+  "delete": {
+    "label": "Delete",
+    "confirm": "Delete project?"
+  }
 }
