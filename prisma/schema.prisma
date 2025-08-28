@@ -97,6 +97,7 @@ model Project {
   forkBase         Json?
   upstreamMergedAt DateTime?
   createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   generations      Generation[]
   patches          Patch[]
   snapshots        ProjectSnapshot[]
@@ -108,7 +109,10 @@ model Project {
   @@index([ownerId])
   @@index([orgId])
   @@index([status])
+  @@index([visibility])
   @@index([visibility, createdAt])
+  @@index([ownerId, updatedAt(sort: Desc)])
+  @@index([visibility, updatedAt(sort: Desc)])
 }
 
 model ProjectMember {
@@ -246,7 +250,7 @@ model Payment {
 
 model Subscription {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   planId    String
   plan      Plan     @relation(fields: [planId], references: [id])
@@ -256,8 +260,9 @@ model Subscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId])
   @@index([planId])
+  @@index([status])
+  @@index([endDate])
 }
 
 model Entitlement {
@@ -272,6 +277,7 @@ model Entitlement {
   updatedAt DateTime @updatedAt
 
   @@index([userId, feature])
+  @@index([expiresAt])
 }
 
 model PaymentLog {
@@ -401,7 +407,7 @@ model ChatMessage {
   content   String
   createdAt DateTime @default(now())
 
-  @@index([projectId, createdAt])
+  @@index([projectId, createdAt(sort: Desc)])
 }
 
 model CopilotEvent {

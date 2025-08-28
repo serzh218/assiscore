@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   }
   const url = new URL(req.url)
   const limit = parseInt(url.searchParams.get('limit') || '20', 10)
-  const offset = parseInt(url.searchParams.get('offset') || '0', 10)
-  const { items, total } = await listNotifications(user.id, { limit, offset })
-  return NextResponse.json({ items, total })
+  const cursor = url.searchParams.get('cursor') || undefined
+  const { items, nextCursor, total } = await listNotifications(user.id, { limit, cursor })
+  return NextResponse.json({ items, nextCursor, total })
 }

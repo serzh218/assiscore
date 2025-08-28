@@ -30,9 +30,12 @@ const notifications = [
 vi.mock('@/auth', () => ({ getCurrentUser: vi.fn(async () => ({ id: 'u1' })) }))
 
 vi.mock('@/server/repo/notification', () => ({
-  listNotifications: vi.fn(async (userId: string, { limit, offset }: any) => {
+  listNotifications: vi.fn(async (userId: string, { limit, cursor }: any) => {
     const arr = notifications.filter((n) => n.userId === userId)
-    return { items: arr.slice(offset, offset + limit), total: arr.length }
+    const start = cursor ? arr.findIndex((n) => n.id === cursor) + 1 : 0
+    const slice = arr.slice(start, start + limit)
+    const nextCursor = arr.length > start + limit ? arr[start + limit].id : null
+    return { items: slice, nextCursor, total: arr.length }
   }),
   markRead: vi.fn(async (userId: string, ids: string[]) => {
     notifications.forEach((n) => {
@@ -55,9 +58,10 @@ describe('notifications API', () => {
 
   it('GET returns own notifications with pagination', async () => {
     const { GET } = await import('@/app/api/notifications/route')
-    const res = await GET(new Request('http://test/api/notifications?limit=1&offset=0'))
+    const res = await GET(new Request('http://test/api/notifications?limit=1'))
     const data = await res.json()
     expect(data.items.length).toBe(1)
+    expect(data.nextCursor).toBeDefined()
     expect(data.total).toBe(2)
   })
 

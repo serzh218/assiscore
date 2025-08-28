@@ -2,6 +2,18 @@ version: "3.9"
 services:
   db:
     image: postgres:16
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.max=10000"
+      - "-c"
+      - "pg_stat_statements.track=all"
+      - "-c"
+      - "log_min_duration_statement=200"
+      - "-c"
+      - "log_statement=none"
     environment:
       POSTGRES_USER: assiscore
       POSTGRES_PASSWORD: assiscore
@@ -23,7 +35,7 @@ services:
       NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: dev-secret
       AUTH_TRUST_HOST: "true"
-      DATABASE_URL: postgresql://assiscore:assiscore@db:5432/assiscore?schema=public
+      DATABASE_URL: postgresql://assiscore:assiscore@db:5432/assiscore?schema=public&connection_limit=10&pool_timeout=15
       # отключаем внешние сервисы в локальном проде
       OPENROUTER_API_KEY: ""
       E2B_API_KEY: ""
