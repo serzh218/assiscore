@@ -1,0 +1,23 @@
+{
+  "files": {
+    "newFile": "New File",
+    "newFolder": "New Folder",
+    "rename": "Rename",
+    "delete": "Delete",
+    "search": "Search files",
+    "empty": "No files yet",
+    "created": "Created",
+    "renamed": "Renamed",
+    "deleted": "Deleted"
+  },
+  "editor": {
+    "saving": "Saving…",
+    "saved": "Saved"
+  },
+  "diff": {
+    "empty": "No changes"
+  },
+  "chat": {
+    "empty": "Ask a question..."
+  }
+}
