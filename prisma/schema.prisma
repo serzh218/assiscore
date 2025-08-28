@@ -392,3 +392,14 @@ model TestRun {
   logs        String?
   createdAt   DateTime @default(now())
 }
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([projectId, createdAt])
+}

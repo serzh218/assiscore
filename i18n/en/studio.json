@@ -18,6 +18,21 @@
     "empty": "No changes"
   },
   "chat": {
-    "empty": "Ask a question..."
+    "empty": "Ask a question...",
+    "placeholder": "Type a message",
+    "send": "Send",
+    "loading": "Thinking...",
+    "loadOlder": "Load older",
+    "modes": {
+      "default": "Default",
+      "explain": "Explain",
+      "refactor": "Refactor",
+      "tests": "Tests"
+    },
+    "shortcut": {
+      "explain": "Explain code",
+      "refactor": "Refactor code",
+      "tests": "Write tests"
+    }
   }
 }
