@@ -8,5 +8,19 @@
     "incomplete": "Incomplete",
     "incomplete_expired": "Incomplete expired",
     "unpaid": "Unpaid"
+  },
+  "usage": {
+    "tokens": "Tokens",
+    "projects": "Private projects",
+    "resetsAt": "Limits reset {date}"
+  },
+  "upgrade": {
+    "banner": {
+      "title": "You're almost out of limits. Upgrade to PRO/TEAM for more.",
+      "cta": "Choose plan"
+    },
+    "toast": {
+      "limitReached": "Limit reached. Upgrade to PRO/TEAM"
+    }
   }
 }

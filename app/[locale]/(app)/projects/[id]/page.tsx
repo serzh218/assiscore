@@ -17,12 +17,13 @@ import {
 } from '@/components/ui'
 import { Paywall } from '@/components/paywall/Paywall'
 import type { DeployProvider } from '@/server/integrations/deploy'
+import { usePaywallToast, handlePaywall } from '@/components/billing/usePaywallToast'
 
 export default function ProjectPage() {
   const params = useParams<{ id: string }>()
   const projectId = params.id
   const { data: session } = useSession()
-  const isPro = session?.user?.plan === 'PRO'
+  const isPro = (session?.user?.plan as any) === 'PRO'
   const githubLinked = session?.user?.githubLinked
   const [visibility, setVisibility] = useState<'public' | 'private'>('public')
   const [message, setMessage] = useState('')
@@ -48,9 +49,15 @@ export default function ProjectPage() {
   const [genLogs, setGenLogs] = useState<string[]>([])
   const [showPaywall, setShowPaywall] = useState(false)
   const domainValid = !domain || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(domain)
+  const paywallToast = usePaywallToast()
+  const apiFetch = async (input: RequestInfo, init?: RequestInit) => {
+    const res = await fetch(input, init)
+    handlePaywall(res, paywallToast)
+    return res
+  }
 
   const fetchPatches = async () => {
-    const res = await fetch(`/api/projects/${projectId}/patches`)
+    const res = await apiFetch(`/api/projects/${projectId}/patches`)
     if (res.ok) {
       const data = await res.json()
       setPatches(data.patches || [])
@@ -59,7 +66,7 @@ export default function ProjectPage() {
 
   useEffect(() => {
     const poll = setInterval(async () => {
-      const res = await fetch(`/api/generate/status?projectId=${projectId}`)
+      const res = await apiFetch(`/api/generate/status?projectId=${projectId}`)
       if (res.ok) {
         const data = await res.json()
         setGenStatus(data.status)
@@ -79,7 +86,7 @@ export default function ProjectPage() {
   useEffect(() => {
     if (!polling) return
     const t = setInterval(async () => {
-      const res = await fetch(`/api/projects/${projectId}/deploy?projectId=${projectId}`)
+      const res = await apiFetch(`/api/projects/${projectId}/deploy?projectId=${projectId}`)
       if (res.ok) {
         const data = await res.json()
         setDeployStatus(data)
@@ -97,7 +104,7 @@ export default function ProjectPage() {
   const send = async () => {
     setSending(true)
     try {
-      await fetch(`/api/projects/${projectId}/patch`, {
+      await apiFetch(`/api/projects/${projectId}/patch`, {
         method: 'POST',
         body: JSON.stringify({ message }),
       })
@@ -112,7 +119,7 @@ export default function ProjectPage() {
     const patch = patches.find((p) => p.id === id)
     if (!patch) return
     if (!patch.diff) {
-      const res = await fetch(`/api/projects/${projectId}/patches/${id}`)
+      const res = await apiFetch(`/api/projects/${projectId}/patches/${id}`)
       if (res.ok) {
         const data = await res.json()
         setPatches((prev) =>
@@ -127,14 +134,14 @@ export default function ProjectPage() {
   }
 
   const removePatch = async (id: string) => {
-    await fetch(`/api/projects/${projectId}/patches/${id}`, { method: 'DELETE' })
+    await apiFetch(`/api/projects/${projectId}/patches/${id}`, { method: 'DELETE' })
     await fetchPatches()
     alert('Откат скоро появится')
   }
 
   const toggleVisibility = async () => {
     const newVis = visibility === 'public' ? 'private' : 'public'
-    const res = await fetch(`/api/projects/${projectId}/visibility`, {
+    const res = await apiFetch(`/api/projects/${projectId}/visibility`, {
       method: 'POST',
       body: JSON.stringify({ visibility: newVis }),
     })
@@ -148,7 +155,7 @@ export default function ProjectPage() {
   }
 
   const exportGithub = async () => {
-    const res = await fetch(`/api/projects/${projectId}/export/github`, {
+    const res = await apiFetch(`/api/projects/${projectId}/export/github`, {
       method: 'POST',
       body: JSON.stringify({ visibility }),
     })
@@ -161,7 +168,7 @@ export default function ProjectPage() {
 
   const startDeploy = async () => {
     try {
-      const res = await fetch(`/api/projects/${projectId}/deploy`, {
+      const res = await apiFetch(`/api/projects/${projectId}/deploy`, {
         method: 'POST',
         body: JSON.stringify({ provider: deployProvider, domain: domain || undefined }),
       })
@@ -249,7 +256,7 @@ export default function ProjectPage() {
                     <span>
                       {new Date(p.createdAt).toLocaleString()} – {p.costTokens} токенов
                     </span>
-                    <Badge variant="secondary">
+                    <Badge>
                       {p.status === 'ready'
                         ? 'Готово'
                         : p.status === 'error'
@@ -425,7 +432,7 @@ export default function ProjectPage() {
                 </Button>
               )}
               {publishStep === 2 && (
-                <Button onClick={startDeploy} disabled={publishStep === 1 && !domainValid}>
+                <Button onClick={startDeploy} disabled={!domainValid}>
                   Опубликовать
                 </Button>
               )}

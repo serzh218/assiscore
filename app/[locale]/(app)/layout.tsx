@@ -46,7 +46,10 @@ export default async function AppLayout({
             <LanguageSwitcher />
             {user ? (
               <div className="text-sm text-muted">
-                {t('plan', { plan: user.plan, tokens: formatTokens(user.tokens, locale as any) })}
+                {t('plan', {
+                  plan: (user as any).plan as string,
+                  tokens: formatTokens(user.tokens, locale as any),
+                })}
               </div>
             ) : (
               <div className="flex items-center gap-2 text-sm text-muted">
