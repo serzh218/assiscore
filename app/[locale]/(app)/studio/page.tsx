@@ -1,114 +1,105 @@
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { Textarea, Button, Progress, Input, Badge, Card } from "@/components/ui";
-import { useSession } from "next-auth/react";
-import { estimateGenerationCost } from "@/lib/tokens";
-import { useRouter } from "next/navigation";
+import { useState } from 'react'
+import { Card, Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui'
+import {
+  Files as FilesIcon,
+  MessageSquare,
+  GitMerge,
+  Clock,
+  Settings,
+  Bell,
+  FileCode,
+  FileJson,
+  FileImage,
+  File as FileIcon,
+} from 'lucide-react'
+
+const files = [
+  { name: 'index.ts', ext: 'ts' },
+  { name: 'app.tsx', ext: 'tsx' },
+  { name: 'data.json', ext: 'json' },
+  { name: 'logo.png', ext: 'png' },
+]
 
 export default function StudioPage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const [text, setText] = useState("");
-  const [useFigma, setUseFigma] = useState(false);
-  const [figma, setFigma] = useState("");
-  const [projectId, setProjectId] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
-  const [logs, setLogs] = useState<string[]>([]);
-  const logsEndRef = useRef<HTMLDivElement | null>(null);
-  const pollingRef = useRef<NodeJS.Timeout | null>(null);
-  const stepMap: Record<string, number> = { plan: 0, code: 1, test: 2, build: 3, ready: 4 };
-  const cost = estimateGenerationCost({ textLen: text.length, hasFigma: useFigma && figma.trim().length > 0 });
-  const tokens = (session?.user as any)?.tokens ?? 0;
-  const canAfford = tokens >= cost;
-
-  useEffect(() => {
-    return () => {
-      if (pollingRef.current) clearInterval(pollingRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [logs]);
-
-  const startPolling = (id: string) => {
-    pollingRef.current = setInterval(async () => {
-      const res = await fetch(`/api/generate/status?projectId=${id}`);
-      const data = await res.json();
-      setStatus(data.status);
-      setLogs(data.logs ?? []);
-      if (data.status === "ready" && pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    }, 2000);
-  };
-
-  const handleGenerate = async () => {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: text, figmaUrl: useFigma ? figma : undefined }),
-    });
-    const data = await res.json();
-    if (data.projectId) {
-      setProjectId(data.projectId);
-      setStatus("plan");
-      setLogs([]);
-      startPolling(data.projectId);
-    }
-  };
-
+  const [active, setActive] = useState('files')
   return (
-    <div className="space-y-6">
-      <h1 className="text-display-2 font-semibold">Создай полноценный сайт с ИИ</h1>
-      <Textarea
-        placeholder="Опиши, какой сайт нужен. Можно коротко, можно подробно."
-        className="min-h-[200px]"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <div className="flex flex-wrap items-center gap-4">
-        <Button variant="secondary" onClick={() => setUseFigma((v) => !v)}>
-          Импорт из Figma
-        </Button>
-        {useFigma && (
-          <Input
-            placeholder="Вставьте ссылку или загрузите JSON-экспорт"
-            value={figma}
-            onChange={(e) => setFigma(e.target.value)}
-            className="max-w-xs"
-          />
-        )}
-        <Button variant="secondary">Прикрепить файлы</Button>
-        <label className="flex items-center gap-2 text-sm text-muted">
-          <input type="checkbox" disabled className="h-4 w-4 rounded border border-border bg-bg-elev" />
-          Приватный проект (PRO)
-        </label>
+    <div className="flex h-screen bg-bg text-text">
+      <aside className="flex w-16 flex-col items-center border-r border-border bg-bg-elev py-4 space-y-4">
+        {[
+          { id: 'files', icon: FilesIcon },
+          { id: 'chat', icon: MessageSquare },
+          { id: 'diff', icon: GitMerge },
+          { id: 'versions', icon: Clock },
+          { id: 'settings', icon: Settings },
+        ].map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActive(item.id)}
+            className={`p-2 rounded-xl transition-colors ${
+              active === item.id ? 'bg-primary text-primary-fore' : 'text-muted hover:bg-bg'
+            }`}
+          >
+            <item.icon className="h-5 w-5" />
+          </button>
+        ))}
+      </aside>
+      <div className="flex flex-1 flex-col">
+        <header className="flex items-center justify-between border-b border-border px-6 py-3">
+          <h2 className="text-lg font-semibold">My Project</h2>
+          <div className="flex items-center gap-4">
+            <Bell className="h-5 w-5" />
+            <div className="h-8 w-8 rounded-full bg-primary" />
+          </div>
+        </header>
+        <main className="flex-1 overflow-y-auto p-6">
+          <Tabs value={active} onValueChange={setActive}>
+            <TabsList>
+              <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="diff">Diff</TabsTrigger>
+              <TabsTrigger value="chat">Chat</TabsTrigger>
+              <TabsTrigger value="versions">Versions</TabsTrigger>
+            </TabsList>
+            <TabsContent value="files">
+              <Card className="p-4 space-y-1">
+                {files.map((f) => (
+                  <div key={f.name} className="flex items-center gap-2">
+                    {getFileIcon(f.ext)}
+                    <span>{f.name}</span>
+                  </div>
+                ))}
+              </Card>
+            </TabsContent>
+            <TabsContent value="diff">
+              <Card className="p-4 text-center text-muted">No diff</Card>
+            </TabsContent>
+            <TabsContent value="chat">
+              <Card className="p-4 text-center text-muted">Chat coming soon</Card>
+            </TabsContent>
+            <TabsContent value="versions">
+              <Card className="p-4 text-center text-muted">No versions</Card>
+            </TabsContent>
+          </Tabs>
+        </main>
       </div>
-      <Button disabled={!canAfford} onClick={handleGenerate}>
-        Создать сайт
-      </Button>
-      <p className="text-sm text-muted">
-        Ориентировочная стоимость: ~{cost} токенов
-        {!canAfford && tokens > 0 && (
-          <span className="ml-2">Недостаточно токенов</span>
-        )}
-      </p>
-      {status && <Progress step={stepMap[status]} />}
-      {status && <Badge>{status}</Badge>}
-      {logs.length > 0 && (
-        <Card className="h-40 overflow-y-auto p-2 font-mono text-sm">
-          {logs.map((l, i) => (
-            <div key={i}>{l}</div>
-          ))}
-          <div ref={logsEndRef} />
-        </Card>
-      )}
-      {status === "ready" && projectId && (
-        <Button onClick={() => router.push(`/projects/${projectId}`)}>Открыть проект</Button>
-      )}
     </div>
-  );
+  )
+}
+
+function getFileIcon(ext: string) {
+  switch (ext) {
+    case 'ts':
+    case 'tsx':
+    case 'js':
+      return <FileCode className="h-4 w-4 text-primary" />
+    case 'json':
+      return <FileJson className="h-4 w-4 text-primary" />
+    case 'png':
+    case 'jpg':
+    case 'jpeg':
+      return <FileImage className="h-4 w-4 text-primary" />
+    default:
+      return <FileIcon className="h-4 w-4 text-primary" />
+  }
 }

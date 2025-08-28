@@ -1,26 +1,22 @@
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { clsx } from "clsx";
+import * as TabsPrimitive from '@radix-ui/react-tabs'
+import { clsx } from 'clsx'
 
-export const Tabs = TabsPrimitive.Root;
+export const Tabs = TabsPrimitive.Root
 
 export const TabsList = ({ className, ...props }: TabsPrimitive.TabsListProps) => (
-  <TabsPrimitive.List
-    className={clsx("flex border-b border-border", className)}
-    {...props}
-  />
-);
+  <TabsPrimitive.List className={clsx('flex gap-2', className)} {...props} />
+)
 
 export const TabsTrigger = ({ className, ...props }: TabsPrimitive.TabsTriggerProps) => (
   <TabsPrimitive.Trigger
     className={clsx(
-      "tabs-trigger relative px-3 py-2 text-sm text-muted transition-base data-[state=active]:text-text",
-      "after:absolute after:left-0 after:-bottom-0.5 after:h-0.5 after:w-full after:bg-primary after:scale-x-0 after:origin-left data-[state=active]:after:scale-x-100",
-      className
+      'rounded-2xl bg-bg-elev px-4 py-2 text-sm text-muted shadow-lg hover:bg-bg-elev/80 hover:shadow-xl data-[state=active]:bg-primary data-[state=active]:text-primary-fore transition-base',
+      className,
     )}
     {...props}
   />
-);
+)
 
 export const TabsContent = ({ className, ...props }: TabsPrimitive.TabsContentProps) => (
-  <TabsPrimitive.Content className={clsx("pt-4", className)} {...props} />
-);
+  <TabsPrimitive.Content className={clsx('pt-4', className)} {...props} />
+)
