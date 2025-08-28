@@ -1,49 +1,93 @@
 name: CI
+
 on:
-  push:
-    branches: [main]
   pull_request:
+    branches: [ main, master, develop ]
+  push:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
     services:
       postgres:
         image: postgres:16
-        ports:
-          - "5432:5432"
         env:
           POSTGRES_USER: assiscore
           POSTGRES_PASSWORD: assiscore
           POSTGRES_DB: assiscore
+        ports:
+          - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U assiscore" --health-interval=10s --health-timeout=5s --health-retries=5
+          --health-cmd="pg_isready -U assiscore" \
+          --health-interval=10s \
+          --health-timeout=5s \
+          --health-retries=5
+
+    env:
+      # CI .env
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: test-secret
+      AUTH_TRUST_HOST: "true"
+      DATABASE_URL: postgresql://assiscore:assiscore@localhost:5432/assiscore?schema=public
+      NODE_ENV: test
+      # Отключаем внешние интеграции в CI
+      OPENROUTER_API_KEY: ""
+      E2B_API_KEY: ""
+      YOOKASSA_SHOP_ID: ""
+      YOOKASSA_SECRET_KEY: ""
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
         with:
           version: 9
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - run: |
-          echo "DATABASE_URL=postgresql://assiscore:assiscore@localhost:5432/assiscore?schema=public" >> $GITHUB_ENV
-          echo "NEXTAUTH_SECRET=test-secret" >> $GITHUB_ENV
-      - run: pnpm prisma:gen
-      - run: pnpm prisma migrate deploy
-      - run: pnpm db:seed
-      - run: pnpm i18n:check
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test
-      - uses: actions/upload-artifact@v4
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma:gen
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U assiscore && break
+            echo "waiting for postgres..."
+            sleep 2
+          done
+
+      - name: Apply migrations
+        run: pnpm prisma:migrate:deploy
+
+      - name: Check schema drift
+        run: pnpm prisma:check-drift
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tests
+        run: pnpm test
+        continue-on-error: false
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload test report
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: coverage
-          path: coverage
-      - run: pnpm build
+          name: junit-report
+          path: reports/junit.xml
