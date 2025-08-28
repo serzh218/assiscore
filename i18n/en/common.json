@@ -1,15 +1,20 @@
 {
   "appName": "AssisCore",
   "nav": {
+    "home": "Home",
     "studio": "Studio",
     "projects": "Projects",
     "explore": "Explore",
     "billing": "Billing",
-    "settings": "Settings"
+    "pricing": "Pricing",
+    "settings": "Settings",
+    "profile": "Profile"
   },
   "auth": {
     "guest": "Guest",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out"
   },
   "plan": "Plan: {plan} • Tokens: {tokens}",
   "actions": {
@@ -23,5 +28,9 @@
     "switch": "Switch language",
     "ru": "Русский",
     "en": "English"
+  },
+  "footer": {
+    "docs": "Docs",
+    "contact": "Contact"
   }
 }

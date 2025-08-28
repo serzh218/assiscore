@@ -1,12 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-  --bg:#0B0D0F;--bg-elev:#111418;--text:#E6E9EF;--muted:#A1A8B3;
-  --primary:#5B8CFF;--primary-fore:#0B0D0F;--border:#1D232F;
-  --radius-lg:12px;--radius-md:8px;--radius-sm:6px;
-  --shadow:0 8px 24px rgba(0,0,0,.25);
-  --display-1:44px;--display-2:36px;--display-3:28px;
-  --body:16px;--line:1.6;
-  --font-inter:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  /* Base colors */
+  --bg: #020617; /* gray-950 */
+  --bg-elev: #111827; /* gray-900 */
+  --text: #f3f4f6; /* gray-100 */
+  --muted: #9ca3af; /* gray-400 */
+  --border: #374151; /* gray-700 */
+  /* Accent */
+  --primary: #6366f1; /* indigo-500 */
+  --primary-fore: #020617;
+  /* Radius */
+  --radius-lg: 16px; /* rounded-2xl */
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  /* Shadow */
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  /* Typography */
+  --display-1: 44px;
+  --display-2: 36px;
+  --display-3: 28px;
+  --body: 16px;
+  --line: 1.6;
+  --font-inter: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
-html,body { background: var(--bg); color: var(--text); }
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter);
+}
