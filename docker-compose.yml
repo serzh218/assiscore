@@ -1,15 +1,33 @@
-version: '3.9'
+version: "3.9"
 services:
   db:
     image: postgres:16
-    ports:
-      - '5432:5432'
     environment:
       POSTGRES_USER: assiscore
       POSTGRES_PASSWORD: assiscore
       POSTGRES_DB: assiscore
+    ports: ["5432:5432"]
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U assiscore']
+      test: ["CMD-SHELL", "pg_isready -U assiscore"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: dev-secret
+      AUTH_TRUST_HOST: "true"
+      DATABASE_URL: postgresql://assiscore:assiscore@db:5432/assiscore?schema=public
+      # отключаем внешние сервисы в локальном проде
+      OPENROUTER_API_KEY: ""
+      E2B_API_KEY: ""
+      YOOKASSA_SHOP_ID: ""
+      YOOKASSA_SECRET_KEY: ""
+    ports:
+      - "3000:3000"
