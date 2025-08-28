@@ -1,24 +1,3 @@
-export const PLANS = {
-  FREE: {
-    genPerMonth: 5,
-    privateProjects: 0,
-    githubExport: false,
-    deploy: false,
-    monthlyTokens: 500,
-    assistantCallsPerHour: 20,
-    testFirstCyclesPerMonth: 3,
-  },
-  PRO: {
-    genPerMonth: 50,
-    privateProjects: 10,
-    githubExport: true,
-    deploy: true,
-    monthlyTokens: 5000,
-    assistantCallsPerHour: 200,
-    testFirstCyclesPerMonth: 30,
-  },
-} as const
-
 export const COSTS = {
   generationBase: 60,
   generationPer1000Chars: 25,
@@ -29,5 +8,3 @@ export const COSTS = {
 } as const
 
 export const ASSISTANT_CONTEXT_TOKENS = 16000
-
-export type PlanKey = keyof typeof PLANS
