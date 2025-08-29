@@ -8,7 +8,10 @@
     "billing": "Биллинг",
     "pricing": "Тарифы",
     "settings": "Настройки",
-    "profile": "Профиль"
+    "profile": "Профиль",
+    "signin": "Войти",
+    "signup": "Регистрация",
+    "signout": "Выйти"
   },
   "auth": {
     "guest": "Гость",
