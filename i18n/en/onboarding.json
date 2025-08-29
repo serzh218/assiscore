@@ -1,0 +1,22 @@
+{
+  "title": "Welcome to AssisCore",
+  "step1": {
+    "title": "Studio capabilities",
+    "body": "Generate code, edit, chat and manage versions."
+  },
+  "step2": {
+    "title": "Quick actions and shortcuts",
+    "body": "Ctrl/Cmd+P — search file, Ctrl/Cmd+S — save, F2 — rename."
+  },
+  "step3": {
+    "title": "Choose a preset",
+    "body": "Start with a preset project."
+  },
+  "neverShowAgain": "Don't show again",
+  "startStudio": "Start in studio",
+  "choosePreset": {
+    "site": "Site",
+    "app": "App",
+    "bot": "Bot"
+  }
+}
