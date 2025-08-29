@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { NextIntlClientProvider } from 'next-intl'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import billingEn from '@/i18n/en/billing.json'
+import paywallEn from '@/i18n/en/paywall.json'
 import UsageMeter from '@/components/billing/UsageMeter'
 import UpgradeBanner from '@/components/billing/UpgradeBanner'
 import { usePaywallToast, handlePaywall } from '@/components/billing/usePaywallToast'
@@ -14,7 +15,7 @@ async function render(ui: React.ReactNode) {
   document.body.appendChild(container)
   const root = createRoot(container)
   root.render(
-    <NextIntlClientProvider locale="en" messages={{ billing: billingEn }}>
+    <NextIntlClientProvider locale="en" messages={{ billing: billingEn, paywall: paywallEn }}>
       {ui}
     </NextIntlClientProvider>,
   )
@@ -75,6 +76,21 @@ describe('UpgradeBanner', () => {
     } as any)
     const c = await render(<UpgradeBanner />)
     expect(c.textContent).toContain('Upgrade to PRO/TEAM')
+  })
+  it('shows limit reached', async () => {
+    vi.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        planCode: 'PRO',
+        quotas: {
+          tokens: { remaining: 0, limit: 100 },
+          privateProjects: { remaining: 1, limit: 10 },
+        },
+        periodEnd: null,
+      }),
+    } as any)
+    const c = await render(<UpgradeBanner />)
+    expect(c.textContent).toContain('Your limit is reached')
   })
   it('hides otherwise', async () => {
     vi.spyOn(global, 'fetch').mockResolvedValue({

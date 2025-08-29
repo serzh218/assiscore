@@ -2,5 +2,9 @@
   "title": "Upgrade required",
   "description": "This feature is available on the Pro plan.",
   "close": "Close",
-  "upgrade": "Upgrade"
+  "upgrade": "Upgrade",
+  "banner": {
+    "limitReached": "Your limit is reached. Upgrade to Pro/Team.",
+    "upgradeCta": "Upgrade"
+  }
 }

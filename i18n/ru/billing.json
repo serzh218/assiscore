@@ -1,5 +1,11 @@
 {
-  "title": "Биллинг",
+  "title": "Подписка и лимиты",
+  "currentPlan": "Текущий план",
+  "usage": "Использование",
+  "changePlan": "Изменить план",
+  "cancelPlan": "Отменить подписку",
+  "statusLabel": "Статус",
+  "currentPeriodEnd": "Дата окончания периода",
   "status": {
     "active": "Активна",
     "trialing": "Пробный период",
@@ -9,7 +15,7 @@
     "incomplete_expired": "Срок завершения истёк",
     "unpaid": "Не оплачена"
   },
-  "usage": {
+  "usageMeter": {
     "tokens": "Токены",
     "projects": "Приватные проекты",
     "resetsAt": "Лимиты обновятся {date}"

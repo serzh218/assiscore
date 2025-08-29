@@ -17,5 +17,8 @@
   "delete": {
     "label": "Delete",
     "confirm": "Delete project?"
+  },
+  "paywall": {
+    "proOnly": "Pro/Team only"
   }
 }

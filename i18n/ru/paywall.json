@@ -2,5 +2,9 @@
   "title": "Требуется обновление",
   "description": "Эта функция доступна в плане Pro.",
   "close": "Закрыть",
-  "upgrade": "Обновить"
+  "upgrade": "Обновить",
+  "banner": {
+    "limitReached": "Ваш лимит исчерпан. Перейдите на Pro/Team.",
+    "upgradeCta": "Апгрейд"
+  }
 }

@@ -1,5 +1,11 @@
 {
-  "title": "Billing",
+  "title": "Subscription and limits",
+  "currentPlan": "Current plan",
+  "usage": "Usage",
+  "changePlan": "Change plan",
+  "cancelPlan": "Cancel subscription",
+  "statusLabel": "Status",
+  "currentPeriodEnd": "Current period end",
   "status": {
     "active": "Active",
     "trialing": "Trialing",
@@ -9,7 +15,7 @@
     "incomplete_expired": "Incomplete expired",
     "unpaid": "Unpaid"
   },
-  "usage": {
+  "usageMeter": {
     "tokens": "Tokens",
     "projects": "Private projects",
     "resetsAt": "Limits reset {date}"

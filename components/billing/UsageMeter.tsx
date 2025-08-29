@@ -6,7 +6,7 @@ import { useUsage } from './useUsage'
 
 export default function UsageMeter() {
   const usage = useUsage()
-  const t = useTranslations('billing')
+  const t = useTranslations('billing.usageMeter')
   if (!usage) return null
 
   const items = [

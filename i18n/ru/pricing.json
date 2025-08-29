@@ -1,15 +1,23 @@
 {
-  "free": "Бесплатно",
-  "select": "Выбрать",
-  "yes": "Да",
-  "no": "Нет",
-  "features": {
-    "genPerMonth": "Генераций в месяц",
-    "privateProjects": "Приватные проекты",
-    "githubExport": "Экспорт в GitHub",
-    "deploy": "Деплой",
-    "monthlyTokens": "Токенов в месяц",
-    "assistantCallsPerHour": "Вызовов ассистента в час",
-    "testFirstCyclesPerMonth": "Циклов Test-first в месяц"
-  }
+  "title": "Выберите план",
+  "plan": {
+    "free": "Free",
+    "pro": "Pro",
+    "team": "Team",
+    "price": {
+      "free": "Бесплатно",
+      "perMonth": "{price}/мес"
+    },
+    "feature": {
+      "tokens": "Токены/мес",
+      "projects": "Приватные проекты",
+      "support": "Поддержка"
+    },
+    "support": {
+      "none": "Сообщество",
+      "email": "Email",
+      "priority": "Приоритетная"
+    }
+  },
+  "select": "Выбрать"
 }

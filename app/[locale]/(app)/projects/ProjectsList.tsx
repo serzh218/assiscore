@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Card, CardContent, CardTitle, Button, Input } from '@/components/ui'
+import { Card, CardContent, CardTitle, Button, Input, Badge } from '@/components/ui'
 import UpgradeBanner from '@/components/billing/UpgradeBanner'
 import { useUsage } from '@/components/billing/useUsage'
 
@@ -114,7 +114,14 @@ export function ProjectsList({ projects: initial }: { projects: Project[] }) {
               <div className="aspect-video w-full bg-gradient-to-br from-primary/20 to-transparent" />
               <CardContent className="flex items-center justify-between p-4">
                 <div>
-                  <CardTitle className="text-base">{p.name}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-base">{p.name}</CardTitle>
+                    {usage?.planCode === 'FREE' && !p.public && (
+                      <Badge className="uppercase" variant="warning">
+                        {t('paywall.proOnly')}
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-xs text-muted">{p.updatedAt}</p>
                 </div>
                 <div className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
