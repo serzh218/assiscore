@@ -6,7 +6,8 @@ import { useUsage } from './useUsage'
 
 export default function UpgradeBanner({ className = '' }: { className?: string }) {
   const usage = useUsage()
-  const t = useTranslations('billing')
+  const tBilling = useTranslations('billing')
+  const tPaywall = useTranslations('paywall.banner')
   const locale = useLocale()
   if (!usage) return null
   const tokensUsed = usage.quotas.tokens.limit - usage.quotas.tokens.remaining
@@ -14,13 +15,14 @@ export default function UpgradeBanner({ className = '' }: { className?: string }
   const projUsed = usage.quotas.privateProjects.limit - usage.quotas.privateProjects.remaining
   const projPct =
     usage.quotas.privateProjects.limit > 0 ? projUsed / usage.quotas.privateProjects.limit : 0
-  const show = usage.planCode === 'FREE' || tokensPct > 0.9 || projPct > 0.9
+  const limitReached = usage.quotas.tokens.remaining <= 0
+  const show = usage.planCode === 'FREE' || tokensPct > 0.9 || projPct > 0.9 || limitReached
   if (!show) return null
   return (
     <div className={`bg-primary text-primary-fore p-4 text-center ${className}`}>
-      <span>{t('upgrade.banner.title')}</span>{' '}
+      <span>{limitReached ? tPaywall('limitReached') : tBilling('upgrade.banner.title')}</span>{' '}
       <Link href={`/${locale}/pricing`} className="underline font-semibold">
-        {t('upgrade.banner.cta')}
+        {limitReached ? tPaywall('upgradeCta') : tBilling('upgrade.banner.cta')}
       </Link>
     </div>
   )

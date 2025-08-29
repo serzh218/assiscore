@@ -43,6 +43,20 @@ export const PLANS: {
       testFirstCyclesPerMonth: 30,
     },
   },
+  {
+    code: 'TEAM',
+    priceCents: 149900,
+    currency: 'RUB',
+    features: {
+      genPerMonth: 200,
+      privateProjects: 100,
+      githubExport: true,
+      deploy: true,
+      monthlyTokens: 20000,
+      assistantCallsPerHour: 1000,
+      testFirstCyclesPerMonth: 100,
+    },
+  },
 ]
 
 export interface PlanWithFeatures {
