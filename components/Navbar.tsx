@@ -38,15 +38,15 @@ export default async function Navbar({ locale }: NavbarProps) {
               prefix={prefix}
               profileLabel={t('nav.profile')}
               billingLabel={t('nav.billing')}
-              signOutLabel={t('auth.signOut')}
+              signOutLabel={t('nav.signout')}
             />
           ) : (
             <div className="flex items-center gap-2">
               <Button asChild variant="secondary" size="sm">
-                <Link href={`${prefix}/auth/sign-in`}>{t('auth.signIn')}</Link>
+                <Link href={`${prefix}/auth/signin`}>{t('nav.signin')}</Link>
               </Button>
               <Button asChild size="sm">
-                <Link href={`${prefix}/auth/sign-up`}>{t('auth.signUp')}</Link>
+                <Link href={`${prefix}/auth/signup`}>{t('nav.signup')}</Link>
               </Button>
             </div>
           )}

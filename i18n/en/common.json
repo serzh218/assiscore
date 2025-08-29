@@ -8,7 +8,10 @@
     "billing": "Billing",
     "pricing": "Pricing",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "signin": "Sign in",
+    "signup": "Sign up",
+    "signout": "Sign out"
   },
   "auth": {
     "guest": "Guest",

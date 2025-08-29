@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
   ],
-  pages: { signIn: '/auth/sign-in' },
+  pages: { signIn: '/auth/signin' },
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'github') {

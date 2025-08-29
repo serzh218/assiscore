@@ -1,6 +1,8 @@
 'use client'
+import React from 'react'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 import { LogOut, User, CreditCard } from 'lucide-react'
 
 interface Props {
@@ -54,11 +56,12 @@ export default function UserMenu({
           >
             <CreditCard className="h-4 w-4" /> {billingLabel}
           </Link>
-          <form action={`${prefix}/auth/sign-out`} method="post">
-            <button className="flex w-full items-center gap-2 rounded-lg p-2 text-left text-sm hover:bg-bg/50 transition">
-              <LogOut className="h-4 w-4" /> {signOutLabel}
-            </button>
-          </form>
+          <button
+            onClick={() => signOut({ callbackUrl: prefix })}
+            className="flex w-full items-center gap-2 rounded-lg p-2 text-left text-sm hover:bg-bg/50 transition"
+          >
+            <LogOut className="h-4 w-4" /> {signOutLabel}
+          </button>
         </div>
       )}
     </div>
