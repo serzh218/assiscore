@@ -21,6 +21,9 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
     studio,
     landing,
     auth,
+    onboarding,
+    empty,
+    help,
   ] = await Promise.all([
     import(`./${l}/common.json`).then((m) => m.default),
     import(`./${l}/pages.json`).then((m) => m.default),
@@ -38,6 +41,9 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
     import(`./${l}/studio.json`).then((m) => m.default),
     import(`./${l}/landing.json`).then((m) => m.default),
     import(`./${l}/auth.json`).then((m) => m.default),
+    import(`./${l}/onboarding.json`).then((m) => m.default),
+    import(`./${l}/empty.json`).then((m) => m.default),
+    import(`./${l}/help.json`).then((m) => m.default),
   ])
   return {
     locale: l,
@@ -58,6 +64,9 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
       studio,
       landing,
       auth,
+      onboarding,
+      empty,
+      help,
     },
   }
 })

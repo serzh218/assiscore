@@ -1,0 +1,22 @@
+{
+  "projects": {
+    "title": "You don't have any projects yet",
+    "cta": "Create in studio"
+  },
+  "files": {
+    "title": "No files",
+    "create": "Create file",
+    "importFigma": "Import from Figma",
+    "upload": "Upload file"
+  },
+  "diff": {
+    "title": "No changes"
+  },
+  "chat": {
+    "title": "Start the conversation"
+  },
+  "versions": {
+    "title": "No versions yet",
+    "cta": "Create version"
+  }
+}
