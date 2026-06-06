@@ -1,133 +1,265 @@
-# AssisCore: Интеллектуальная среда для создания цифровых продуктов
+<div align="center">
 
-**AssisCore** — это не просто инструмент, а IDE нового поколения, работающая в браузере. Мы меняем сам подход к разработке, делая его доступным для всех и на порядок быстрее для профессионалов.
+# 🧠 AssisCore
 
-## 🚀 Главная идея
+**A next-generation browser-based IDE powered by AI.**  
+Turn any idea into a working website, web app, or Telegram bot — just by having a conversation.
 
-AssisCore позволяет пользователям превращать идеи в готовые цифровые продукты — веб-сайты, веб-приложения и Telegram-ботов — ведя диалог с умным AI-ассистентом. Мы объединяем мощь AI-генерации с полным контролем над исходным кодом, предоставляя лучшее из обоих миров.
+[![CI](https://github.com/serzh218/assiscore/actions/workflows/ci.yml/badge.svg)](https://github.com/serzh218/assiscore/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](package.json)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 
----
-
-## 🤖 AI-ассистент
-
-В редактор файлов встроен AI-помощник. Он умеет кратко объяснять выбранный фрагмент, предлагать рефакторинг, генерировать тесты и отвечать на вопросы. Для изменений ассистент возвращает минимальный _unified diff_ — его можно предварительно просмотреть и отклонить.
-
-Каждый вызов списывает токены согласно тарифу: бесплатно — до 20 обращений в час, на PRO — до 200. Важные файлы (`.env`, миграции Prisma) защищены от правок.
-
-## ✨ Как это работает?
-
-Весь процесс от идеи до работающего продукта состоит из нескольких интуитивно понятных шагов:
-
-1.  **Запрос и выбор типа:** Пользователь выбирает, что хочет создать (**Сайт**, **Приложение** или **Телеграм-бот**), а затем описывает свою идею на естественном языке. Этот выбор определяет всю дальнейшую логику генерации и предпросмотра.
-
-2.  **Мгновенная генерация:** AI-ассистент анализирует запрос, выбирает подходящий шаблон и за несколько минут создает полную, рабочую структуру проекта со всеми необходимыми файлами и базовым кодом.
-
-3.  **Интерактивная "Студия":** Пользователь попадает в единое рабочее пространство, адаптированное под его задачу:
-    - **Для Сайта/Приложения:** В центре находится **живой предпросмотр (`Live Preview`)**, мгновенно отображающий все изменения.
-    - **Для Телеграм-бота:** В центре располагается **эмулятор бота**, имитирующий экран телефона для тестирования логики и ответов в реальном времени.
-    - **Всегда доступны:** Дерево файлов проекта, редактор кода и чат с AI-ассистентом.
-
-4.  **Разработка через диалог:** Пользователь дорабатывает проект, просто общаясь с AI в чате. Запросы вроде _"Сделай фон темнее"_ или _"Добавь кнопку 'Контакты' в главное меню бота"_ AI превращает в реальные изменения в коде, которые тут же отображаются в предпросмотре.
-
-5.  **Полный контроль:** В любой момент пользователь может скачать весь исходный код или отправить его на GitHub. Мы не "запираем" пользователей — они получают чистый, профессиональный код.
+</div>
 
 ---
 
-## 🎯 Ключевые преимущества
+## 🚀 What is AssisCore?
 
-- **Скорость:** От идеи до работающего MVP за минуты, а не недели.
-- **Доступность:** Стирает границы между новичками и профессионалами.
-- **Прозрачность:** Полный доступ к качественному, читаемому исходному коду.
-- **Адаптивность:** Уникальный интерфейс, который подстраивается под конкретную задачу.
+AssisCore is an **AI-native development environment** that runs entirely in the browser. It lets anyone — from beginners to professionals — go from idea to a working digital product in minutes, not weeks.
 
-## 💻 Технологический стек
+Instead of writing boilerplate and fighting configuration, you simply **describe what you want** and our AI assistant builds it, shows it live, and keeps iterating based on your feedback.
 
-- **Фронтенд:** Next.js, React, TypeScript, Tailwind CSS, shadcn/ui
-- **Бэкенд:** Next.js API Routes, Node.js
-- **AI:** OpenRouter для доступа к ведущим языковым моделям (Claude, GPT и др.)
-- **Среда выполнения:** E2B (e2b.dev) для создания безопасных и изолированных "песочниц"
+### Why AssisCore?
 
-## Локальный запуск БД и сиды
+- ⚡ **Speed** — From idea to working MVP in minutes, not weeks
+- 🌍 **Accessibility** — Removes the barrier between beginners and professional-grade results  
+- 🔍 **Transparency** — You always own clean, readable, exportable source code
+- 🎯 **Adaptability** — The interface adapts to the type of project you're building
 
-1. Установите и запустите PostgreSQL, создайте базу `assiscore`.
-2. Скопируйте `.env.example` в `.env` и задайте `DATABASE_URL`.
-3. Выполните миграции и сгенерируйте клиент:
-   ```bash
-   pnpm prisma:migrate
-   pnpm prisma:gen
-   ```
-4. Заполните базу демо-данными:
-   ```bash
-   pnpm db:seed
-   ```
+---
 
-````
+## ✨ Key Features
 
-## Baseline миграция
+| Feature | Description |
+|---|---|
+| 🤖 **AI Code Generation** | Describe your project in natural language — the AI generates a complete, working file structure |
+| 👁️ **Live Preview** | Instantly see your website or web app update as changes are made |
+| 📱 **Telegram Bot Emulator** | Test your bot logic in a realistic phone-like simulator, in real-time |
+| 🗂️ **Integrated File Editor** | Browse, view, and edit every generated file in the built-in code editor |
+| 💬 **Conversational Iteration** | Refine your project via chat: *"Make the background darker"*, *"Add a contact button to the nav"* |
+| 🔒 **Sandboxed Execution** | Code runs in secure E2B cloud sandboxes — completely isolated from your machine |
+| 📤 **Export Anywhere** | Download the full source code as a ZIP or push directly to GitHub |
+| 🎨 **Figma Import** | Import designs from Figma and turn them into working code |
+| 📊 **Token & Billing System** | Transparent usage tracking with free and PRO tiers |
 
-История миграций сведена к одной базовой миграции в `prisma/migrations/*_baseline`.
-Любые изменения схемы оформляйте через
-`prisma migrate dev --name <описание>` — это создаст новую папку с SQL и
-обновит клиент. На CI и в продакшене применять изменения только через
-`prisma migrate deploy`; использование `prisma db push` в этих средах
-запрещено.
+---
 
-## Лимиты и токены
+## 🏗️ Architecture
 
-Стоимость операций задаётся в файле [`lib/limits.ts`](lib/limits.ts), а параметры тарифов описаны в [`server/billing/plans.ts`](server/billing/plans.ts).
+```mermaid
+graph TB
+    User["👤 User (Browser)"] --> NextApp["Next.js App (App Router)"]
+    
+    NextApp --> Auth["NextAuth.js\n(GitHub OAuth)"]
+    NextApp --> API["API Routes"]
+    
+    API --> AIRouter["AI Router\n(OpenRouter / Anthropic\n/ OpenAI / Groq / Gemini)"]
+    API --> DB[("PostgreSQL\n(Prisma ORM)")]
+    API --> E2B["E2B Sandbox\n(Secure Code Execution)"]
+    API --> Figma["Figma API\n(Design Import)"]
+    
+    AIRouter --> LLM["Language Models\n(Claude, GPT-4o, Gemini...)"]
+    E2B --> Preview["Static Preview\n(Live iframe)"]
+    E2B --> BotEmulator["Telegram Bot\nEmulator"]
+    
+    style User fill:#4f46e5,color:#fff
+    style NextApp fill:#000,color:#fff
+    style E2B fill:#0ea5e9,color:#fff
+    style AIRouter fill:#7c3aed,color:#fff
+```
 
-Для расчёта стоимости и работы с балансом предусмотрены утилиты в [`lib/tokens.ts`](lib/tokens.ts). На серверном уровне используйте guard'ы из [`server/guards/limits.ts`](server/guards/limits.ts) — они проверяют месячные лимиты и списывают токены через транзакции.
+---
 
-Все списания и возвраты токенов должны выполняться только через функции `spendTokens()` или `chargeTokens()` в транзакции, чтобы избежать отрицательного баланса и сохранить историю операций в таблице `TokenTransaction`.
+## 💻 Tech Stack
 
-### Сброс квот
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, Framer Motion |
+| **Backend** | Next.js API Routes, Node.js, Custom WebSocket server |
+| **Database** | PostgreSQL + Prisma ORM |
+| **AI Providers** | OpenRouter, Anthropic Claude, OpenAI GPT, Google Gemini, Groq (via Vercel AI SDK) |
+| **Sandboxing** | [E2B](https://e2b.dev) — secure cloud sandboxes for code execution |
+| **Auth** | NextAuth.js (GitHub OAuth + email/password) |
+| **Testing** | Vitest, jsdom |
+| **Observability** | OpenTelemetry, Pino logger, Prometheus metrics |
+| **DevOps** | Docker, Docker Compose, Fly.io, GitHub Actions CI |
+| **i18n** | next-intl (internationalization support) |
 
-Для ежемесячных лимитов предусмотрен эндпоинт `POST /api/billing/cron/reset`. В продакшене его следует запускать ежедневно (cron или отдельный worker), чтобы обнулять квоты истекших энтайтлментов. В дев-окружении эндпоинт можно дергать вручную.
+---
 
-## Генерация кода (LLM + e2b)
+## 🛠️ Local Development
 
-Пайплайн генерации использует **OpenRouter** для получения пакета файлов и **e2b** для сборки статического предпросмотра. Для работы необходимы ключи `OPENROUTER_API_KEY` и `E2B_API_KEY` в `.env`.
+### Prerequisites
 
-1. Пользователь отправляет запрос на генерацию.
-2. LLM возвращает набор файлов в формате `FileBundle`.
-3. Файлы валидируются и применяются к проекту.
-4. В песочнице e2b собирается статический предпросмотр, который доступен по `/api/projects/[id]/preview`.
+- Node.js ≥ 20
+- pnpm ≥ 8
+- Docker & Docker Compose (for local database)
+- API keys (see `.env.example`)
 
-Подробнее о схеме и возможностях см. в `lib/ai` и `server/ai`.
+### 1. Clone the repository
 
-## Импорт из Figma
+```bash
+git clone https://github.com/serzh218/assiscore.git
+cd assiscore
+```
 
-Чтобы подтянуть дизайн из Figma, получите [Personal Access Token](https://www.figma.com/developers/api#access-tokens) и пропишите его в `.env` как `FIGMA_PERSONAL_ACCESS_TOKEN`.
-Пример ссылки: `https://www.figma.com/file/FILE_KEY/name?node-id=NODE_ID`.
+### 2. Install dependencies
 
-## Разработка
+```bash
+pnpm install
+```
 
-1. Установите зависимости:
- ```bash
- pnpm i
-````
+### 3. Set up environment variables
 
-2. Поднимите локальную базу данных:
-   ```bash
-   docker compose up -d db
-   ```
-   и задайте `DATABASE_URL` (см. `.env.example`).
-3. Примените миграции и заполните БД демо-данными:
-   ```bash
-   pnpm prisma:migrate
-   pnpm prisma:gen
-   pnpm db:seed
-   ```
-4. Запустите dev-сервер:
-   ```bash
-   pnpm dev
-   ```
-5. Проверки качества:
-   ```bash
-   pnpm dx:check
-   ```
-   (генерация Prisma → тайпчек → линт → тесты → билд). Тесты отдельно:
-   ```bash
-   pnpm test
-   ```
-6. CI прогоняет те же шаги и защищает `main` (нужен зелёный статус `CI` и хотя бы одно ревью), см. [`ci.yml`](.github/workflows/ci.yml).
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in at least:
+- `DATABASE_URL` (pre-filled for Docker setup below)
+- `E2B_API_KEY` — get at [e2b.dev](https://e2b.dev)
+- One AI provider key (e.g., `OPENROUTER_API_KEY` or `ANTHROPIC_API_KEY`)
+- `NEXTAUTH_SECRET` — any random string (e.g., `openssl rand -base64 32`)
+
+### 4. Start the database
+
+```bash
+docker compose up -d db
+```
+
+### 5. Run migrations and seed demo data
+
+```bash
+pnpm prisma:migrate
+pnpm prisma:gen
+pnpm db:seed
+```
+
+### 6. Start the dev server
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) — you're ready to go! 🎉
+
+### 7. Quality checks
+
+```bash
+# Run all checks (typecheck → lint → tests → build)
+pnpm dx:check
+
+# Tests only
+pnpm test
+
+# Linting only
+pnpm lint
+```
+
+---
+
+## 🐳 Docker Setup (Full Stack)
+
+Run the entire stack with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+This starts the Next.js application and PostgreSQL together. Configure your `.env` accordingly.
+
+---
+
+## 📁 Project Structure
+
+```
+assiscore/
+├── app/                  # Next.js App Router pages & layouts
+├── auth/                 # Authentication logic (NextAuth config)
+├── components/           # Reusable React components
+│   ├── editor/           # Code editor components
+│   ├── preview/          # Live preview components
+│   └── ui/               # Base UI components (shadcn/ui based)
+├── config/               # App-wide configuration constants
+├── docs/                 # Developer documentation
+├── i18n/                 # Internationalization (translations)
+├── lib/                  # Shared utilities
+│   ├── ai/               # AI prompt builders & parsers
+│   └── tokens.ts         # Token accounting utilities
+├── prisma/               # Database schema & migrations
+│   └── schema.prisma
+├── public/               # Static assets
+├── scripts/              # Dev scripts (seed, i18n-check, etc.)
+├── server/               # Server-only logic
+│   ├── ai/               # LLM integration & code generation pipeline
+│   ├── billing/          # Plans, entitlements, token transactions
+│   └── guards/           # Rate limiting & limit guards
+├── templates/            # Project scaffolding templates
+├── tests/                # Integration & unit tests
+├── types/                # Shared TypeScript types
+├── Dockerfile
+├── docker-compose.yml
+└── next.config.ts
+```
+
+---
+
+## 🤖 How AI Code Generation Works
+
+1. **User describes their project** — they pick a type (Website / Web App / Telegram Bot) and describe what they want
+2. **LLM generates a file bundle** — the AI selects an appropriate template and returns a complete set of files
+3. **Files are validated and applied** — the system validates the output, detects the package manager, and applies the changes
+4. **E2B sandbox builds a preview** — code is bundled in a secure cloud sandbox and served as a live iframe
+5. **User iterates via chat** — subsequent messages apply unified diffs, with preview/reject before committing
+
+> **Important protected files:** `.env` and Prisma migration files are write-protected by the AI pipeline to prevent accidental damage.
+
+---
+
+## 🗺️ Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the full list of planned features and open issues.
+
+**Current focus (v0.2):**
+- [ ] Multi-file diff preview before applying AI changes
+- [ ] Collaborative editing (multiple users on one project)
+- [ ] Plugin system for custom AI providers
+- [ ] Mobile-friendly layout for the studio
+- [ ] VS Code extension for local sync
+
+---
+
+## 🤝 Contributing
+
+Contributions are very welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
+
+**Quick start:**
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m 'feat: add amazing feature'`
+4. Push and open a Pull Request
+
+---
+
+## 🔐 Security
+
+- Sensitive files (`.env`, Prisma migrations) are protected from AI edits
+- All code generation runs in isolated [E2B](https://e2b.dev) sandboxes
+- Never commit real API keys — always use `.env` (git-ignored)
+
+To report a security vulnerability, please open a [private security advisory](https://github.com/serzh218/assiscore/security/advisories/new).
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+  Built with ❤️ — open to contributions, ideas, and collaboration.
+</div>
